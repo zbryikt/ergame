@@ -4,6 +4,9 @@ Source of Sounds
  * bk.mp3 - [Hall of the Mountain King](http://incompetech.com/music/royalty-free/index.html?isrc=USUAN1200072)
    - by Kevin MacLeod ( incompetech.com ), Licensed under CC BY 3.0 http://creativecommons.org/licenses/by/3.0/
   
+ * amb.mp3 - [Ambulance.aif](https://freesound.org/people/bwav/sounds/203720/)
+   - by bwav, CC0
+
  * click.mp3 - [click](https://freesound.org/people/OtisJames/sounds/215772/)
    - by OtisJames, CC0
 
@@ -26,3 +29,6 @@ Source of Sounds
 
  * born.mp3 - [Short and Sensetive - G2](https://freesound.org/people/modularsamples/sounds/281726/)
    - by modularsamples, CC0
+
+ * click2.mp3 - [Click.wav](https://freesound.org/people/kwahmah_02/sounds/256116/)
+   - by kwahmah_02, CC0
