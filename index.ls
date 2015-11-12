@@ -304,8 +304,8 @@ angular.module \ERGame, <[]>
     $interval ( ->
       if isHalt! => return
       if $scope.dialog.tut => return
-      if Math.random! < 0.13 => $scope.patient.add 1
-      if Math.random! < 0.13 => $scope.supply.active!
+      if Math.random! < 0.03 => $scope.patient.add 1
+      if Math.random! < 0.03 => $scope.supply.active!
     ), 100
 
     $scope.madspeed = 0.002
