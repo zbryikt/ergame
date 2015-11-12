@@ -29,10 +29,10 @@ html(lang="en")
           #landing-reporter
             img(src="img/cover/landing-reporter-0.png")
             img.active(src="img/cover/landing-reporter-1.png")
-          #landing-start(ng-click="game.start()")
+          #landing-start(ng-click="game.start();audio.click()")
             img(src="img/cover/landing-start-0.png")
             img.active(src="img/cover/landing-start-1.png")
-          #landing-skip(ng-click="dialog.skip();game.start()")
+          #landing-skip(ng-click="dialog.skip();audio.click()")
             img(src="img/cover/landing-skip-0.png")
             img.active(src="img/cover/landing-skip-1.png")
         #countdown(ng-if="game.state==5")
@@ -54,16 +54,16 @@ html(lang="en")
             img(src="img/pause/tutorial-0.png")
             img.active(src="img/pause/tutorial-1.png")
         #game-ctrl(ng-if="game.state>0")
-          #gctrl-landing(ng-if="game.state==4",ng-click="game.reset()")
+          #gctrl-landing(ng-if="game.state==4",ng-click="game.reset();audio.click()")
             img(src="img/game/landing-0.png")
             img.active(src="img/game/landing-1.png")
-          #gctrl-pause(ng-if="game.state==2",ng-click="game.setState(1)")
+          #gctrl-pause(ng-if="game.state==2",ng-click="game.setState(1);audio.click()")
             img(src="img/game/pause-0.png")
             img.active(src="img/game/pause-1.png")
-          #gctrl-skip(ng-if="game.state==3",ng-click="dialog.skip()")
+          #gctrl-skip(ng-if="game.state==3",ng-click="dialog.skip();audio.click()")
             img(src="img/game/skip-0.png")
             img.active(src="img/game/skip-1.png")
-          #gctrl-start(ng-if="game.state==1",ng-click="game.setState(2)")
+          #gctrl-start(ng-if="game.state==1",ng-click="game.setState(2);audio.click()")
             img(src="img/game/start-0.png")
             img.active(src="img/game/start-1.png")
         #game-over(ng-if="game.state==4")
@@ -80,7 +80,7 @@ html(lang="en")
             each val in [0,1,2,3]
               .score-digit(ng-attr-style="background-image:url(img/gauge/{{doctor.score.digit["+val+"]}}s.png)")
 
-        #energy
+        #energy(ng-class="{'active':doctor.draining>0}")
           #energy-base
           #energy-current(ng-attr-style="width:{{doctor.energy*100}}%")
         #chance(ng-class="{'active':doctor.hurting>0}")
@@ -108,12 +108,9 @@ html(lang="en")
         #finger-tap
           img(src="img/tutorial/finger1.png",draggable="false")
           img(src="img/tutorial/finger2.png",draggable="false")
-        #dialog(ng-click="dialog.next()",ng-class="dialog.type")
+        #dialog(ng-click="dialog.next();audio.sel()",ng-class="dialog.type")
           img#dialog-content(ng-attr-src="img/tutorial/{{dialog.idx}}.png")
           img#dialog-doctor(src="img/tutorial/doctor.png")
-          //-.btn.btn-default(ng-click="dialog.next()") 
-            span(ng-if="dialog.hasNext[dialog.idx]") 下一步
-            span(ng-if="!dialog.hasNext[dialog.idx]") 知道了
         img#wheel(src="img/wheel.png",draggable="false")
         img(src="/img/scenario.png",style="width:100%",draggable="false")
         .sprite(ng-repeat="pat in percent.sprite.points",
@@ -122,22 +119,18 @@ html(lang="en")
         ng-class="pat.cls")
           .base(draggable="false")
           .normal(draggable="false")
-          .active(ng-if="pat.type==1 && pat.active==1",
+          .active(ng-if="pat.type==1 && pat.active==1",ng-class="{'blink': pat.life < 0.3 && pat.variant != 0}",
           ng-attr-style="height:{{100 * (1 - pat.life)}}%",draggable="false")
             img(ng-attr-src="img/it-{{pat.type}}-{{pat.variant || 0}}-{{pat.active || 0}}.png",draggable="false")
 
-          .active(ng-if="pat.type>=2 && pat.type<=4 && pat.active==1",
+          .active(ng-if="pat.type>=2 && pat.type<=4 && pat.active==1",ng-class="{'blink':pat.mad > 0.6 && pat.mad < 0.8}",
           ng-attr-style="top:{{100 * (1 - pat.mad)}}%",draggable="false")
             img(ng-attr-src="img/it-{{pat.type}}-{{pat.variant || 0}}-{{pat.active || 0}}.png",draggable="false",
             ng-attr-style="position:absolute;top:-{{100 * (1 - pat.mad)}}%")
 
-          .active(ng-if="pat.type>=5 && pat.type<=8 && pat.active==1",
-          ng-attr-style="height:{{100 * (1 - pat.life)}}%",draggable="false")
+          .active(ng-if="pat.type>=5 && pat.type<=8 && pat.active==1",ng-class="{'blink':pat.countdown < 0.4}",
+          draggable="false")
             img(ng-attr-src="img/it-{{pat.type}}-{{pat.variant || 0}}-{{pat.active || 0}}.png",draggable="false")
-      //-#foot
-        .pull-left
-           a(href="#") ABOUT
-        #foot-source SOURCE CODE
       #foot
         a.pull-left(href="#"): img(src="img/about.png")
         a.pull-right(href="#"): img(src="img/github.png")

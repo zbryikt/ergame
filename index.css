@@ -47,6 +47,13 @@ img {
 .sprite .active {
   padding: 0;
 }
+.sprite .active.blink {
+  -ms-animation: blink 0.15s infinite linear;
+  -moz-animation: blink 0.15s infinite linear;
+  -webkit-animation: blink 0.15s infinite linear;
+  -o-animation: blink 0.15s infinite linear;
+  animation: blink 0.15s infinite linear;
+}
 #frame {
   max-width: 1024px;
   padding: 20px 10px;
@@ -1426,6 +1433,13 @@ width: 100%;
   width: 33%;
   height: 4%;
   margin: 0.85%;
+}
+#energy.active {
+  -ms-animation: vibrate 0.2s linear infinite;
+  -moz-animation: vibrate 0.2s linear infinite;
+  -webkit-animation: vibrate 0.2s linear infinite;
+  -o-animation: vibrate 0.2s linear infinite;
+  animation: vibrate 0.2s linear infinite;
 }
 #energy-base,
 #energy-current {

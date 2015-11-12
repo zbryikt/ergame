@@ -27,7 +27,7 @@ angular.module \ERGame, <[]>
         ]
         points:
           [{x: 591, y: -19, type: 6}] ++
-          [{x: 317, y: -3, type: 5}] ++
+          [{x: 317, y: 2, type: 5}] ++
           [{x: 687, y: -36, type: 7}] ++
           [{x: 503, y: 65, type: 8}] ++ 
           [{x: 507, y: 54, type: 9, variant: 1}] ++
@@ -65,7 +65,6 @@ angular.module \ERGame, <[]>
     $scope.rebuild = ->
       for it in $scope.percent.sprite.points =>
         it.cls = (
-          (if it.active => <[active]> else []) ++ 
           ["it-#{it.type}-#{it.variant or 0}-#{it.active or 0}"]
         )
 
@@ -81,12 +80,13 @@ angular.module \ERGame, <[]>
         @state = it
       start: ->
         @set-state 5
-        @countdown.start!
+        $timeout (~> @countdown.start! ), 300
       reset: ->
         $scope.patient.reset!
         $scope.doctor.reset!
         $scope.supply.reset!
         $scope.mouse.reset!
+        $scope.audio.reset!
         $scope.rebuild!
         $scope <<< {madmax: 0}
         $scope.dialog.toggle null, false
@@ -96,8 +96,11 @@ angular.module \ERGame, <[]>
         value: 0
         count: ->
           @value = @value - 1
+          if @value > 0 => $scope.audio["count#{if @value == 1 => 2 else 1}"]!
           if @value => $timeout (~> @count!), 650
-          else => $scope.game.set-state 2
+          else => 
+            $scope.game.set-state 2
+            $scope.audio.bk!
         start: ->
           @value = 5
           @count!
@@ -108,6 +111,13 @@ angular.module \ERGame, <[]>
       faint: false
       chance: 5
       hurting: 0
+      draining: 0
+      drain: ->
+        @
+          ..energy -= 0.2
+          ..energy >?= 0
+          ..draining = 1 # 震動倒數
+        if $scope.doctor.energy == 0 => $scope.doctor.faint = true
       fail: -> 
         @
           ..set-mood 7
@@ -115,8 +125,9 @@ angular.module \ERGame, <[]>
           ..chance >?= 0
           ..hurting = 1 # 震動倒數
         if @chance <= 0 => $scope.game.set-state 4
+        $scope.audio.die!
       reset: ->
-        @ <<< {energy: 1, faint: false, chance: 5, hurting: 0}
+        @ <<< {energy: 1, faint: false, chance: 5, hurting: 0, draining: 0}
         if @handler => $timeout.cancel @handler
         @set-mood 1
       score: do
@@ -171,6 +182,7 @@ angular.module \ERGame, <[]>
           if dice < @lvprob.0.0 => variant = 1
           else if dice < @lvprob.0.1 => variant = 2
           else variant = 3
+          $scope.audio.born!
         else => variant = parseInt(Math.random! * 2 + 1)
         if area > 1 => variant <?= 2
         if defvar? => variant = defvar
@@ -208,6 +220,7 @@ angular.module \ERGame, <[]>
           display: "block"
           top: "#{y}px"
           left: "#{x}px"
+        $scope.audio.blop!
         $scope.rebuild!
       up: (e) -> 
         if isHalt! => return
@@ -232,8 +245,10 @@ angular.module \ERGame, <[]>
                 mood = if Math.random! < 0.5 => 2 else 4 + parseInt(Math.random! * 3)
                 if @forceMood? => mood = @forceMood
                 $scope.doctor.set-mood mood
+                $scope.audio.dindon!
                 # 非濫用資源者才計分
-                if mood == 2 => $scope.doctor.score.value += 1
+                if mood == 2 => 
+                  $scope.doctor.score.value += 1
               else # 中、重症病患
                 # 一定機率進留觀
                 if (!(@forceStay?) and Math.random! > 0.5) =>
@@ -243,6 +258,7 @@ angular.module \ERGame, <[]>
                   $scope.doctor.set-mood 3
                   $scope.patient.add 4, 2, 0
                 else $scope.doctor.set-mood 2
+                $scope.audio.dindon!
                 $scope.doctor.score.value += 1
             else => $scope.doctor.fail! # 答錯，難過，扣血
 
@@ -253,6 +269,7 @@ angular.module \ERGame, <[]>
             @target.mad <?= 0.8
             @target.mad -= 0.2
             @target.mad >?= 0
+            $scope.audio.click2!
           else if @target.type >= 5 and @target.type <= 8 and @target.active => # 恢復體力
             $scope.doctor.energy += 0.1
             $scope.doctor.energy <?= 1
@@ -260,6 +277,7 @@ angular.module \ERGame, <[]>
             $scope.rebuild!
             @target.active = 0
             @target.countdown = 1
+            $scope.audio.click2!
         @target = null
 
     $scope.madmax = 0
@@ -276,6 +294,7 @@ angular.module \ERGame, <[]>
           ..energy <?= 1
         if $scope.doctor.energy == 1 => $scope.doctor.faint = false
       e.preventDefault!
+      $scope.audio.click2!
       return false
 
     $scope.rebuild!
@@ -285,8 +304,8 @@ angular.module \ERGame, <[]>
     $interval ( ->
       if isHalt! => return
       if $scope.dialog.tut => return
-      if Math.random! < 0.1 => $scope.patient.add 1
-      if Math.random! < 0.1 => $scope.supply.active!
+      if Math.random! < 0.13 => $scope.patient.add 1
+      if Math.random! < 0.13 => $scope.supply.active!
     ), 100
 
     $scope.madspeed = 0.002
@@ -295,6 +314,9 @@ angular.module \ERGame, <[]>
       if $scope.doctor.hurting => 
         $scope.doctor.hurting -= 0.2
         $scope.doctor.hurting >?= 0
+      if $scope.doctor.draining => 
+        $scope.doctor.draining -= 0.2
+        $scope.doctor.draining >?= 0
       inqueue = $scope.percent.sprite.points.filter(->it.type == 1 and it.variant > 0)
       for it in inqueue
         it.life -= ( 0.004 * it.variant )
@@ -321,9 +343,12 @@ angular.module \ERGame, <[]>
           if it.countdown <= 0 =>
             it.countdown = 1
             it.active = 0
+            $scope.doctor.drain!
+            /*
             $scope.doctor.energy -= 0.2
             $scope.doctor.energy >?= 0
             if $scope.doctor.energy == 0 => $scope.doctor.faint = true
+            */
 
     ), 100
     $scope.$watch 'madmax' -> if it => $(\#wheel).css({display: "none"})
@@ -363,7 +388,8 @@ angular.module \ERGame, <[]>
         for item in @h.i => $interval.cancel item
         for item in @h.t => $timeout.cancel item
         @idx = @step.length - 2
-        @toggle 0, true
+        @clean!
+        $scope.game.start!
       interval: (func, delay) ->
         ret = $interval func, delay
         @h.i.push ret
@@ -586,5 +612,22 @@ angular.module \ERGame, <[]>
         <~ setTimeout _, 0
         if !(isOn?) => @show = !@show
         else @show = isOn
-        if @show => $(\#dialog).fadeIn! else $(\#dialog).fadeOut!
+        if @show => 
+          $(\#dialog).fadeIn!
+          $scope.audio.menu!
+        else $(\#dialog).fadeOut!
     $interval (->$scope.dialog.main!), 100
+
+    $scope.audio = do
+      s: {}
+      names: <[amb click count1 count2 blop die menu sel dindon born click2 bk]>
+      reset: -> for item in @names => @s[item].pause!
+      player: (name) -> ~>
+        @s[name]currentTime = 0;
+        @s[name]play!
+      init: ->
+        for item in @names => 
+          @s[item] = new Audio!
+            ..src = "snd/#{item}.mp3"
+          @[item] = @player item
+    $scope.audio.init!

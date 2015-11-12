@@ -29,6 +29,8 @@ img
     padding: 0.6837%
   .active
     padding: 0
+    &.blink
+      animation(blink 0.15s infinite linear)
 
 #frame
   max-width: 1024px
@@ -163,6 +165,8 @@ for type in (1..12)
   width: 33%
   height: 4%
   margin: 0.85%
+  &.active
+    animation(vibrate 0.2s linear infinite)
 
 #energy-base, #energy-current
   width: 100%
