@@ -165,11 +165,6 @@ angular.module \ERGame, <[]>
           @sprite[idx].countdown = 1
 
     $scope.patient = do
-      lvprob: [
-        [0.6, 0.9],
-        [0.4, 0.8],
-        [0.3, 0.3],
-      ]
       reset: ->
         remains = $scope.percent.sprite.points.filter( ->it.type >=1 and it.type <= 4 )
         for item in remains => item <<< {variant: 0, mad: 0, life: 1}
@@ -179,8 +174,8 @@ angular.module \ERGame, <[]>
         variant = parseInt(Math.random! * 3 + 1)
         if area == 1 =>
           dice = Math.random!
-          if dice < @lvprob.0.0 => variant = 1
-          else if dice < @lvprob.0.1 => variant = 2
+          if dice < $scope.config.cur.patprob.0 => variant = 1
+          else if dice < $scope.config.cur.patprob.1 => variant = 2
           else variant = 3
           $scope.audio.born!
         else => variant = parseInt(Math.random! * 2 + 1)
@@ -193,6 +188,15 @@ angular.module \ERGame, <[]>
         if des.type in [2 3 4] => des.mad = 0
         $scope.rebuild!
 
+    $scope.config = do
+      cur: do
+        pat: 0.05, sup: 0.01, patprob: [0.6, 0.95], mad: 0.002
+      setting: [
+        * pat: 0.02, sup: 0.01, patprob: [0.7, 0.95], mad: 0.002
+        * pat: 0.07, sup: 0.04, patprob: [0.5, 0.8], mad: 0.004
+        * pat: 0.15, sup: 0.11, patprob: [0.3, 0.3], mad: 0.006
+      ]
+
     $scope.mouse = do
       x: 0, y: 0, target: null
       reset: -> @target = null
@@ -203,7 +207,9 @@ angular.module \ERGame, <[]>
         if @is-locked or $scope.madmax or $scope.doctor.faint => return
         offset = $(\#wrapper).offset!
         [x,y] = [@x, @y] = [e.clientX - offset.left, e.clientY - offset.top]
-        target = $scope.hitmask.resolve(x, y)
+        xp = x * 1024 / $(\#wrapper)width!
+        yp = y * 576 / $(\#wrapper)height!
+        target = $scope.hitmask.resolve(xp, yp)
         if !target => return
         if target.type == 1 =>
           if target.variant == 0 => return
@@ -304,8 +310,12 @@ angular.module \ERGame, <[]>
     $interval ( ->
       if isHalt! => return
       if $scope.dialog.tut => return
-      if Math.random! < 0.07 => $scope.patient.add 1
-      if Math.random! < 0.07 => $scope.supply.active!
+      if Math.random! < $scope.config.cur.pat => $scope.patient.add 1
+      if Math.random! < $scope.config.cur.sup => $scope.supply.active!
+      time = $scope.audio.s.bk.currentTime
+      if time <= 60 => $scope.config.cur = $scope.config.setting.0
+      else if time <= 110 => $scope.config.cur = $scope.config.setting.1
+      else => $scope.config.cur = $scope.config.setting.2
     ), 100
 
     $scope.madspeed = 0.002
@@ -344,11 +354,6 @@ angular.module \ERGame, <[]>
             it.countdown = 1
             it.active = 0
             $scope.doctor.drain!
-            /*
-            $scope.doctor.energy -= 0.2
-            $scope.doctor.energy >?= 0
-            if $scope.doctor.energy == 0 => $scope.doctor.faint = true
-            */
 
     ), 100
     $scope.$watch 'madmax' -> if it => $(\#wheel).css({display: "none"})
