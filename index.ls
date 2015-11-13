@@ -193,7 +193,7 @@ angular.module \ERGame, <[]>
       cur: do
         pat: 0.05, sup: 0.01, patprob: [0.6, 0.95], mad: 0.002
       setting: [
-        * pat: 0.02, sup: 0.21, patprob: [0.7, 0.95], mad: 0.002
+        * pat: 0.02, sup: 0.01, patprob: [0.7, 0.95], mad: 0.002
         * pat: 0.07, sup: 0.04, patprob: [0.5, 0.8], mad: 0.004
         * pat: 0.15, sup: 0.11, patprob: [0.3, 0.3], mad: 0.006
       ]
