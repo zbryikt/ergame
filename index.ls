@@ -117,7 +117,7 @@ angular.module \ERGame, <[]>
           ..energy -= 0.2
           ..energy >?= 0
           ..draining = 1 # 震動倒數
-        if $scope.doctor.energy == 0 => $scope.doctor.faint = true
+        if $scope.doctor.energy <= 0 => $scope.doctor.faint = true
       fail: -> 
         @
           ..set-mood 7
@@ -312,6 +312,7 @@ angular.module \ERGame, <[]>
       if $scope.dialog.tut => return
       if Math.random! < $scope.config.cur.pat => $scope.patient.add 1
       if Math.random! < $scope.config.cur.sup => $scope.supply.active!
+      if $scope.percent.sprite.points.filter(->it.type == 1).length == 0 and Math.random! > 0.5 => $scope.patient.add 1
       time = $scope.audio.s.bk.currentTime
       if time <= 60 => $scope.config.cur = $scope.config.setting.0
       else if time <= 110 => $scope.config.cur = $scope.config.setting.1
