@@ -79,7 +79,7 @@ html(lang="en")
           .score
             each val in [0,1,2,3]
               .score-digit(ng-attr-style="background-image:url(img/gauge/{{doctor.score.digit["+val+"]}}s.png)")
-        #danger: img(src="img/danger.png",draggable="false")
+        #danger(ng-class="{'active':danger}"): img(src="img/danger.png",draggable="false")
         #energy(ng-class="{'active':doctor.draining>0}")
           #energy-base
           #energy-current(ng-attr-style="width:{{doctor.energy*100}}%")

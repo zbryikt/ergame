@@ -485,12 +485,16 @@ for type in (1..12)
     height: 100%
 
 #danger
-  display: none
+  z-index: index(order, 'game-ctrl')
   position: absolute
-  top: 50%
-  left: 50%
-  margin: -50% 0 0 -50%
+  display: none
+  top: 25%
+  left: 30%
   width: 40%
+  &.active
+    display: block
+  no-selection()
   img
     width: 100%
+  animation(blink 0.4s linear infinite)
 

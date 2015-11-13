@@ -5,6 +5,7 @@
 angular.module \ERGame, <[]>
   ..controller \ERGame, <[$scope $interval $timeout]> ++ ($scope, $interval, $timeout) ->
     $scope.list = [[(i % 4), parseInt(i / 4)] for i from 0 til 12]
+    $scope.danger = false
     $scope.pixel = do
       scene: w: 1170, h: 658
 
@@ -216,7 +217,8 @@ angular.module \ERGame, <[]>
           pat = $scope.percent.sprite.points.filter(->it.type == 1)
           max = 0
           for item in pat => if item.variant > max => max = item.variant
-          if max == 3 and target.variant < max => 
+          #if max == 3 and target.variant < max => 
+          if target.variant < max => 
             @target = null
             return
 
@@ -312,11 +314,15 @@ angular.module \ERGame, <[]>
       if $scope.dialog.tut => return
       if Math.random! < $scope.config.cur.pat => $scope.patient.add 1
       if Math.random! < $scope.config.cur.sup => $scope.supply.active!
-      if $scope.percent.sprite.points.filter(->it.type == 1).length == 0 and Math.random! > 0.5 => $scope.patient.add 1
+      if $scope.percent.sprite.points.filter(->it.type == 1 and it.variant == 0).length == 0 and Math.random! > 0.3 => 
+        $scope.patient.add 1
       time = $scope.audio.s.bk.currentTime
       if time <= 60 => $scope.config.cur = $scope.config.setting.0
       else if time <= 110 => $scope.config.cur = $scope.config.setting.1
-      else => $scope.config.cur = $scope.config.setting.2
+      else if time >= 110 and time <= 112 => $scope.danger = true
+      else => 
+        $scope.danger = false
+        $scope.config.cur = $scope.config.setting.2
     ), 100
 
     $scope.madspeed = 0.002
