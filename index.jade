@@ -112,7 +112,7 @@ html(lang="en")
           img#dialog-content(ng-attr-src="img/tutorial/{{dialog.idx}}.png")
           img#dialog-doctor(src="img/tutorial/doctor.png")
         img#wheel(src="img/wheel.png",draggable="false")
-        img(src="/img/scenario.png",style="width:100%",draggable="false")
+        img(src="img/scenario.png",style="width:100%",draggable="false")
         .sprite(ng-repeat="pat in percent.sprite.points",
         ng-attr-style="width:{{percent.sprite.size[pat.type].w}}%;height:{{percent.sprite.size[pat.type].h}}%;"+
         "left:{{pat.x}}%;top:{{pat.y}}%",draggable="false",ng-mousedown="mouse.down($event, pat)",
