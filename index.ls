@@ -118,7 +118,7 @@ angular.module \ERGame, <[]>
           ..energy -= 0.2
           ..energy >?= 0
           ..draining = 1 # 震動倒數
-        if $scope.doctor.energy <= 0 => $scope.doctor.faint = true
+        if $scope.doctor.energy <= 0.0001 => $scope.doctor.faint = true
       fail: -> 
         @
           ..set-mood 7
@@ -161,7 +161,7 @@ angular.module \ERGame, <[]>
         if !isOn =>
           @sprite[idx].active = 0
           delete @sprite[idx].countdown
-        else =>
+        else if !@sprite[idx].active =>
           @sprite[idx].active = 1
           @sprite[idx].countdown = 1
 
@@ -193,7 +193,7 @@ angular.module \ERGame, <[]>
       cur: do
         pat: 0.05, sup: 0.01, patprob: [0.6, 0.95], mad: 0.002
       setting: [
-        * pat: 0.02, sup: 0.01, patprob: [0.7, 0.95], mad: 0.002
+        * pat: 0.02, sup: 0.21, patprob: [0.7, 0.95], mad: 0.002
         * pat: 0.07, sup: 0.04, patprob: [0.5, 0.8], mad: 0.004
         * pat: 0.15, sup: 0.11, patprob: [0.3, 0.3], mad: 0.006
       ]
@@ -602,7 +602,6 @@ angular.module \ERGame, <[]>
         * do
             ready: false
             check: -> 
-              console.log \hit
               if !@handler? and $scope.doctor.energy == 1 and $scope.doctor.faint == false =>
                 @handler = $scope.dialog.timeout (~> 
                   @ready = true
