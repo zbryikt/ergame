@@ -80,8 +80,7 @@ angular.module \ERGame, <[]>
       set-state: -> 
         @state = it
       start: ->
-        @set-state 5
-        $timeout (~> @countdown.start! ), 300
+        @set-state 2
       reset: ->
         $scope.patient.reset!
         $scope.doctor.reset!
@@ -103,6 +102,7 @@ angular.module \ERGame, <[]>
             $scope.game.set-state 2
             $scope.audio.bk!
         start: ->
+          $scope.game.set-state 5
           @value = 5
           @count!
     $scope.doctor = do
@@ -152,7 +152,7 @@ angular.module \ERGame, <[]>
         score.digit[ 3 - i ] = parseInt(score.value / (10 ** i)) % (10 ** (i+1))
 
     $scope.supply = do
-      sprite: $scope.percent.sprite.points.filter(->it.type in [5 6 7 8])
+      sprite: $scope.percent.sprite.points.filter(->it.type in [5 6 7])
       reset: ->
         for item in @sprite => item <<< {active: 0, countdown: -1}
       active: (defidx, isOn=true) ->
@@ -203,9 +203,12 @@ angular.module \ERGame, <[]>
       reset: -> @target = null
       lock: -> @is-locked = true
       unlock: -> @is-locked = false
+      timestamp: 0
+      is-pal-on: false
       down: (e, target)->
         if isHalt! => return
         if @is-locked or $scope.madmax or $scope.doctor.faint => return
+        if @is-pal-on => return
         offset = $(\#wrapper).offset!
         [x,y] = [@x, @y] = [e.clientX - offset.left, e.clientY - offset.top]
         xp = x * 1024 / $(\#wrapper)width!
@@ -230,10 +233,15 @@ angular.module \ERGame, <[]>
           left: "#{x}px"
         $scope.audio.blop!
         $scope.rebuild!
+        @timestamp = new Date!getTime!
+        @is-pal-on = true
       up: (e) -> 
         if isHalt! => return
         if @is-locked or $scope.madmax or $scope.doctor.faint => return
+        now = new Date!getTime!
+        if now - @timestamp < 100 => return
         <~ setTimeout _, 0
+        @is-pal-on = false
         $(\#wheel).css({display: "none"})
         offset = $(\#wrapper).offset!
         [dx, dy] = [e.clientX - @x - offset.left, e.clientY - @y - offset.top]
@@ -373,6 +381,7 @@ angular.module \ERGame, <[]>
       resolve: (x,y) ->
         color = @get x,y
         type = color.0
+        if type == 8 => type = 5
         if type == 0 => return null
         else if type ==1 => order = color.1 * 4 + color.2
         else => order = color.2
@@ -401,7 +410,7 @@ angular.module \ERGame, <[]>
         for item in @h.t => $timeout.cancel item
         @idx = @step.length - 2
         @clean!
-        $scope.game.start!
+        $scope.game.countdown.start!
       interval: (func, delay) ->
         ret = $interval func, delay
         @h.i.push ret
@@ -642,3 +651,9 @@ angular.module \ERGame, <[]>
             ..src = "snd/#{item}.mp3"
           @[item] = @player item
     $scope.audio.init!
+
+mouse = do
+  down: (e) ->
+    angular.element(\#wrapper).scope().mouse.down(e)
+  up: ->
+    angular.element(\#wrapper).scope().mouse.up(e)

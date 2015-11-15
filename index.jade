@@ -15,9 +15,9 @@ html(lang="en")
     include library.jade
     // custom files
     link(rel="stylesheet",type="text/css",href="index.css")
-    link(href='https://fonts.googleapis.com/css?family=Montserrat',rel='stylesheet',type='text/css')
     script(type="text/javascript",src="index.js")
-  body(ng-app="ERGame",ng-controller="ERGame",ng-mouseup="mouse.up($event)",ng-mousedown="mouse.down($event)")
+  body(ng-app="ERGame",ng-controller="ERGame",ng-mouseup="mouse.up($event)",ng-mousedown="mouse.down($event)",
+  ontouchstart="mouse.down(event)", ontouchend="mouse.up(event)")
     #container
       #head
         img#logo(src="img/logo.png")
