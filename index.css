@@ -1835,7 +1835,7 @@ width: 100%;
   animation: vibrate 0.2s linear infinite;
 }
 #chance .chance-node {
-  width: 18%;
+  width: 17.5%;
   height: 100%;
   margin: 2px;
   display: inline-block;

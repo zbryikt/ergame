@@ -305,7 +305,7 @@ angular.module \ERGame, <[]>
 
     $scope.madmax = 0
     $scope.demad = (e) ->
-      madmax = $scope.percent.sprite.points.filter(-> (it.mad?) and (it.mad >= 1)) 
+      madmax = $scope.percent.sprite.points.filter(-> (it.mad?) and (it.mad >= 0.2)) 
       if !madmax.length => $scope.madmax = 0
       if madmax.length => 
         madmax.0.mad <?= 0.8
@@ -328,6 +328,8 @@ angular.module \ERGame, <[]>
       if $scope.dialog.tut =>
         #TODO loop bk in the first 1 ~ 9.1 sec
         time = $scope.audio.s.bk.currentTime
+
+        time = (new Date!getTime! / 1000) - $scope.audio.bkt
         if time >= 9.1 => $scope.audio.s.bk.currentTime = 1
         return
       if isHalt! => return
@@ -424,6 +426,7 @@ angular.module \ERGame, <[]>
         for item in @h.t => $timeout.cancel item
         @idx = @step.length - 2
         if !hold => @clean!
+        if hold => @toggle 0, true
         #$scope.game.countdown.start!
       interval: (func, delay) ->
         ret = $interval func, delay
@@ -436,6 +439,7 @@ angular.module \ERGame, <[]>
       clean: ->
         delete $scope.mouse.forceStay
         delete $scope.mouse.forceMood
+        $scope.game.reset!
         $scope.dialog.tut = false
         $scope.mouse.unlock!
         $(\#score).remove-class \hint
