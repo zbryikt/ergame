@@ -223,8 +223,8 @@ angular.module \ERGame, <[]>
           pat = $scope.percent.sprite.points.filter(->it.type == 1)
           max = 0
           for item in pat => if item.variant > max => max = item.variant
-          #if max == 3 and target.variant < max => 
-          if target.variant < max => 
+          #if target.variant < max => 
+          if max == 3 and target.variant < max => 
             @target = null
             return
 
