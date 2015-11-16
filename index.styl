@@ -254,7 +254,7 @@ for type in (1..12)
   margin-top: 10%
   height: 40%
 
-#landing, #pause, #game-ctrl, #game-over, #countdown
+#landing, #pause, #game-ctrl, #game-over, #countdown, #loading
   position: absolute
   top: 0
   left: 0
@@ -296,6 +296,43 @@ for type in (1..12)
 #landing-skip
   right: 11%
 
++keyframes(fade)
+  0%
+    opacity: 1
+  100%
+    opacity: 0
+
+#loading
+  z-index: index(order, 'loading')
+  background: #fff
+  &.fade
+    animation(fade 0.5s ease-in-out 1)
+#loading-text
+  position: absolute
+  width: 80%
+  bottom: 20%
+  left: 10%
+
+#loading-fig
+  width: 10%
+  position: absolute
+  top: 20%
+  left: 45%
+  .base
+    width: 100%
+
+#loading-progress
+  position: absolute
+  top: 0
+  left: 0
+  width: 100%
+  height: 100%
+  overflow: hidden
+  transition(top 0.5s linear)
+  img
+    position: absolute
+    width: 100%
+    transition(top 0.5s linear)
 
 #pause
   background-color: rgba(65,65,65,0.7)

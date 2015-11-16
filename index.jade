@@ -25,6 +25,12 @@ html(lang="en")
           a(href="#"): img(src="img/fb.png")
           a(href="#"): img(src="img/twt.png")
       #frame: #wrapper
+        #loading(ng-if="loading",ng-class="{'fade':progress >= 100}")
+          #loading-fig
+            img.base(src="img/load/shadow.png")
+            #loading-progress(ng-attr-style="top:{{100 - progress}}%")
+              img(src="img/load/doctor.png",ng-attr-style="top:-{{100 - progress}}%")
+          img#loading-text(src="img/load/text.png")
         #landing(ng-if="game.state==0")
           #landing-reporter
             img(src="img/cover/landing-reporter-0.png")

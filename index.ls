@@ -192,11 +192,12 @@ angular.module \ERGame, <[]>
 
     $scope.config = do
       cur: do
-        pat: 0.05, sup: 0.01, patprob: [0.6, 0.95], mad: 0.002
+        pat: 0.05, sup: 0.01, patprob: [0.6, 0.95], mad: 0.001
       setting: [
-        * pat: 0.02, sup: 0.01, patprob: [0.7, 0.95], mad: 0.002
-        * pat: 0.07, sup: 0.04, patprob: [0.5, 0.8], mad: 0.004
-        * pat: 0.15, sup: 0.11, patprob: [0.3, 0.3], mad: 0.006
+        * pat: 0.02, sup: 0.01, patprob: [0.70, 0.95], mad: 0.001
+        * pat: 0.07, sup: 0.04, patprob: [0.50, 0.80 ], mad: 0.003
+        * pat: 0.15, sup: 0.11, patprob: [0.25, 0.30], mad: 0.006
+        * pat: 0.22, sup: 0.15, patprob: [0.10, 0.25], mad: 0.008
       ]
 
     $scope.mouse = do
@@ -334,9 +335,11 @@ angular.module \ERGame, <[]>
       if time <= 60 => $scope.config.cur = $scope.config.setting.0
       else if time <= 110 => $scope.config.cur = $scope.config.setting.1
       else if time >= 110 and time <= 112 => $scope.danger = true
-      else => 
+      else if time <= 130 => 
         $scope.danger = false
         $scope.config.cur = $scope.config.setting.2
+      else =>
+        $scope.config.cur = $scope.config.setting.3
     ), 100
 
     $scope.madspeed = 0.002
@@ -664,11 +667,12 @@ angular.module \ERGame, <[]>
       buf: {}
       names: <[amb click count1 count2 blop die menu sel dindon born click2 bk]>
       reset: -> for item in @names => @s[item].pause!
+      n: {}
       player: (name) -> ~>
         console.log name, @buf[name]
         if !@buf[name] => return
-        src = @context.create-buffer-source!
-        console.log name, typeof(@buf[name]), @buf[name]
+        if @n[name] => @n[name]disconnect!
+        @n[name] = src = @context.create-buffer-source!
         src.buffer = @buf[name]
         src.connect @context.destination
         src.start 0
@@ -682,7 +686,10 @@ angular.module \ERGame, <[]>
         request.onload = ~>
           (buf) <~ @context.decode-audio-data request.response, _, (-> console.log(\fail))
           @buf[name] = buf
-          console.log "ok: ",name
+          setTimeout ( ~> $scope.$apply ~> 
+            $scope.progress = parseInt(100 * [key for key of @buf].length / @names.length)
+            if $scope.progress >= 100 => $timeout (->$scope.loading = false), 500
+          ), 500
         request.send!  
       init: ->
         AudioContext = window.AudioContext or window.webkitAudioContext
@@ -693,6 +700,8 @@ angular.module \ERGame, <[]>
           @[item] = @player item
           @load item, "snd/#{item}.mp3"
     $scope.audio.init!
+    $scope.progress = 0
+    $scope.loading = true
 
 
 mouse = do
