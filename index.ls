@@ -323,6 +323,7 @@ angular.module \ERGame, <[]>
       return false
     $interval ( ->
       if $scope.dialog.tut =>
+        #TODO loop bk in the first 1 ~ 9.1 sec
         time = $scope.audio.s.bk.currentTime
         if time >= 9.1 => $scope.audio.s.bk.currentTime = 1
         return
@@ -331,7 +332,7 @@ angular.module \ERGame, <[]>
       if Math.random! < $scope.config.cur.sup => $scope.supply.active!
       if $scope.percent.sprite.points.filter(->it.type == 1 and it.variant != 0).length == 0 and Math.random! > 0.8 => 
         $scope.patient.add 1
-      time = $scope.audio.s.bk.currentTime
+      time = (new Date!getTime! / 1000) - $scope.audio.bkt
       if time <= 60 => $scope.config.cur = $scope.config.setting.0
       else if time <= 110 => $scope.config.cur = $scope.config.setting.1
       else if time >= 110 and time <= 112 => $scope.danger = true
@@ -668,6 +669,7 @@ angular.module \ERGame, <[]>
       names: <[amb click count1 count2 blop die menu sel dindon born click2 bk]>
       reset: -> for item in @names => @s[item].pause!
       n: {}
+      bkt: 0
       player: (name) -> ~>
         console.log name, @buf[name]
         if !@buf[name] => return
@@ -676,6 +678,7 @@ angular.module \ERGame, <[]>
         src.buffer = @buf[name]
         src.connect @context.destination
         src.start 0
+        if name == \bk => @bkt = parseInt(new Date!getTime! / 1000)
         #@s[name]currentTime = 0;
         #@s[name]play!
       load: (name, url) ->
