@@ -328,9 +328,11 @@ angular.module \ERGame, <[]>
       if $scope.dialog.tut =>
         #TODO loop bk in the first 1 ~ 9.1 sec
         time = $scope.audio.s.bk.currentTime
-
-        time = (new Date!getTime! / 1000) - $scope.audio.bkt
         if time >= 9.1 => $scope.audio.s.bk.currentTime = 1
+        time = (new Date!getTime! / 1000) - $scope.audio.bkt
+        if time >= 9.1 =>
+          $scope.audio.bkt = parseInt( new Date!getTime! / 1000 )
+          $scope.audio.bk!
         return
       if isHalt! => return
       if Math.random! < $scope.config.cur.pat => $scope.patient.add 1
