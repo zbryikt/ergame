@@ -131,6 +131,8 @@ angular.module \ERGame, <[]>
       reset: ->
         @ <<< {energy: 1, faint: false, chance: 5, hurting: 0, draining: 0}
         if @handler => $timeout.cancel @handler
+        @score.value = 0
+        @score.digit = [0,0,0,0]
         @set-mood 1
       score: do
         digit: [0,0,0,0]
@@ -209,7 +211,8 @@ angular.module \ERGame, <[]>
       is-pal-on: false
       down: (e, target)->
         if isHalt! => return
-        if @is-locked or $scope.madmax or $scope.doctor.faint => return
+        if $scope.madmax or $scope.doctor.faint => return $scope.demad e
+        if @is-locked => return
         if @is-pal-on => return
         offset = $(\#wrapper).offset!
         [ex, ey] = [(e.clientX or e.pageX), (e.clientY or e.pageY)]
@@ -341,6 +344,7 @@ angular.module \ERGame, <[]>
         $scope.config.cur = $scope.config.setting.2
       else =>
         $scope.config.cur = $scope.config.setting.3
+      $scope.madspeed = $scope.config.cur.mad
     ), 100
 
     $scope.madspeed = 0.002

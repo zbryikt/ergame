@@ -95,7 +95,7 @@ html(lang="en")
         #score
           each val in [0,1,2,3]
             .score-digit(ng-attr-style="background-image:url(img/gauge/{{doctor.score.digit["+val+"]}}s.png)")
-        #block-mask(ng-click="demad($event)",ng-if="doctor.faint || madmax")
+        #block-mask(ng-if="doctor.faint || madmax")
           .type(ng-if="doctor.faint && !madmax")
             img(src="img/mad/hungry1.png")
             img(src="img/mad/hungry2.png")
