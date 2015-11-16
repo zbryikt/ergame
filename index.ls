@@ -81,6 +81,7 @@ angular.module \ERGame, <[]>
         @state = it
       start: ->
         @set-state 2
+        $scope.audio.bk!
       reset: ->
         $scope.patient.reset!
         $scope.doctor.reset!
@@ -210,7 +211,8 @@ angular.module \ERGame, <[]>
         if @is-locked or $scope.madmax or $scope.doctor.faint => return
         if @is-pal-on => return
         offset = $(\#wrapper).offset!
-        [x,y] = [@x, @y] = [e.clientX - offset.left, e.clientY - offset.top]
+        [ex, ey] = [(e.clientX or e.pageX), (e.clientY or e.pageY)]
+        [x,y] = [@x, @y] = [ex - offset.left, ey - offset.top]
         xp = x * 1024 / $(\#wrapper)width!
         yp = y * 576 / $(\#wrapper)height!
         target = $scope.hitmask.resolve(xp, yp)
@@ -244,7 +246,8 @@ angular.module \ERGame, <[]>
         @is-pal-on = false
         $(\#wheel).css({display: "none"})
         offset = $(\#wrapper).offset!
-        [dx, dy] = [e.clientX - @x - offset.left, e.clientY - @y - offset.top]
+        [ex, ey] = [(e.clientX or e.pageX), (e.clientY or e.pageY)]
+        [dx, dy] = [ex - @x - offset.left, ey - @y - offset.top]
 
         angle = Math.acos( dx / Math.sqrt( dx ** 2 + dy ** 2 ) ) * 360 / ( Math.PI * 2 )
         if dy > 0 => angle = 360 - angle
@@ -280,7 +283,7 @@ angular.module \ERGame, <[]>
 
             @target.variant = 0
             $scope.rebuild!
-          else if @target.type >= 2 and @target.type <= 4 =>
+          else if @target.type >= 2 and @target.type <= 4 and @target.variant =>
             if @target.mad > 0.8 => @target.mad = 0.8
             @target.mad <?= 0.8
             @target.mad -= 0.2
@@ -318,8 +321,11 @@ angular.module \ERGame, <[]>
       if ($scope.game.state != 2 and $scope.game.state != 3) or $scope.dialog.show == true => return true
       return false
     $interval ( ->
+      if $scope.dialog.tut =>
+        time = $scope.audio.s.bk.currentTime
+        if time >= 9.1 => $scope.audio.s.bk.currentTime = 1
+        return
       if isHalt! => return
-      if $scope.dialog.tut => return
       if Math.random! < $scope.config.cur.pat => $scope.patient.add 1
       if Math.random! < $scope.config.cur.sup => $scope.supply.active!
       if $scope.percent.sprite.points.filter(->it.type == 1 and it.variant != 0).length == 0 and Math.random! > 0.8 => 
@@ -376,7 +382,7 @@ angular.module \ERGame, <[]>
     $scope.hitmask = do
       ready: false
       get: (x, y) ->
-        if !@ready => return [0,0,0,0]
+        if !@ready or !(x? and y?) or (isNaN(x) or isNaN(y)) => return [0,0,0,0]
         @ctx.getImageData(x,y,1,1).data
       resolve: (x,y) ->
         color = @get x,y
@@ -405,12 +411,12 @@ angular.module \ERGame, <[]>
       next: -> $timeout (~> @main true), 200
       type: ""
       h: {i: [], t: []}
-      skip: ->
+      skip: (hold = false) ->
         for item in @h.i => $interval.cancel item
         for item in @h.t => $timeout.cancel item
         @idx = @step.length - 2
-        @clean!
-        $scope.game.countdown.start!
+        if !hold => @clean!
+        #$scope.game.countdown.start!
       interval: (func, delay) ->
         ret = $interval func, delay
         @h.i.push ret
@@ -432,6 +438,7 @@ angular.module \ERGame, <[]>
           ..energy = 1
           ..set-mood 2
         $scope.game.set-state 2
+        $scope.game.countdown.start!
       step: [
         * {}
         * do
@@ -558,7 +565,7 @@ angular.module \ERGame, <[]>
                 $scope.dialog.timeout (~>
                   @handler = $scope.dialog.interval (~>
                     $scope.supply.active @supply, false
-                    @supply = ( @supply + 1 ) % 4
+                    @supply = ( @supply + 1 ) % 3
                     $scope.supply.active @supply
                   ), 500
                   $(\#arrow).css do
@@ -573,13 +580,15 @@ angular.module \ERGame, <[]>
               $scope.supply.active 0, false
               $scope.supply.active 1, true
               $scope.supply.active 2, false
-              $scope.supply.active 3, false
               $(\#arrow).css display: \none
               $(\#finger-tap).css do
                 display: \block
                 top: \7%
                 left: \20%
-              $scope.dialog.timeout (-> $(\#finger-tap).css display: \none), 1000
+              $scope.dialog.timeout (->
+                $(\#finger-tap).css display: \none
+                $scope.mouse.unlock!
+              ), 1000
         * do
             ready: false
             handler: false
@@ -638,22 +647,56 @@ angular.module \ERGame, <[]>
         else $(\#dialog).fadeOut!
     $interval (->$scope.dialog.main!), 100
 
+    [doc-w, doc-h] = [$(document)width!, $(document)height! - 50]
+    [cvs-w, cvs-h] = [1024,576]
+    [w1,h1] = if doc-w < 1024 => [doc-w, doc-w * 576 / 1024 ] else [1024,576]
+    [w2,h2] = if doc-h < 576  => [doc-h * 1024 / 576, doc-h] else [1024,576]
+    [w,h] = if h1 > doc-h => [w2,h2] else [w1,h2]
+    $(\#frame).css width: "#{w}px", height: "#{h}px", padding: 0
+    $(\body).css overflow: \hidden
+    if h < 480 => # TODO: use a more robust approach
+      $(\#head).css display: \none
+      $(\#foot).css display: \none
+    document.ontouchmove = (e) -> e.prevent-default!
+
     $scope.audio = do
       s: {}
+      buf: {}
       names: <[amb click count1 count2 blop die menu sel dindon born click2 bk]>
       reset: -> for item in @names => @s[item].pause!
       player: (name) -> ~>
-        @s[name]currentTime = 0;
-        @s[name]play!
+        console.log name, @buf[name]
+        if !@buf[name] => return
+        src = @context.create-buffer-source!
+        console.log name, typeof(@buf[name]), @buf[name]
+        src.buffer = @buf[name]
+        src.connect @context.destination
+        src.start 0
+        #@s[name]currentTime = 0;
+        #@s[name]play!
+      load: (name, url) ->
+        request = new XMLHttpRequest!
+        request.open \GET, url, true
+        request.response-type = \arraybuffer
+        console.log name
+        request.onload = ~>
+          (buf) <~ @context.decode-audio-data request.response, _, (-> console.log(\fail))
+          @buf[name] = buf
+          console.log "ok: ",name
+        request.send!  
       init: ->
+        AudioContext = window.AudioContext or window.webkitAudioContext
+        @context = new AudioContext!
         for item in @names => 
           @s[item] = new Audio!
             ..src = "snd/#{item}.mp3"
           @[item] = @player item
+          @load item, "snd/#{item}.mp3"
     $scope.audio.init!
+
 
 mouse = do
   down: (e) ->
     angular.element(\#wrapper).scope().mouse.down(e)
-  up: ->
+  up: (e) ->
     angular.element(\#wrapper).scope().mouse.up(e)

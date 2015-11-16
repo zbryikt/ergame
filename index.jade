@@ -9,7 +9,7 @@ doctype html
 html(lang="en")
   head(prefix="og: http://ogp.me/ns#")
     meta(charset="utf-8")
-    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    meta(name='viewport', content='width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=0.0')
     title template
     // libraries
     include library.jade
@@ -60,7 +60,7 @@ html(lang="en")
           #gctrl-pause(ng-if="game.state==2",ng-click="game.setState(1);audio.click()")
             img(src="img/game/pause-0.png")
             img.active(src="img/game/pause-1.png")
-          #gctrl-skip(ng-if="game.state==3",ng-click="dialog.skip();audio.click()")
+          #gctrl-skip(ng-if="game.state==3",ng-click="dialog.skip(true);audio.click()")
             img(src="img/game/skip-0.png")
             img.active(src="img/game/skip-1.png")
           #gctrl-start(ng-if="game.state==1",ng-click="game.setState(2);audio.click()")
