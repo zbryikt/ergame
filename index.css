@@ -2740,9 +2740,9 @@ width: 100%;
 }
 #finger-slide img:nth-of-type(3) {
   width: 132%;
-  height: 132%;
+  height: 142%;
   left: 8%;
-  top: -40%;
+  top: -44%;
   z-index: 0;
   -ms-animation: slide3 3s infinite linear;
   -moz-animation: slide3 3s infinite linear;
