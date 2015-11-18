@@ -2192,6 +2192,16 @@ width: 100%;
   top: 42%;
   margin: 0 3%;
 }
+#pause div#pause-tm {
+  position: absolute;
+  top: auto;
+  bottom: 10%;
+  left: 30%;
+  width: 40%;
+}
+#pause div#pause-tm img {
+  width: 100%;
+}
 #game-ctrl {
   z-index: 9;
   top: auto;
