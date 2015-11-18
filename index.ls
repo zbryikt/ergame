@@ -679,9 +679,10 @@ angular.module \ERGame, <[]>
     [w1,h1] = if doc-w < 1024 => [doc-w, doc-w * 576 / 1024 ] else [1024,576]
     [w2,h2] = if doc-h < 576  => [doc-h * 1024 / 576, doc-h] else [1024,576]
     [w,h] = if h1 > doc-h => [w2,h2] else [w1,h2]
-    $(\#frame).css width: "#{w}px", height: "#{h}px", padding: 0
+    $(\#frame).css width: "#{w}px", height: "#{h + if h < 480 => 0 else 10}px"
     $(\body).css overflow: \hidden
     if h < 480 => # TODO: use a more robust approach
+      $(\#frame).css padding: 0
       $(\#head).css display: \none
       $(\#foot).css display: \none
     document.ontouchmove = (e) -> e.prevent-default!
