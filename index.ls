@@ -111,6 +111,7 @@ angular.module \ERGame, <[]>
       handler: null
       energy: 1
       faint: false
+      demading: 0
       chance: 5
       hurting: 0
       draining: 0
@@ -119,7 +120,9 @@ angular.module \ERGame, <[]>
           ..energy -= 0.2
           ..energy >?= 0
           ..draining = 1 # 震動倒數
-        if $scope.doctor.energy <= 0.0001 => $scope.doctor.faint = true
+        if $scope.doctor.energy <= 0.0001 =>
+          $scope.doctor.faint = true
+          $scope.doctor.demading = 0
       fail: -> 
         @
           ..set-mood 7
@@ -197,7 +200,7 @@ angular.module \ERGame, <[]>
         pat: 0.05, sup: 0.01, patprob: [0.6, 0.95], mad: 0.001
       setting: [
         * pat: 0.02, sup: 0.01, patprob: [0.70, 0.95], mad: 0.001
-        * pat: 0.07, sup: 0.04, patprob: [0.50, 0.80 ], mad: 0.003
+        * pat: 0.07, sup: 0.04, patprob: [0.50, 0.80], mad: 0.003
         * pat: 0.15, sup: 0.11, patprob: [0.25, 0.30], mad: 0.006
         * pat: 0.22, sup: 0.15, patprob: [0.10, 0.25], mad: 0.008
       ]
@@ -305,19 +308,26 @@ angular.module \ERGame, <[]>
 
     $scope.madmax = 0
     $scope.demad = (e) ->
-      madmax = $scope.percent.sprite.points.filter(-> (it.mad?) and (it.mad >= 0.2)) 
+      prog = 100
+      madmax = $scope.percent.sprite.points.filter(->it.ismad) 
       if !madmax.length => $scope.madmax = 0
       if madmax.length => 
         madmax.0.mad <?= 0.8
         madmax.0.mad -= 0.1
         madmax.0.mad >?= 0
+        if madmax.0.mad <= 0 => delete madmax.0.ismad
+        cur = madmax.map(->1 - it.mad).reduce(((a,b)->a + b),0)
+        sum = madmax.length
+        prog = 100 * cur / sum
       else if $scope.doctor.faint =>
         $scope.doctor
           ..energy += 0.1
           ..energy <?= 1
-        if $scope.doctor.energy == 1 => $scope.doctor.faint = false
+        if $scope.doctor.energy >= 0.9999 => $scope.doctor.faint = false
+        prog = $scope.doctor.energy * 100
       e.preventDefault!
       $scope.audio.click2!
+      $scope.doctor.demading = prog
       return false
 
     $scope.rebuild!
@@ -372,8 +382,11 @@ angular.module \ERGame, <[]>
         it.mad += $scope.madspeed
         if it.mad >= 0.8 => 
           it.mad = 1
+          it.ismad = true
           madmax = 1
-      if madmax and !$scope.madmax => $scope.madmax = parseInt( Math.random!*2 + 1 )
+      if madmax and !$scope.madmax => 
+        $scope.madmax = parseInt( Math.random!*2 + 1 )
+        $scope.doctor.demading = 0
 
       if !$scope.doctor.faint =>
         inqueue = $scope.percent.sprite.points.filter(->(it.type in [5 6 7 8]) and it.active)
@@ -622,6 +635,7 @@ angular.module \ERGame, <[]>
               $(\#arrow).css display: \none
               $scope.doctor.energy = 0
               $scope.doctor.faint = true
+              $scope.doctor.demading = 0
               $(\#finger-tap).css do
                 display: \block
                 top: \20%
