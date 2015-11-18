@@ -19,7 +19,7 @@ angular.module \ERGame, <[]>
           * w: 316, h: 269 #  5 料理台
           * w: 105, h: 196 #  6 飲水機
           * w: 146, h: 239 #  7 廁所
-          * w:  98, h:  60 #  8 香蕉
+          * w:  98, h:  60 #  8 香蕉, deprecated but keep for proper order
           * w: 306, h: 298 #  9 醫生台
           * w: 191, h: 240 # 10 隔簾
           * w: 104, h: 136 # 11 左窗
@@ -30,7 +30,6 @@ angular.module \ERGame, <[]>
           [{x: 591, y: -19, type: 6}] ++
           [{x: 317, y: 2, type: 5}] ++
           [{x: 687, y: -36, type: 7}] ++
-          [{x: 503, y: 65, type: 8}] ++ 
           [{x: 507, y: 54, type: 9, variant: 1}] ++
           [{x: 249, y: 184, type: 11}] ++
           [{
@@ -326,10 +325,7 @@ angular.module \ERGame, <[]>
       if ($scope.game.state != 2 and $scope.game.state != 3) or $scope.dialog.show == true => return true
       return false
     $interval ( ->
-      if $scope.dialog.tut =>
-        #TODO loop bk in the first 1 ~ 9.1 sec
-        time = $scope.audio.s.bk.currentTime
-        if time >= 9.1 => $scope.audio.s.bk.currentTime = 1
+      if $scope.dialog.tut or !($scope.game.state in [1 2 4]) =>
         time = (new Date!getTime! / 1000) - $scope.audio.bkt
         if time >= 9.1 =>
           $scope.audio.bkt = parseInt( new Date!getTime! / 1000 )
@@ -682,7 +678,6 @@ angular.module \ERGame, <[]>
       n: {}
       bkt: 0
       player: (name) -> ~>
-        console.log name, @buf[name]
         if !@buf[name] => return
         if @n[name] => @n[name]disconnect!
         @n[name] = src = @context.create-buffer-source!
@@ -696,7 +691,6 @@ angular.module \ERGame, <[]>
         request = new XMLHttpRequest!
         request.open \GET, url, true
         request.response-type = \arraybuffer
-        console.log name
         request.onload = ~>
           (buf) <~ @context.decode-audio-data request.response, _, (-> console.log(\fail))
           @buf[name] = buf
