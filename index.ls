@@ -440,6 +440,7 @@ angular.module \ERGame, <[]>
         if @idx == @step.length - 2 => @next!
         else
           @idx = @step.length - 2
+          @type = ""
           if hold => @toggle 0, true
       interval: (func, delay) ->
         ret = $interval func, delay
@@ -646,7 +647,7 @@ angular.module \ERGame, <[]>
         * do
             ready: false
             check: -> 
-              if !@handler? and $scope.doctor.energy == 1 and $scope.doctor.faint == false =>
+              if !@handler? and $scope.doctor.energy >= 0.999 and $scope.doctor.faint == false =>
                 @handler = $scope.dialog.timeout (~> 
                   @ready = true
                   $scope.dialog.type = ""
