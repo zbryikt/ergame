@@ -680,6 +680,7 @@ angular.module \ERGame, <[]>
     [w2,h2] = if doc-h < 576  => [doc-h * 1024 / 576, doc-h] else [1024,576]
     [w,h] = if h1 > doc-h => [w2,h2] else [w1,h2]
     $(\#frame).css width: "#{w}px", height: "#{h + if h < 480 => 0 else 10}px"
+    $(\#container).css width: "#{w}px"
     $(\body).css overflow: \hidden
     if h < 480 => # TODO: use a more robust approach
       $(\#frame).css padding: 0
