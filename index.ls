@@ -677,16 +677,23 @@ angular.module \ERGame, <[]>
       reset: -> for item in @names => @s[item].pause!
       n: {}
       bkt: 0
-      player: (name) -> ~>
-        if !@buf[name] => return
-        if @n[name] => @n[name]disconnect!
-        @n[name] = src = @context.create-buffer-source!
-        src.buffer = @buf[name]
-        src.connect @context.destination
-        src.start 0
-        if name == \bk => @bkt = parseInt(new Date!getTime! / 1000)
-        #@s[name]currentTime = 0;
-        #@s[name]play!
+      player: (name) ->
+        ret = (offset) ~>
+          if !@buf[name] => return
+          if @n[name] => @n[name]disconnect!
+          @n[name] = src = @context.create-buffer-source!
+          src.buffer = @buf[name]
+          src.connect @context.destination
+          if ret.pausetime =>
+            offset = ret.pausetime - ret.starttime
+            delete ret.pausetime
+          ret.starttime = parseInt( new Date!getTime! / 1000 ) - (if offset? => offset else 0)
+          if offset? => src.start 0, offset else src.start 0
+          if name == \bk => @bkt = parseInt(new Date!getTime! / 1000)
+        ret.pause = ~> 
+          @n[name].stop!
+          ret.pausetime = parseInt( new Date!getTime! / 1000 )
+        ret
       load: (name, url) ->
         request = new XMLHttpRequest!
         request.open \GET, url, true
