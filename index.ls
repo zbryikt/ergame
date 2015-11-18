@@ -83,6 +83,7 @@ angular.module \ERGame, <[]>
         @set-state 2
         $scope.audio.bk!
       reset: ->
+        $(\#wheel).css display: \none
         $scope.patient.reset!
         $scope.doctor.reset!
         $scope.supply.reset!
