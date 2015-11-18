@@ -423,10 +423,11 @@ angular.module \ERGame, <[]>
       skip: (hold = false) ->
         for item in @h.i => $interval.cancel item
         for item in @h.t => $timeout.cancel item
-        @idx = @step.length - 2
         if !hold => @clean!
-        if hold => @toggle 0, true
-        #$scope.game.countdown.start!
+        if @idx == @step.length - 2 => @next!
+        else
+          @idx = @step.length - 2
+          if hold => @toggle 0, true
       interval: (func, delay) ->
         ret = $interval func, delay
         @h.i.push ret
