@@ -201,12 +201,12 @@ angular.module \ERGame, <[]>
 
     $scope.config = do
       cur: do
-        pat: 0.05, sup: 0.01, patprob: [0.6, 0.95], mad: 0.001
+        pat: 0.05, sup: 0.01, patprob: [0.6, 0.95], mad: 0.001, supdelay: 0.015
       setting: [
-        * pat: 0.02, sup: 0.01, patprob: [0.60, 0.95], mad: 0.001
-        * pat: 0.07, sup: 0.04, patprob: [0.50, 0.80], mad: 0.003
-        * pat: 0.15, sup: 0.11, patprob: [0.25, 0.30], mad: 0.006
-        * pat: 0.22, sup: 0.15, patprob: [0.10, 0.25], mad: 0.008
+        * pat: 0.02, sup: 0.01, patprob: [0.60, 0.95], mad: 0.001, supdelay: 0.015
+        * pat: 0.07, sup: 0.04, patprob: [0.50, 0.80], mad: 0.003, supdelay: 0.020
+        * pat: 0.15, sup: 0.11, patprob: [0.25, 0.30], mad: 0.006, supdelay: 0.025
+        * pat: 0.22, sup: 0.15, patprob: [0.10, 0.25], mad: 0.008, supdelay: 0.030
       ]
 
     $scope.mouse = do
@@ -400,7 +400,7 @@ angular.module \ERGame, <[]>
         inqueue = $scope.percent.sprite.points.filter(->(it.type in [5 6 7 8]) and it.active)
         for it in inqueue
           if !(it.countdown?) or it.countdown <= 0 => it.countdown = 1
-          it.countdown -= 0.025
+          it.countdown -= $scope.config.cur.supdelay
           if it.countdown <= 0 =>
             it.countdown = 1
             it.active = 0
@@ -743,7 +743,6 @@ angular.module \ERGame, <[]>
     $scope.audio.init!
     $scope.progress = 0
     $scope.loading = true
-
 
 mouse = do
   down: (e) ->

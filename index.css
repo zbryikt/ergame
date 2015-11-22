@@ -3037,3 +3037,25 @@ width: 100%;
   height: 100%;
   background: #fff;
 }
+#click-indicator {
+  position: absolute;
+  top: 65%;
+  left: 54%;
+  width: 6%;
+}
+#click-indicator img {
+  position: absolute;
+  width: 100%;
+  -ms-animation: blink 0.4s infinite linear;
+  -moz-animation: blink 0.4s infinite linear;
+  -webkit-animation: blink 0.4s infinite linear;
+  -o-animation: blink 0.4s infinite linear;
+  animation: blink 0.4s infinite linear;
+}
+#click-indicator img:nth-of-type(2) {
+  -ms-animation-delay: 0.2s;
+  -moz-animation-delay: 0.2s;
+  -webkit-animation-delay: 0.2s;
+  -o-animation-delay: 0.2s;
+  animation-delay: 0.2s;
+}

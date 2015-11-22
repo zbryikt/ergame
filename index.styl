@@ -591,3 +591,15 @@ for type in (1..12)
     width: 50%
     height: 100%
     background: #fff
+
+#click-indicator
+  position: absolute
+  top: 65%
+  left: 54%
+  width: 6%
+  img
+    position: absolute
+    width: 100%
+    animation(blink 0.4s infinite linear)
+  img:nth-of-type(2)
+    animation-delay(0.2s)
