@@ -31,6 +31,7 @@ html(lang="en")
             img.base(src="img/load/shadow.png")
             #loading-progress(ng-attr-style="top:{{100 - progress}}%")
               img(src="img/load/doctor.png",ng-attr-style="top:-{{100 - progress}}%")
+          #loading-percent {{progress}}&nbsp;%
           img#loading-text(src="img/load/text.png")
         #landing(ng-if="game.state==0")
           #landing-reporter

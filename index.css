@@ -2161,16 +2161,27 @@ width: 100%;
   -o-animation: fade 0.5s ease-in-out 1;
   animation: fade 0.5s ease-in-out 1;
 }
+#loading-percent {
+  position: absolute;
+  top: 55%;
+  left: 50%;
+  width: 50px;
+  margin-left: -25px;
+  color: #777;
+  font-weight: bold;
+  letter-spacing: 2px;
+  text-align: center;
+}
 #loading-text {
   position: absolute;
   width: 80%;
-  bottom: 20%;
+  bottom: 16%;
   left: 10%;
 }
 #loading-fig {
   width: 10%;
   position: absolute;
-  top: 20%;
+  top: 18%;
   left: 45%;
 }
 #loading-fig .base {
