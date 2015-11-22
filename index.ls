@@ -172,6 +172,9 @@ angular.module \ERGame, <[]>
           @sprite[idx].countdown = 1
 
     $scope.patient = do
+      urgent: 0
+      update-urgent: ->
+        @urgent = $scope.percent.sprite.points.filter(->it.type == 1 and it.variant ==3).length
       reset: ->
         remains = $scope.percent.sprite.points.filter( ->it.type >=1 and it.type <= 4 )
         for item in remains => item <<< {variant: 0, mad: 0, life: 1}
@@ -184,6 +187,7 @@ angular.module \ERGame, <[]>
           if dice < $scope.config.cur.patprob.0 => variant = 1
           else if dice < $scope.config.cur.patprob.1 => variant = 2
           else variant = 3
+          if variant == 3 => @urgent++
           $scope.audio.born!
         else => variant = parseInt(Math.random! * 2 + 1)
         if area > 1 => variant <?= 2
@@ -199,7 +203,7 @@ angular.module \ERGame, <[]>
       cur: do
         pat: 0.05, sup: 0.01, patprob: [0.6, 0.95], mad: 0.001
       setting: [
-        * pat: 0.02, sup: 0.01, patprob: [0.70, 0.95], mad: 0.001
+        * pat: 0.02, sup: 0.01, patprob: [0.10, 0.15], mad: 0.001
         * pat: 0.07, sup: 0.04, patprob: [0.50, 0.80], mad: 0.003
         * pat: 0.15, sup: 0.11, patprob: [0.25, 0.30], mad: 0.006
         * pat: 0.22, sup: 0.15, patprob: [0.10, 0.25], mad: 0.008
@@ -286,6 +290,7 @@ angular.module \ERGame, <[]>
                 else $scope.doctor.set-mood 2
                 $scope.audio.dindon!
                 $scope.doctor.score.value += 1
+                if type == 3 => $scope.patient.update-urgent!
             else => $scope.doctor.fail! # 答錯，難過，扣血
 
             @target.variant = 0
@@ -368,12 +373,15 @@ angular.module \ERGame, <[]>
         $scope.doctor.draining -= 0.2
         $scope.doctor.draining >?= 0
       inqueue = $scope.percent.sprite.points.filter(->it.type == 1 and it.variant > 0)
+      die = false
       for it in inqueue
         it.life -= ( 0.004 * it.variant )
         if it.life <= 0 => 
           it.life = 0
           $scope.doctor.fail!
           it.variant = 0
+          die = true
+      if die => $scope.patient.update-urgent!
 
       inqueue = $scope.percent.sprite.points.filter(->(it.type in [2 3 4]) and it.variant > 0)
       madmax = 0

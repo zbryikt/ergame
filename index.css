@@ -2013,7 +2013,8 @@ width: 100%;
 #game-ctrl,
 #game-over,
 #countdown,
-#loading {
+#loading,
+#urgency {
   position: absolute;
   top: 0;
   left: 0;
@@ -2031,6 +2032,23 @@ width: 100%;
   width: 24%;
   height: 13%;
   bottom: 38%;
+}
+#urgency {
+  background-image: url("img/urgency.png");
+  background-position: center center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  opacity: 0;
+  z-index: -1;
+  -ms-transition: opacity 0.5s linear;
+  -moz-transition: opacity 0.5s linear;
+  -webkit-transition: opacity 0.5s linear;
+  -o-transition: opacity 0.5s linear;
+  transition: opacity 0.5s linear;
+}
+#urgency.active {
+  opacity: 0.7;
+  z-index: 6;
 }
 #landing div img,
 #pause div img,

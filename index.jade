@@ -5,12 +5,13 @@ doctype html
 - var lib = { jquery: true, d3js: false, angular: true, bootstrap: true, semantic: false, fontawesome: true }
 - var assets = "assets"
 - var thumbnail = "thumbnail.png"
-- var favicon = "thumbnail.png"
+- var favicon = "img/favicon.png"
+- var title = "急診人生 - 三分鐘的急診室醫師人生 / 報導者"
 html(lang="en")
   head(prefix="og: http://ogp.me/ns#")
     meta(charset="utf-8")
     meta(name='viewport', content='width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=0.0')
-    title template
+    title= title
     // libraries
     include library.jade
     // custom files
@@ -59,6 +60,9 @@ html(lang="en")
           #pause-tutorial
             img(src="img/pause/tutorial-0.png")
             img.active(src="img/pause/tutorial-1.png")
+          #pause-replay
+            img(src="img/pause/replay-0.png")
+            img.active(src="img/pause/replay-1.png")
           #pause-tm
             img(src="img/pause/tm.png")
         #game-ctrl(ng-if="game.state>0")
@@ -91,6 +95,7 @@ html(lang="en")
             each val in [0,1,2,3]
               .score-digit(ng-attr-style="background-image:url(img/gauge/{{doctor.score.digit["+val+"]}}s.png)")
         #danger(ng-class="{'active':danger}"): img(src="img/danger.png",draggable="false")
+        #urgency(ng-class="{'active':patient.urgent}")
         #energy(ng-class="{'active':doctor.draining>0}")
           #energy-base
           #energy-current(ng-attr-style="width:{{doctor.energy*100}}%")
