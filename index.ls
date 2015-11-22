@@ -174,7 +174,7 @@ angular.module \ERGame, <[]>
     $scope.patient = do
       urgent: 0
       update-urgent: ->
-        @urgent = $scope.percent.sprite.points.filter(->it.type == 1 and it.variant ==3).length
+        @urgent = $scope.percent.sprite.points.filter(->it.type == 1 and it.variant == 3 ).length
       reset: ->
         remains = $scope.percent.sprite.points.filter( ->it.type >=1 and it.type <= 4 )
         for item in remains => item <<< {variant: 0, mad: 0, life: 1}
@@ -187,7 +187,6 @@ angular.module \ERGame, <[]>
           if dice < $scope.config.cur.patprob.0 => variant = 1
           else if dice < $scope.config.cur.patprob.1 => variant = 2
           else variant = 3
-          if variant == 3 => @urgent++
           $scope.audio.born!
         else => variant = parseInt(Math.random! * 2 + 1)
         if area > 1 => variant <?= 2
@@ -195,6 +194,7 @@ angular.module \ERGame, <[]>
         idx = if defpos? => defpos else parseInt(Math.random!*remains.length)
         des = remains[idx]
         des.variant = variant
+        if des.type == 1 and des.variant == 3 => @urgent++
         if des.type == 1 => des.life = 1
         if des.type in [2 3 4] => des.mad = 0
         $scope.rebuild!
@@ -290,7 +290,9 @@ angular.module \ERGame, <[]>
                 else $scope.doctor.set-mood 2
                 $scope.audio.dindon!
                 $scope.doctor.score.value += 1
-                if type == 3 => $scope.patient.update-urgent!
+              if type == 3 => 
+                @target.variant = 0
+                $scope.patient.update-urgent!
             else => $scope.doctor.fail! # 答錯，難過，扣血
 
             @target.variant = 0
