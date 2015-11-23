@@ -16,6 +16,7 @@ html(lang="en")
     include library.jade
     // custom files
     link(rel="stylesheet",type="text/css",href="index.css")
+    script(type="text/javascript",src="scream.min.js")
     script(type="text/javascript",src="index.js")
   body(ng-app="ERGame",ng-controller="ERGame",ng-mouseup="mouse.up($event)",ng-mousedown="mouse.down($event)",
   ontouchstart="mouse.down(event)", ontouchend="mouse.up(event)")
@@ -156,3 +157,14 @@ html(lang="en")
       #foot
         a.pull-left(href="#"): img(src="img/about.png")
         a.pull-right(href="#"): img(src="img/github.png")
+      #minimal-fix
+        br
+        br
+        br
+        br
+        br
+        br
+        br
+        br
+        br
+        br

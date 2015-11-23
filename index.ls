@@ -682,7 +682,19 @@ angular.module \ERGame, <[]>
           $(\#dialog).fadeIn!
           $scope.audio.menu!
         else $(\#dialog).fadeOut!
-    $interval (->$scope.dialog.main!), 100
+
+    $scope.scream = gajus.Scream width: portrait: 320, landscape: 480
+
+    $interval (->
+      $scope.dialog.main!
+      try
+        ismin = $scope.scream.is-minimal-view!
+      if $scope.ismin and !ismin => 
+        document.body.scrollTop = 0
+        $(\#minimal-fix).css display: \block
+      if ismin => $(\#minimal-fix).css display: \none
+      $scope.ismin = ismin
+    ), 100
 
     [doc-w, doc-h] = [$(document)width!, $(document)height! - 50]
     [cvs-w, cvs-h] = [1024,576]
@@ -696,7 +708,7 @@ angular.module \ERGame, <[]>
       $(\#frame).css padding: 0
       $(\#head).css display: \none
       $(\#foot).css display: \none
-    document.ontouchmove = (e) -> e.prevent-default!
+    document.ontouchmove = (e) -> if $scope.ismin => return e.prevent-default!
 
     $scope.audio = do
       s: {}
