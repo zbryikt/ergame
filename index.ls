@@ -78,7 +78,6 @@ angular.module \ERGame, <[]>
       state: 0
       over: ->
         @set-state 4
-        $scope.doctor.score.value = 70
         $timeout (->
           r = parseInt($scope.doctor.score.value / 10)
           if r >= 6 => r--
