@@ -210,6 +210,15 @@ angular.module \ERGame, <[]>
     $scope.config = do
       cur: do
         pat: 0.05, sup: 0.01, patprob: [0.6, 0.95], mad: 0.001, supdelay: 0.015
+      /*
+      # easy mode
+      setting: [
+        * pat: 0.02, sup: 0.01, patprob: [0.60, 0.95], mad: 0.001, supdelay: 0.011
+        * pat: 0.02, sup: 0.01, patprob: [0.60, 0.90], mad: 0.001, supdelay: 0.011
+        * pat: 0.02, sup: 0.01, patprob: [0.60, 0.90], mad: 0.001, supdelay: 0.011
+        * pat: 0.02, sup: 0.01, patprob: [0.60, 0.90], mad: 0.001, supdelay: 0.011
+      ]
+      */
       setting: [
         * pat: 0.02, sup: 0.01, patprob: [0.60, 0.95], mad: 0.001, supdelay: 0.015
         * pat: 0.07, sup: 0.04, patprob: [0.50, 0.80], mad: 0.003, supdelay: 0.020
@@ -347,6 +356,7 @@ angular.module \ERGame, <[]>
     $scope.rebuild!
     isHalt = ->
       if ($scope.game.state != 2 and $scope.game.state != 3) or $scope.dialog.show == true => return true
+      if $scope.danger => return true
       return false
     $interval ( ->
       if $scope.dialog.tut or !($scope.game.state in [1 2 4]) =>
@@ -355,20 +365,21 @@ angular.module \ERGame, <[]>
           $scope.audio.bkt = parseInt( new Date!getTime! / 1000 )
           $scope.audio.bk!
         return
-      if isHalt! => return
-      if Math.random! < $scope.config.cur.pat => $scope.patient.add 1
-      if Math.random! < $scope.config.cur.sup => $scope.supply.active!
-      if $scope.percent.sprite.points.filter(->it.type == 1 and it.variant != 0).length == 0 and Math.random! > 0.8 => 
-        $scope.patient.add 1
       time = (new Date!getTime! / 1000) - $scope.audio.bkt
       if time <= 60 => $scope.config.cur = $scope.config.setting.0
-      else if time <= 110 => $scope.config.cur = $scope.config.setting.1
-      else if time >= 110 and time <= 112 => $scope.danger = true
-      else if time <= 130 => 
+      else if time <= 98 => $scope.config.cur = $scope.config.setting.1
+      else if time >= 98 and time <= 101 => $scope.danger = true
+      else if time <= 120 =>
         $scope.danger = false
         $scope.config.cur = $scope.config.setting.2
       else =>
         $scope.config.cur = $scope.config.setting.3
+      if isHalt! => return
+      if Math.random! < $scope.config.cur.pat => $scope.patient.add 1
+      if Math.random! < $scope.config.cur.sup => $scope.supply.active!
+      if $scope.percent.sprite.points.filter(->it.type == 1 and it.variant != 0).length == 0 and Math.random! > 0.8 =>
+        $scope.patient.add 1
+
       $scope.madspeed = $scope.config.cur.mad
     ), 100
 
