@@ -237,7 +237,6 @@ angular.module \ERGame, <[]>
           if max == 3 and target.variant < max => 
             @target = null
             return
-
         @target = target
         if !target or target.type != 1 => return
         $(\#wheel).css do
@@ -748,16 +747,28 @@ angular.module \ERGame, <[]>
         request.send!  
       init: ->
         AudioContext = window.AudioContext or window.webkitAudioContext
+        #TODO android browser doesn't support web audio
+        if !AudioContext =>
+          for item in @names =>
+            @[item] = ->
+            @[item]pause = ->
+            @s[item] = pause: ->
+          $scope.progress = 100
+          $scope.loading = false
+          return
         @context = new AudioContext!
         for item in @names => 
           @s[item] = new Audio!
             ..src = "snd/#{item}.mp3"
           @[item] = @player item
           @load item, "snd/#{item}.mp3"
-    $scope.audio.init!
+
     $scope.progress = 0
     $scope.loading = true
+    $scope.audio.init!
 
+#TODO: android trigger both touchstart and mousedown, which causes problem
+#TODO: android browser long press cause problem ( can't slide, popup menu )
 mouse = do
   down: (e) ->
     angular.element(\#wrapper).scope().mouse.down(e)
