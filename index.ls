@@ -76,6 +76,14 @@ angular.module \ERGame, <[]>
       # 4 - game over
       # 5 - countdown
       state: 0
+      over: ->
+        @set-state 4
+        $scope.doctor.score.value = 70
+        $timeout (->
+          r = parseInt($scope.doctor.score.value / 10)
+          if r >= 6 => r--
+          $scope.doctor.rank = r
+        ), 500
       set-state: -> 
         @state = it
       start: ->
@@ -115,6 +123,7 @@ angular.module \ERGame, <[]>
       chance: 5
       hurting: 0
       draining: 0
+      rank: 0
       drain: ->
         @
           ..energy -= 0.2
@@ -129,10 +138,10 @@ angular.module \ERGame, <[]>
           ..chance -= 1
           ..chance >?= 0
           ..hurting = 1 # 震動倒數
-        if @chance <= 0 => $scope.game.set-state 4
+        if @chance <= 0 => $scope.game.over!
         $scope.audio.die!
       reset: ->
-        @ <<< {energy: 1, faint: false, chance: 5, hurting: 0, draining: 0}
+        @ <<< {rank: 0, energy: 1, faint: false, chance: 5, hurting: 0, draining: 0}
         if @handler => $timeout.cancel @handler
         @score.value = 0
         @score.digit = [0,0,0,0]

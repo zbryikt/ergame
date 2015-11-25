@@ -84,15 +84,16 @@ html(lang="en")
             img(src="img/game/start-0.png")
             img.active(src="img/game/start-1.png")
         #game-over(ng-if="game.state==4")
-          #gover-link
-            img(src="img/pause/link-0.png")
-            img.active(src="img/pause/link-1.png")
           #gover-reporter
-            img(src="img/pause/reporter-0.png")
-            img.active(src="img/pause/reporter-1.png")
+            img(src="img/cover/over-report-0.png")
+            img.active(src="img/cover/over-report-1.png")
           #gover-facebook
-            img(src="img/pause/fb-0.png")
-            img.active(src="img/pause/fb-1.png")
+            img(src="img/cover/over-share-0.png")
+            img.active(src="img/cover/over-share-1.png")
+          #gover-rank
+            img#govevr-rank-bas(src="img/lv/0.png")
+            #gover-rank-active(ng-attr-style="left:{{doctor.rank * 14.746094}}%")
+              img(src="img/lv/8.png",ng-attr-style="left:-{{doctor.rank * 125.5}}%")
           .score
             each val in [0,1,2,3]
               .score-digit(ng-attr-style="background-image:url(img/gauge/{{doctor.score.digit["+val+"]}}s.png)")
