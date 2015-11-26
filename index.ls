@@ -234,6 +234,8 @@ angular.module \ERGame, <[]>
       timestamp: 0
       is-pal-on: false
       down: (e, target)->
+        # touch will be troublesome if mouse can be triggered. remove it here
+        if window.touch => window.touch = window.notouch
         if isHalt! => return
         if $scope.madmax or $scope.doctor.faint => return $scope.demad e
         if @is-locked => return
@@ -798,10 +800,12 @@ angular.module \ERGame, <[]>
     $scope.loading = true
     $scope.audio.init!
 
-#TODO: android trigger both touchstart and mousedown, which causes problem
 #TODO: android browser long press cause problem ( can't slide, popup menu )
-mouse = do
+window.touch = touch = do
   down: (e) ->
     angular.element(\#wrapper).scope().mouse.down(e)
   up: (e) ->
     angular.element(\#wrapper).scope().mouse.up(e)
+
+# dummy touch handler to replace window.touch if mouse can be triggered
+window.notouch = down: (->), up: (->)

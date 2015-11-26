@@ -19,7 +19,7 @@ html(lang="en")
     script(type="text/javascript",src="scream.min.js")
     script(type="text/javascript",src="index.js")
   body(ng-app="ERGame",ng-controller="ERGame",ng-mouseup="mouse.up($event)",ng-mousedown="mouse.down($event)",
-  ontouchstart="mouse.down(event)", ontouchend="mouse.up(event)")
+  ontouchstart="touch.down(event)", ontouchend="touch.up(event)")
     #container
       #head
         img#logo(src="img/logo.png")
