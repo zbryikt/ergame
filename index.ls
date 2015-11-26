@@ -233,18 +233,23 @@ angular.module \ERGame, <[]>
       unlock: -> @is-locked = false
       timestamp: 0
       is-pal-on: false
-      down: (e, target)->
+      down: (e, touch = false)->
+        $scope.{}debug <<< {time: new Date!getTime!}
+        if touchflag and !touch => return
         # touch will be troublesome if mouse can be triggered. remove it here
-        if window.touch => window.touch = window.notouch
         if isHalt! => return
         if $scope.madmax or $scope.doctor.faint => return $scope.demad e
         if @is-locked => return
         if @is-pal-on => return
         offset = $(\#wrapper).offset!
         [ex, ey] = [(e.clientX or e.pageX), (e.clientY or e.pageY)]
+        if !ex and !ey => [ex,ey] = [e.touches.0.clientX, e.touches.0.clientY]
+        @{}last <<< {x: ex, y: ey}
+        $scope.{}debug <<< {ex: parseInt(ex), ey: parseInt(ey), try: e}
         [x,y] = [@x, @y] = [ex - offset.left, ey - offset.top]
         xp = x * 1024 / $(\#wrapper)width!
         yp = y * 576 / $(\#wrapper)height!
+        $scope.{}debug <<< {xp: parseInt(xp), yp: parseInt(yp)}
         target = $scope.hitmask.resolve(xp, yp)
         if !target => return
         if target.type == 1 =>
@@ -266,7 +271,19 @@ angular.module \ERGame, <[]>
         $scope.rebuild!
         @timestamp = new Date!getTime!
         @is-pal-on = true
-      up: (e) -> 
+        e.preventDefault!
+      move: (e) ->
+        $scope.debug <<< {try: e.touches.length}
+        [x,y] = [
+          e.clientX or e.pageX or e.touches.0.clientX,
+          e.clientY or e.pageY or e.touches.0.clientY
+        ]
+        @{}last <<< {x,y}
+        $scope.debug.try = "#{@last.x} #{@last.y}"
+        #TODO prevent long press trigger menu
+        #e.preventDefault()
+      up: (e, touch = false) -> 
+        if touchflag and !touch => return
         if isHalt! => return
         if @is-locked or $scope.madmax or $scope.doctor.faint => return
         now = new Date!getTime!
@@ -276,6 +293,7 @@ angular.module \ERGame, <[]>
         $(\#wheel).css({display: "none"})
         offset = $(\#wrapper).offset!
         [ex, ey] = [(e.clientX or e.pageX), (e.clientY or e.pageY)]
+        if !ex and !ey => [ex,ey] = [@last.x, @last.y]
         [dx, dy] = [ex - @x - offset.left, ey - @y - offset.top]
 
         angle = Math.acos( dx / Math.sqrt( dx ** 2 + dy ** 2 ) ) * 360 / ( Math.PI * 2 )
@@ -799,13 +817,23 @@ angular.module \ERGame, <[]>
     $scope.progress = 0
     $scope.loading = true
     $scope.audio.init!
+    document.body
+      ..ontouchstart = window.touch.down
+      ..ontouchmove = window.touch.move
+      ..ontouchend = window.touch.up
 
+touchflag = false
 #TODO: android browser long press cause problem ( can't slide, popup menu )
 window.touch = touch = do
   down: (e) ->
-    angular.element(\#wrapper).scope().mouse.down(e)
+    #keys = [k for k of e].join(",")
+    #keys = [k for k of e.touches.0].join(",")
+    #setTimeout (->alert(e.touches.0.clientX)), 100
+    touchflag := true
+    angular.element(\#wrapper).scope().mouse.down(e,true)
   up: (e) ->
-    angular.element(\#wrapper).scope().mouse.up(e)
+    touchflag := true
+    angular.element(\#wrapper).scope().mouse.up(e,true)
+  move: (e) ->
+    angular.element(\#wrapper).scope().mouse.move(e,true)
 
-# dummy touch handler to replace window.touch if mouse can be triggered
-window.notouch = down: (->), up: (->)

@@ -18,14 +18,27 @@ html(lang="en")
     link(rel="stylesheet",type="text/css",href="index.css")
     script(type="text/javascript",src="scream.min.js")
     script(type="text/javascript",src="index.js")
-  body(ng-app="ERGame",ng-controller="ERGame",ng-mouseup="mouse.up($event)",ng-mousedown="mouse.down($event)",
-  ontouchstart="touch.down(event)", ontouchend="touch.up(event)")
+  //-body(ng-app="ERGame",ng-controller="ERGame",ng-mouseup="mouse.up($event)",ng-mousedown="mouse.down($event)",
+     ontouchstart="touch.down(event)", ontouchend="touch.up(event)")
+  body(ng-app="ERGame",ng-controller="ERGame",ng-mouseup="mouse.up($event)",ng-mousedown="mouse.down($event)")
     #container
       #head
         img#logo(src="img/logo.png")
         .pull-right
           a(href="#"): img(src="img/fb.png")
           a(href="#"): img(src="img/twt.png")
+      //-div(style="position:absolute;top:10px;left:10px;z-index:10000")
+        | T: {{debug.time}}
+        br
+        | XP: {{debug.xp}} 
+        br
+        | YP: {{debug.yp}}
+        br
+        | EX: {{debug.ex}} 
+        br
+        | EY: {{debug.ey}}
+        br
+        | TS: {{debug.try}}
       #frame: #wrapper
         #loading(ng-if="loading",ng-class="{'fade':progress >= 100}")
           #loading-fig
@@ -138,8 +151,7 @@ html(lang="en")
         img(src="img/scenario.png",style="width:100%",draggable="false")
         .sprite(ng-repeat="pat in percent.sprite.points",
         ng-attr-style="width:{{percent.sprite.size[pat.type].w}}%;height:{{percent.sprite.size[pat.type].h}}%;"+
-        "left:{{pat.x}}%;top:{{pat.y}}%",draggable="false",ng-mousedown="mouse.down($event, pat)",
-        ng-class="pat.cls")
+        "left:{{pat.x}}%;top:{{pat.y}}%",draggable="false",ng-class="pat.cls")
           .base(draggable="false")
           .normal(draggable="false")
           .active(ng-if="pat.type==1 && pat.active==1",ng-class="{'blink': pat.life < 0.3 && pat.variant != 0}",
