@@ -361,7 +361,7 @@ angular.module \ERGame, <[]>
     $interval ( ->
       if $scope.dialog.tut or !($scope.game.state in [1 2 4]) =>
         time = (new Date!getTime! / 1000) - $scope.audio.bkt
-        if time >= 9.1 =>
+        if time >= 9.8 =>
           $scope.audio.bkt = parseInt( new Date!getTime! / 1000 )
           $scope.audio.bk!
         return
@@ -743,7 +743,7 @@ angular.module \ERGame, <[]>
     $scope.audio = do
       s: {}
       buf: {}
-      names: <[amb click count1 count2 blop die menu sel dindon born click2 bk]>
+      names: <[amb click count1 count2 blop die menu dindon born click2 bk]>
       reset: -> for item in @names => @s[item].pause!
       n: {}
       bkt: 0
