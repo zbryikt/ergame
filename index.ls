@@ -745,7 +745,7 @@ angular.module \ERGame, <[]>
     $scope.audio = do
       s: {}
       buf: {}
-      names: <[amb click count1 count2 blop die menu dindon born click2 bk]>
+      names: <[click count1 count2 blop die menu dindon born click2 bk]>
       reset: -> for item in @names => @s[item].pause!
       n: {}
       bkt: 0
