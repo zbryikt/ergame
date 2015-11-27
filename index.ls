@@ -219,15 +219,22 @@ angular.module \ERGame, <[]>
     $scope.config = do
       cur: do
         pat: 0.05, sup: 0.01, patprob: [0.6, 0.95], mad: 0.001, supdelay: 0.015
+      # trivial mode
       /*
+      setting: [
+        * pat: 0.00, sup: 0.00, patprob: [0.60, 0.95], mad: 0.001, supdelay: 0.011
+        * pat: 0.00, sup: 0.00, patprob: [0.60, 0.90], mad: 0.001, supdelay: 0.011
+        * pat: 0.00, sup: 0.00, patprob: [0.60, 0.90], mad: 0.001, supdelay: 0.011
+        * pat: 0.00, sup: 0.00, patprob: [0.60, 0.90], mad: 0.001, supdelay: 0.011
+      ]
       # easy mode
       setting: [
         * pat: 0.02, sup: 0.01, patprob: [0.60, 0.95], mad: 0.001, supdelay: 0.011
         * pat: 0.02, sup: 0.01, patprob: [0.60, 0.90], mad: 0.001, supdelay: 0.011
         * pat: 0.02, sup: 0.01, patprob: [0.60, 0.90], mad: 0.001, supdelay: 0.011
         * pat: 0.02, sup: 0.01, patprob: [0.60, 0.90], mad: 0.001, supdelay: 0.011
-      ]
-      */
+      ]*/
+      # normal mode
       setting: [
         * pat: 0.02, sup: 0.01, patprob: [0.60, 0.95], mad: 0.001, supdelay: 0.015
         * pat: 0.07, sup: 0.04, patprob: [0.50, 0.80], mad: 0.003, supdelay: 0.020
@@ -392,12 +399,10 @@ angular.module \ERGame, <[]>
       time = (new Date!getTime! / 1000) - $scope.audio.bkt
       if time <= 60 => $scope.config.cur = $scope.config.setting.0
       else if time <= 98 => $scope.config.cur = $scope.config.setting.1
-      else if time >= 98 and time <= 101 => $scope.danger = true
-      else if time <= 120 =>
-        $scope.danger = false
-        $scope.config.cur = $scope.config.setting.2
-      else =>
-        $scope.config.cur = $scope.config.setting.3
+      else if time <= 120 => $scope.config.cur = $scope.config.setting.2
+      else => $scope.config.cur = $scope.config.setting.3
+      if time >= 98 and time <= 101 and $scope.game.state == 2 => $scope.danger = true
+      else if time <= 120 => $scope.danger = false
       if isHalt! => return
       if Math.random! < $scope.config.cur.pat => $scope.patient.add 1
       if Math.random! < $scope.config.cur.sup => $scope.supply.active!
@@ -780,10 +785,9 @@ angular.module \ERGame, <[]>
             offset = ret.pausetime - ret.starttime
             delete ret.pausetime
           ret.starttime = parseInt( new Date!getTime! / 1000 ) - (if offset? => offset else 0)
-          if looping => 
-            src.loop = true
+          if looping => src.loop = true
           if offset? => src.start 0, offset else src.start 0
-          if name == \bk => @bkt = parseInt(new Date!getTime! / 1000)
+          if name == \bk => @bkt = ret.starttime
         ret.pause = (reset = false) ~> 
           if @n[name] => @n[name].stop!
           if !reset => ret.pausetime = parseInt( new Date!getTime! / 1000 )
