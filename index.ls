@@ -774,13 +774,17 @@ angular.module \ERGame, <[]>
       reset: -> for item in @names => @s[item].pause!
       n: {}
       bkt: 0
+      is-mute: false
+      toggle-mute: ->
+        @is-mute = !@is-mute
+        @gain.gain.value = if @is-mute => 0 else 1
       player: (name) ->
         ret = (offset, looping = false) ~>
           if !@buf[name] => return
           if @n[name] => @n[name]disconnect!
           @n[name] = src = @context.create-buffer-source!
           src.buffer = @buf[name]
-          src.connect @context.destination
+          src.connect @gain # @context.destination
           if ret.pausetime =>
             offset = ret.pausetime - ret.starttime
             delete ret.pausetime
@@ -816,6 +820,8 @@ angular.module \ERGame, <[]>
           $scope.loading = false
           return
         @context = new AudioContext!
+        @gain = @context.create-gain!
+        @gain.connect @context.destination
         for item in @names => 
           @s[item] = new Audio!
             ..src = "snd/#{item}.mp3"

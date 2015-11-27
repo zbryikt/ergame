@@ -254,7 +254,7 @@ for type in (1..12)
   margin-top: 10%
   height: 40%
 
-#landing, #pause, #game-ctrl, #game-over, #countdown, #loading, #urgency
+#landing, #pause, #game-ctrl, #game-over, #countdown, #loading, #urgency, #mute
   position: absolute
   top: 0
   left: 0
@@ -285,7 +285,7 @@ for type in (1..12)
     z-index: index(order, 'urgent')
 
 
-#landing div, #pause div, #game-ctrl div, #game-over div
+#landing div, #pause div, #game-ctrl div, #game-over div, #mute div
   img
     position: absolute
     top: 0
@@ -378,7 +378,7 @@ for type in (1..12)
   img
     width: 100%
 
-#game-ctrl
+#game-ctrl, #mute
   z-index: index(order, 'game-ctrl')
   top: auto
   left: auto
@@ -392,6 +392,10 @@ for type in (1..12)
     left: 0
     width: 100%
     height: 100%
+
+#mute
+  right: auto
+  left: 20px
 
 #game-ctrl div#gctrl-cont
   left: -380%

@@ -2015,7 +2015,8 @@ width: 100%;
 #game-over,
 #countdown,
 #loading,
-#urgency {
+#urgency,
+#mute {
   position: absolute;
   top: 0;
   left: 0;
@@ -2054,7 +2055,8 @@ width: 100%;
 #landing div img,
 #pause div img,
 #game-ctrl div img,
-#game-over div img {
+#game-over div img,
+#mute div img {
   position: absolute;
   top: 0;
   left: 0;
@@ -2064,13 +2066,15 @@ width: 100%;
 #landing div img.active,
 #pause div img.active,
 #game-ctrl div img.active,
-#game-over div img.active {
+#game-over div img.active,
+#mute div img.active {
   display: none;
 }
 #landing div:hover img.active,
 #pause div:hover img.active,
 #game-ctrl div:hover img.active,
-#game-over div:hover img.active {
+#game-over div:hover img.active,
+#mute div:hover img.active {
   display: block;
 }
 #landing-reporter {
@@ -2232,7 +2236,8 @@ width: 100%;
 #pause div#pause-tm img {
   width: 100%;
 }
-#game-ctrl {
+#game-ctrl,
+#mute {
   z-index: 10;
   top: auto;
   left: auto;
@@ -2241,12 +2246,17 @@ width: 100%;
   width: 6%;
   height: 10.6%;
 }
-#game-ctrl div {
+#game-ctrl div,
+#mute div {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
+}
+#mute {
+  right: auto;
+  left: 20px;
 }
 #game-ctrl div#gctrl-cont {
   left: -380%;
