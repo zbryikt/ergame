@@ -1446,20 +1446,21 @@ width: 100%;
 #energy-current {
   width: 100%;
   height: 100%;
+  overflow: hidden;
   top: 0;
   left: 0;
   z-index: 1;
   position: absolute;
-  background-size: cover;
-  background-position: left center;
-  background-repeat: no-repeat;
 }
-#energy-base {
-  background-image: url("img/gauge/energy-0.png");
+#energy-base img,
+#energy-current img {
+  position: absolute;
+  width: 100%;
+  height: 100%;
 }
+#energy-base,
 #energy-current {
   z-index: 2;
-  background-image: url("img/gauge/energy-5.png");
   -ms-transition: width 0.5s ease-in-out;
   -moz-transition: width 0.5s ease-in-out;
   -webkit-transition: width 0.5s ease-in-out;

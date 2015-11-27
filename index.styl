@@ -172,19 +172,19 @@ for type in (1..12)
 #energy-base, #energy-current
   width: 100%
   height: 100%
+  overflow: hidden
   top: 0
   left: 0
   z-index: index(order, 'gauge')
   position: absolute
-  background-size: cover
-  background-position: left center
-  background-repeat: no-repeat
+  img
+    position: absolute
+    width: 100%
+    height: 100%
 
 #energy-base
-  background-image: url(img/gauge/energy-0.png)
 #energy-current 
   z-index: index(order, 'gauge-current')
-  background-image: url(img/gauge/energy-5.png)
   transition(width 0.5s ease-in-out)
 
 +keyframes(vibrate)

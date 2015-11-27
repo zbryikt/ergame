@@ -114,7 +114,9 @@ html(lang="en")
         #urgency(ng-class="{'active':patient.urgent}")
         #energy(ng-class="{'active':doctor.draining>0}")
           #energy-base
-          #energy-current(ng-attr-style="width:{{doctor.energy*100}}%")
+            img(src="img/gauge/energy-0.png")
+          #energy-current(ng-attr-style="left:-{{(1 - doctor.energy) * 99 + 1.0738255}}%")
+            img(src="img/gauge/energy-5.png",ng-attr-style="left:{{(1 - doctor.energy) * 99 + 1.0738255}}%")
         #chance(ng-class="{'active':doctor.hurting>0}")
           each val in [1,2,3,4,5]
             .chance-node(ng-class="{'active':doctor.chance >="+val+"}")
