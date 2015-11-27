@@ -51,7 +51,7 @@ html(lang="en")
           #landing-reporter
             img(src="img/cover/landing-reporter-0.png")
             img.active(src="img/cover/landing-reporter-1.png")
-          #landing-start(ng-click="game.start();audio.click()")
+          #landing-start(ng-click="game.tutorial();audio.click()")
             img(src="img/cover/landing-start-0.png")
             img.active(src="img/cover/landing-start-1.png")
           #landing-skip(ng-click="dialog.skip();audio.click()")
@@ -75,7 +75,7 @@ html(lang="en")
           #pause-tutorial
             img(src="img/pause/tutorial-0.png")
             img.active(src="img/pause/tutorial-1.png")
-          #pause-replay
+          #pause-replay(ng-click="game.reset();audio.click()")
             img(src="img/pause/replay-0.png")
             img.active(src="img/pause/replay-1.png")
           #pause-tm

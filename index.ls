@@ -85,11 +85,17 @@ angular.module \ERGame, <[]>
         ), 500
       set-state: -> 
         @state = it
+      tutorial: ->
+        @set-state 3
+        $scope.audio.bkloop 0, true
+        $scope.audio.bk.pause true
       start: ->
         @set-state 2
+        $scope.audio.bkloop.pause true
         $scope.audio.bk!
       reset: ->
         $(\#wheel).css display: \none
+        $scope.danger = false
         $scope.patient.reset!
         $scope.doctor.reset!
         $scope.supply.reset!
@@ -104,10 +110,12 @@ angular.module \ERGame, <[]>
         value: 0
         count: ->
           @value = @value - 1
-          if @value > 0 => $scope.audio["count#{if @value == 1 => 2 else 1}"]!
-          if @value => $timeout (~> @count!), 650
+          if @value > 0 => 
+            $scope.audio["count#{if @value == 1 => 2 else 1}"]!
+            $timeout (~> @count!), 650
           else => 
             $scope.game.set-state 2
+            $scope.audio.bkloop.pause true
             $scope.audio.bk!
         start: ->
           $scope.game.set-state 5
@@ -186,6 +194,7 @@ angular.module \ERGame, <[]>
       reset: ->
         remains = $scope.percent.sprite.points.filter( ->it.type >=1 and it.type <= 4 )
         for item in remains => item <<< {variant: 0, mad: 0, life: 1}
+        @urgent = 0
       add: (area, defvar, defpos) ->
         remains = $scope.percent.sprite.points.filter(-> it.type == area and it.variant == 0)
         if remains.length == 0 => return
@@ -379,12 +388,7 @@ angular.module \ERGame, <[]>
       if $scope.danger => return true
       return false
     $interval ( ->
-      if $scope.dialog.tut or !($scope.game.state in [1 2 4]) =>
-        time = (new Date!getTime! / 1000) - $scope.audio.bkt
-        if time >= 9.8 =>
-          $scope.audio.bkt = parseInt( new Date!getTime! / 1000 )
-          $scope.audio.bk!
-        return
+      if $scope.dialog.tut or !($scope.game.state in [1 2 4]) => return
       time = (new Date!getTime! / 1000) - $scope.audio.bkt
       if time <= 60 => $scope.config.cur = $scope.config.setting.0
       else if time <= 98 => $scope.config.cur = $scope.config.setting.1
@@ -487,9 +491,10 @@ angular.module \ERGame, <[]>
         if !hold => @clean!
         if @idx == @step.length - 2 => @next!
         else
-          @idx = @step.length - 2
           @type = ""
-          if hold => @toggle 0, true
+          if hold => 
+            @idx = @step.length - 2
+            @toggle 0, true
       interval: (func, delay) ->
         ret = $interval func, delay
         @h.i.push ret
@@ -518,9 +523,7 @@ angular.module \ERGame, <[]>
         * do
             ready: false
             check: ->
-              if !@ready and $scope.game.state == 2 => 
-                $scope.game.state = 3
-                @ready = true
+              if !@ready and $scope.game.state == 3 => @ready = true
               @ready
             fire: ->
               $scope.mouse.forceStay = false
@@ -712,8 +715,7 @@ angular.module \ERGame, <[]>
               @ready
         * do
             check: -> true
-            fire: ->
-              $scope.dialog.clean!
+            fire: -> $scope.dialog.clean!
         * check: -> false
       ]
       main: (force = false) ->
@@ -763,12 +765,12 @@ angular.module \ERGame, <[]>
     $scope.audio = do
       s: {}
       buf: {}
-      names: <[click count1 count2 blop die menu dindon born click2 bk]>
+      names: <[click count1 count2 blop die menu dindon born click2 bkloop bk]>
       reset: -> for item in @names => @s[item].pause!
       n: {}
       bkt: 0
       player: (name) ->
-        ret = (offset) ~>
+        ret = (offset, looping = false) ~>
           if !@buf[name] => return
           if @n[name] => @n[name]disconnect!
           @n[name] = src = @context.create-buffer-source!
@@ -778,11 +780,13 @@ angular.module \ERGame, <[]>
             offset = ret.pausetime - ret.starttime
             delete ret.pausetime
           ret.starttime = parseInt( new Date!getTime! / 1000 ) - (if offset? => offset else 0)
+          if looping => 
+            src.loop = true
           if offset? => src.start 0, offset else src.start 0
           if name == \bk => @bkt = parseInt(new Date!getTime! / 1000)
-        ret.pause = ~> 
-          @n[name].stop!
-          ret.pausetime = parseInt( new Date!getTime! / 1000 )
+        ret.pause = (reset = false) ~> 
+          if @n[name] => @n[name].stop!
+          if !reset => ret.pausetime = parseInt( new Date!getTime! / 1000 )
         ret
       load: (name, url) ->
         request = new XMLHttpRequest!
