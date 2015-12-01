@@ -236,8 +236,8 @@ angular.module \ERGame, <[]>
         ]
         # normal mode
         normal: [
-          * prob: {pat: [0.02, 0.45, 0.95], sup: 0.01, stay: 0.1}, decay: {life: 0.003, sup: 0.005, mad: 0.001}
-          * prob: {pat: [0.06, 0.40, 0.80], sup: 0.03, stay: 0.3}, decay: {life: 0.004, sup: 0.015, mad: 0.003}
+          * prob: {pat: [0.02, 0.45, 0.95], sup: 0.01, stay: 0.1}, decay: {life: 0.002, sup: 0.005, mad: 0.001}
+          * prob: {pat: [0.06, 0.40, 0.80], sup: 0.03, stay: 0.3}, decay: {life: 0.003, sup: 0.015, mad: 0.003}
           * prob: {pat: [0.14, 0.30, 0.50], sup: 0.09, stay: 0.5}, decay: {life: 0.005, sup: 0.020, mad: 0.005}
           * prob: {pat: [0.22, 0.10, 0.20], sup: 0.15, stay: 0.6}, decay: {life: 0.006, sup: 0.025, mad: 0.007}
         ]
