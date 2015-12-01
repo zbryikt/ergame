@@ -218,29 +218,29 @@ angular.module \ERGame, <[]>
 
     $scope.config = do
       cur: do
-        pat: 0.05, sup: 0.01, patprob: [0.6, 0.95], mad: 0.001, supdelay: 0.015
+        pat: 0.05, sup: 0.01, patprob: [0.6, 0.95], mad: 0.001, sup-decay: 0.015
       # trivial mode
-      /*
-      setting: [
-        * pat: 0.00, sup: 0.00, patprob: [0.60, 0.95], mad: 0.001, supdelay: 0.011
-        * pat: 0.00, sup: 0.00, patprob: [0.60, 0.90], mad: 0.001, supdelay: 0.011
-        * pat: 0.00, sup: 0.00, patprob: [0.60, 0.90], mad: 0.001, supdelay: 0.011
-        * pat: 0.00, sup: 0.00, patprob: [0.60, 0.90], mad: 0.001, supdelay: 0.011
-      ]
-      # easy mode
-      setting: [
-        * pat: 0.02, sup: 0.01, patprob: [0.60, 0.95], mad: 0.001, supdelay: 0.011
-        * pat: 0.02, sup: 0.01, patprob: [0.60, 0.90], mad: 0.001, supdelay: 0.011
-        * pat: 0.02, sup: 0.01, patprob: [0.60, 0.90], mad: 0.001, supdelay: 0.011
-        * pat: 0.02, sup: 0.01, patprob: [0.60, 0.90], mad: 0.001, supdelay: 0.011
-      ]*/
-      # normal mode
-      setting: [
-        * pat: 0.02, sup: 0.01, patprob: [0.60, 0.95], mad: 0.001, supdelay: 0.015
-        * pat: 0.07, sup: 0.04, patprob: [0.50, 0.80], mad: 0.003, supdelay: 0.020
-        * pat: 0.15, sup: 0.11, patprob: [0.25, 0.30], mad: 0.006, supdelay: 0.025
-        * pat: 0.22, sup: 0.15, patprob: [0.10, 0.25], mad: 0.008, supdelay: 0.030
-      ]
+      mode: do
+        trivial: [
+          * pat: 0.00, sup: 0.00, patprob: [0.60, 0.95], mad: 0.001, sup-decay: 0.001, life-decay: 0.001
+          * pat: 0.00, sup: 0.00, patprob: [0.60, 0.90], mad: 0.001, sup-decay: 0.001, life-decay: 0.001
+          * pat: 0.00, sup: 0.00, patprob: [0.60, 0.90], mad: 0.001, sup-decay: 0.001, life-decay: 0.001
+          * pat: 0.00, sup: 0.00, patprob: [0.60, 0.90], mad: 0.001, sup-decay: 0.001, life-decay: 0.001
+        ]
+        # easy mode
+        easy: [
+          * pat: 0.02, sup: 0.01, patprob: [0.60, 0.95], mad: 0.001, sup-decay: 0.005, life-decay: 0.001
+          * pat: 0.04, sup: 0.02, patprob: [0.50, 0.82], mad: 0.002, sup-decay: 0.008, life-decay: 0.002
+          * pat: 0.08, sup: 0.04, patprob: [0.40, 0.70], mad: 0.003, sup-decay: 0.011, life-decay: 0.003
+          * pat: 0.22, sup: 0.10, patprob: [0.30, 0.60], mad: 0.004, sup-decay: 0.014, life-decay: 0.006
+        ]
+        # normal mode
+        normal: [
+          * pat: 0.02, sup: 0.01, patprob: [0.60, 0.95], mad: 0.001, sup-decay: 0.012, life-decay: 0.004
+          * pat: 0.07, sup: 0.04, patprob: [0.50, 0.80], mad: 0.003, sup-decay: 0.018, life-decay: 0.004
+          * pat: 0.15, sup: 0.11, patprob: [0.25, 0.30], mad: 0.006, sup-decay: 0.024, life-decay: 0.004
+          * pat: 0.22, sup: 0.15, patprob: [0.10, 0.25], mad: 0.008, sup-decay: 0.030, life-decay: 0.006
+        ]
 
     $scope.mouse = do
       x: 0, y: 0, target: null
@@ -397,10 +397,10 @@ angular.module \ERGame, <[]>
     $interval ( ->
       if $scope.dialog.tut or !($scope.game.state in [1 2 4]) => return
       time = (new Date!getTime! / 1000) - $scope.audio.bkt
-      if time <= 60 => $scope.config.cur = $scope.config.setting.0
-      else if time <= 98 => $scope.config.cur = $scope.config.setting.1
-      else if time <= 120 => $scope.config.cur = $scope.config.setting.2
-      else => $scope.config.cur = $scope.config.setting.3
+      if time <= 60 => $scope.config.cur = $scope.config.mode.easy.0
+      else if time <= 98 => $scope.config.cur = $scope.config.mode.easy.1
+      else if time <= 120 => $scope.config.cur = $scope.config.mode.easy.2
+      else => $scope.config.cur = $scope.config.mode.easy.3
       if time >= 98 and time <= 101 and $scope.game.state == 2 => $scope.danger = true
       else if time <= 120 => $scope.danger = false
       if isHalt! => return
@@ -424,7 +424,7 @@ angular.module \ERGame, <[]>
       inqueue = $scope.percent.sprite.points.filter(->it.type == 1 and it.variant > 0)
       die = false
       for it in inqueue
-        it.life -= ( 0.004 * it.variant )
+        it.life -= ( $scope.config.cur.life-decay * it.variant )
         if it.life <= 0 => 
           it.life = 0
           $scope.doctor.fail!
@@ -449,7 +449,7 @@ angular.module \ERGame, <[]>
         inqueue = $scope.percent.sprite.points.filter(->(it.type in [5 6 7 8]) and it.active)
         for it in inqueue
           if !(it.countdown?) or it.countdown <= 0 => it.countdown = 1
-          it.countdown -= $scope.config.cur.supdelay
+          it.countdown -= $scope.config.cur.sup-decay
           if it.countdown <= 0 =>
             it.countdown = 1
             it.active = 0
