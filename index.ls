@@ -201,8 +201,8 @@ angular.module \ERGame, <[]>
         variant = parseInt(Math.random! * 3 + 1)
         if area == 1 =>
           dice = Math.random!
-          if dice < $scope.config.cur.patprob.0 => variant = 1
-          else if dice < $scope.config.cur.patprob.1 => variant = 2
+          if dice < $scope.config.cur.prob.pat.1 => variant = 1
+          else if dice < $scope.config.cur.prob.pat.2 => variant = 2
           else variant = 3
           $scope.audio.born!
         else => variant = parseInt(Math.random! * 2 + 1)
@@ -218,28 +218,28 @@ angular.module \ERGame, <[]>
 
     $scope.config = do
       cur: do
-        pat: 0.05, sup: 0.01, patprob: [0.6, 0.95], mad: 0.001, sup-decay: 0.015
+        prob: {pat: [0.05, 0.60, 0.95], sup: 0.01, stay: 0.1}, decay: {life: 0.001, sup: 0.001, mad: 0.001}
       # trivial mode
       mode: do
         trivial: [
-          * pat: 0.00, sup: 0.00, patprob: [0.60, 0.95], mad: 0.001, sup-decay: 0.001, life-decay: 0.001
-          * pat: 0.00, sup: 0.00, patprob: [0.60, 0.90], mad: 0.001, sup-decay: 0.001, life-decay: 0.001
-          * pat: 0.00, sup: 0.00, patprob: [0.60, 0.90], mad: 0.001, sup-decay: 0.001, life-decay: 0.001
-          * pat: 0.00, sup: 0.00, patprob: [0.60, 0.90], mad: 0.001, sup-decay: 0.001, life-decay: 0.001
+          * prob: {pat: [0.00, 0.60, 0.95], sup: 0.01, stay: 0.1}, decay: {life: 0.001, sup: 0.001, mad: 0.001}
+          * prob: {pat: [0.00, 0.60, 0.95], sup: 0.01, stay: 0.1}, decay: {life: 0.001, sup: 0.001, mad: 0.001}
+          * prob: {pat: [0.00, 0.60, 0.95], sup: 0.01, stay: 0.1}, decay: {life: 0.001, sup: 0.001, mad: 0.001}
+          * prob: {pat: [0.00, 0.60, 0.95], sup: 0.01, stay: 0.1}, decay: {life: 0.001, sup: 0.001, mad: 0.001}
         ]
         # easy mode
         easy: [
-          * pat: 0.02, sup: 0.01, patprob: [0.60, 0.95], mad: 0.001, sup-decay: 0.005, life-decay: 0.001
-          * pat: 0.04, sup: 0.02, patprob: [0.50, 0.82], mad: 0.002, sup-decay: 0.008, life-decay: 0.002
-          * pat: 0.08, sup: 0.04, patprob: [0.40, 0.70], mad: 0.003, sup-decay: 0.011, life-decay: 0.003
-          * pat: 0.22, sup: 0.10, patprob: [0.30, 0.60], mad: 0.004, sup-decay: 0.014, life-decay: 0.006
+          * prob: {pat: [0.02, 0.60, 0.95], sup: 0.01, stay: 0.1}, decay: {life: 0.001, sup: 0.005, mad: 0.001}
+          * prob: {pat: [0.04, 0.50, 0.82], sup: 0.02, stay: 0.2}, decay: {life: 0.002, sup: 0.008, mad: 0.002}
+          * prob: {pat: [0.08, 0.40, 0.70], sup: 0.04, stay: 0.4}, decay: {life: 0.003, sup: 0.011, mad: 0.003}
+          * prob: {pat: [0.12, 0.30, 0.60], sup: 0.10, stay: 0.5}, decay: {life: 0.006, sup: 0.014, mad: 0.006}
         ]
         # normal mode
         normal: [
-          * pat: 0.02, sup: 0.01, patprob: [0.60, 0.95], mad: 0.001, sup-decay: 0.012, life-decay: 0.004
-          * pat: 0.07, sup: 0.04, patprob: [0.50, 0.80], mad: 0.003, sup-decay: 0.018, life-decay: 0.004
-          * pat: 0.15, sup: 0.11, patprob: [0.25, 0.30], mad: 0.006, sup-decay: 0.024, life-decay: 0.004
-          * pat: 0.22, sup: 0.15, patprob: [0.10, 0.25], mad: 0.008, sup-decay: 0.030, life-decay: 0.006
+          * prob: {pat: [0.02, 0.60, 0.95], sup: 0.01, stay: 0.1}, decay: {life: 0.003, sup: 0.005, mad: 0.001}
+          * prob: {pat: [0.06, 0.50, 0.80], sup: 0.03, stay: 0.3}, decay: {life: 0.004, sup: 0.015, mad: 0.003}
+          * prob: {pat: [0.14, 0.30, 0.40], sup: 0.09, stay: 0.5}, decay: {life: 0.005, sup: 0.020, mad: 0.005}
+          * prob: {pat: [0.22, 0.10, 0.20], sup: 0.15, stay: 0.6}, decay: {life: 0.006, sup: 0.025, mad: 0.007}
         ]
 
     $scope.mouse = do
@@ -333,7 +333,7 @@ angular.module \ERGame, <[]>
                   $scope.doctor.score.value += 1
               else # 中、重症病患
                 # 一定機率進留觀
-                if (!(@forceStay?) and Math.random! > 0.5) =>
+                if (!(@forceStay?) and Math.random! < $scope.config.cur.prob.stay) =>
                   $scope.doctor.set-mood 3
                   $scope.patient.add parseInt(3 * Math.random! + 2)
                 else if @forceStay =>
@@ -404,12 +404,12 @@ angular.module \ERGame, <[]>
       if time >= 98 and time <= 101 and $scope.game.state == 2 => $scope.danger = true
       else if time <= 120 => $scope.danger = false
       if isHalt! => return
-      if Math.random! < $scope.config.cur.pat => $scope.patient.add 1
-      if Math.random! < $scope.config.cur.sup => $scope.supply.active!
+      if Math.random! < $scope.config.cur.prob.pat.0 => $scope.patient.add 1
+      if Math.random! < $scope.config.cur.prob.sup => $scope.supply.active!
       if $scope.percent.sprite.points.filter(->it.type == 1 and it.variant != 0).length == 0 and Math.random! > 0.8 =>
         $scope.patient.add 1
 
-      $scope.madspeed = $scope.config.cur.mad
+      $scope.madspeed = $scope.config.cur.decay.mad
     ), 100
 
     $scope.madspeed = 0.002
@@ -424,7 +424,7 @@ angular.module \ERGame, <[]>
       inqueue = $scope.percent.sprite.points.filter(->it.type == 1 and it.variant > 0)
       die = false
       for it in inqueue
-        it.life -= ( $scope.config.cur.life-decay * it.variant )
+        it.life -= ( $scope.config.cur.decay.life * it.variant )
         if it.life <= 0 => 
           it.life = 0
           $scope.doctor.fail!
@@ -449,7 +449,7 @@ angular.module \ERGame, <[]>
         inqueue = $scope.percent.sprite.points.filter(->(it.type in [5 6 7 8]) and it.active)
         for it in inqueue
           if !(it.countdown?) or it.countdown <= 0 => it.countdown = 1
-          it.countdown -= $scope.config.cur.sup-decay
+          it.countdown -= $scope.config.cur.decay.sup
           if it.countdown <= 0 =>
             it.countdown = 1
             it.active = 0
