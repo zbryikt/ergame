@@ -873,3 +873,52 @@ nbtz = ->
 nbtz jQuery
 $(\body).nodoubletapzoom!
 
+imglist = <[
+  img/it-1-0-0.png
+  img/it-1-0-1.png
+  img/it-1-1-0.png
+  img/it-1-1-1.png
+  img/it-1-2-0.png
+  img/it-1-2-1.png
+  img/it-1-3-0.png
+  img/it-1-3-1.png
+  img/it-10-0-0.png
+  img/it-11-0-0.png
+  img/it-12-0-0.png
+  img/it-2-0-0.png
+  img/it-2-0-1.png
+  img/it-2-1-0.png
+  img/it-2-1-1.png
+  img/it-2-2-0.png
+  img/it-2-2-1.png
+  img/it-3-0-0.png
+  img/it-3-0-1.png
+  img/it-3-1-0.png
+  img/it-3-1-1.png
+  img/it-3-2-0.png
+  img/it-3-2-1.png
+  img/it-4-0-0.png
+  img/it-4-0-1.png
+  img/it-4-1-0.png
+  img/it-4-1-1.png
+  img/it-4-2-0.png
+  img/it-4-2-1.png
+  img/it-5-0-0.png
+  img/it-5-0-1.png
+  img/it-6-0-0.png
+  img/it-6-0-1.png
+  img/it-7-0-0.png
+  img/it-7-0-1.png
+  img/it-9-0-0.png
+  img/it-9-1-0.png
+  img/it-9-2-0.png
+  img/it-9-3-0.png
+  img/it-9-4-0.png
+  img/it-9-5-0.png
+  img/it-9-6-0.png
+  img/it-9-7-0.png
+]>
+
+for img in imglist => 
+  obj = new Image
+  obj.src = img
