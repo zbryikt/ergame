@@ -10,6 +10,7 @@ html,body
 
 body
   background: rgba(253,255,250,1)
+  position: relative
 
 img
   no-selection()
@@ -212,7 +213,7 @@ for type in (1..12)
     animation(vibrate 0.2s linear infinite)
 
 #chance .chance-node
-  width: 17.5%
+  width: 17%
   height: 100%
   margin: 2px
   display: inline-block
@@ -595,7 +596,7 @@ for type in (1..12)
   z-index: index(order, 'urgent')
   position: absolute
   display: none
-  top: 25%
+  top: 10%
   left: 30%
   width: 40%
   &.active

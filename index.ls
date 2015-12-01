@@ -250,7 +250,6 @@ angular.module \ERGame, <[]>
       timestamp: 0
       is-pal-on: false
       down: (e, touch = false)->
-        $scope.{}debug <<< {time: new Date!getTime!}
         if touchflag and !touch => return
         # touch will be troublesome if mouse can be triggered. remove it here
         if isHalt! => return
@@ -261,11 +260,9 @@ angular.module \ERGame, <[]>
         [ex, ey] = [(e.clientX or e.pageX), (e.clientY or e.pageY)]
         if !ex and !ey => [ex,ey] = [e.touches.0.clientX, e.touches.0.clientY]
         @{}last <<< {x: ex, y: ey}
-        $scope.{}debug <<< {ex: parseInt(ex), ey: parseInt(ey), try: e}
         [x,y] = [@x, @y] = [ex - offset.left, ey - offset.top]
         xp = x * 1024 / $(\#wrapper)width!
         yp = y * 576 / $(\#wrapper)height!
-        $scope.{}debug <<< {xp: parseInt(xp), yp: parseInt(yp)}
         target = $scope.hitmask.resolve(xp, yp)
         if !target => return
         if target.type == 1 =>
@@ -289,13 +286,11 @@ angular.module \ERGame, <[]>
         @is-pal-on = true
         e.preventDefault!
       move: (e) ->
-        $scope.debug <<< {try: e.touches.length}
         [x,y] = [
           e.clientX or e.pageX or e.touches.0.clientX,
           e.clientY or e.pageY or e.touches.0.clientY
         ]
         @{}last <<< {x,y}
-        $scope.debug.try = "#{@last.x} #{@last.y}"
         #TODO prevent long press trigger menu
         #e.preventDefault()
       up: (e, touch = false) -> 
@@ -344,8 +339,8 @@ angular.module \ERGame, <[]>
                 $scope.doctor.score.value += 1
               if type == 3 => 
                 @target.variant = 0
-                $scope.patient.update-urgent!
             else => $scope.doctor.fail! # 答錯，難過，扣血
+            if type == 3 => $scope.patient.update-urgent!
 
             @target.variant = 0
             $scope.rebuild!
@@ -394,68 +389,8 @@ angular.module \ERGame, <[]>
       if ($scope.game.state != 2 and $scope.game.state != 3) or $scope.dialog.show == true => return true
       if $scope.danger => return true
       return false
-    $interval ( ->
-      if $scope.dialog.tut or !($scope.game.state in [1 2 4]) => return
-      time = (new Date!getTime! / 1000) - $scope.audio.bkt
-      if time <= 60 => $scope.config.cur = $scope.config.mode.easy.0
-      else if time <= 98 => $scope.config.cur = $scope.config.mode.easy.1
-      else if time <= 120 => $scope.config.cur = $scope.config.mode.easy.2
-      else => $scope.config.cur = $scope.config.mode.easy.3
-      if time >= 98 and time <= 101 and $scope.game.state == 2 => $scope.danger = true
-      else if time <= 120 => $scope.danger = false
-      if isHalt! => return
-      if Math.random! < $scope.config.cur.prob.pat.0 => $scope.patient.add 1
-      if Math.random! < $scope.config.cur.prob.sup => $scope.supply.active!
-      if $scope.percent.sprite.points.filter(->it.type == 1 and it.variant != 0).length == 0 and Math.random! > 0.8 =>
-        $scope.patient.add 1
-
-      $scope.madspeed = $scope.config.cur.decay.mad
-    ), 100
-
     $scope.madspeed = 0.002
-    $interval (->
-      if isHalt! => return
-      if $scope.doctor.hurting => 
-        $scope.doctor.hurting -= 0.2
-        $scope.doctor.hurting >?= 0
-      if $scope.doctor.draining => 
-        $scope.doctor.draining -= 0.2
-        $scope.doctor.draining >?= 0
-      inqueue = $scope.percent.sprite.points.filter(->it.type == 1 and it.variant > 0)
-      die = false
-      for it in inqueue
-        it.life -= ( $scope.config.cur.decay.life * it.variant )
-        if it.life <= 0 => 
-          it.life = 0
-          $scope.doctor.fail!
-          it.variant = 0
-          die = true
-      if die => $scope.patient.update-urgent!
 
-      inqueue = $scope.percent.sprite.points.filter(->(it.type in [2 3 4]) and it.variant > 0)
-      madmax = 0
-      for it in inqueue
-        if !(it.mad?) => it.mad = 0
-        it.mad += $scope.madspeed
-        if it.mad >= 0.8 => 
-          it.mad = 1
-          it.ismad = true
-          madmax = 1
-      if madmax and !$scope.madmax => 
-        $scope.madmax = parseInt( Math.random!*2 + 1 )
-        $scope.doctor.demading = 0
-
-      if !$scope.doctor.faint =>
-        inqueue = $scope.percent.sprite.points.filter(->(it.type in [5 6 7 8]) and it.active)
-        for it in inqueue
-          if !(it.countdown?) or it.countdown <= 0 => it.countdown = 1
-          it.countdown -= $scope.config.cur.decay.sup
-          if it.countdown <= 0 =>
-            it.countdown = 1
-            it.active = 0
-            $scope.doctor.drain!
-
-    ), 100
     $scope.$watch 'madmax' -> if it => $(\#wheel).css({display: "none"})
 
     $scope.hitmask = do
@@ -742,17 +677,6 @@ angular.module \ERGame, <[]>
 
     $scope.scream = gajus.Scream width: portrait: 320, landscape: 480
 
-    $interval (->
-      $scope.dialog.main!
-      try
-        ismin = $scope.scream.is-minimal-view!
-      if $scope.ismin and !ismin => 
-        document.body.scrollTop = 0
-        $(\#minimal-fix).css display: \block
-      if ismin => $(\#minimal-fix).css display: \none
-      $scope.ismin = ismin
-    ), 100
-
     [doc-w, doc-h] = [$(document)width!, $(document)height! - 50]
     [cvs-w, cvs-h] = [1024,576]
     [w1,h1] = if doc-w < 1024 => [doc-w, doc-w * 576 / 1024 ] else [1024,576]
@@ -765,7 +689,7 @@ angular.module \ERGame, <[]>
       $(\#frame).css padding: 0
       $(\#head).css display: \none
       $(\#foot).css display: \none
-    document.ontouchmove = (e) -> if $scope.ismin => return e.prevent-default!
+    document.ontouchmove = (e) -> if $scope.is-pad or $scope.ismin => return e.prevent-default!
 
     $scope.audio = do
       s: {}
@@ -791,9 +715,11 @@ angular.module \ERGame, <[]>
           ret.starttime = parseInt( new Date!getTime! / 1000 ) - (if offset? => offset else 0)
           if looping => src.loop = true
           if offset? => src.start 0, offset else src.start 0
-          if name == \bk => @bkt = ret.starttime
+          if name == \bk => 
+            @bkt = ret.starttime
+            $scope.debug.d5 = @bkt
         ret.pause = (reset = false) ~> 
-          if @n[name] => @n[name].stop!
+          if @n[name] => @n[name].stop 0
           if !reset => ret.pausetime = parseInt( new Date!getTime! / 1000 )
         ret
       load: (name, url) ->
@@ -827,7 +753,87 @@ angular.module \ERGame, <[]>
             ..src = "snd/#{item}.mp3"
           @[item] = @player item
           @load item, "snd/#{item}.mp3"
+    $scope.debug = d1: 0, d2: 0
+    interval = do
+      spawn: ->
+        if $scope.dialog.tut or !($scope.game.state in [1 2 4]) => return
+        time = (new Date!getTime! / 1000) - $scope.audio.bkt
+        $scope.debug.d6 = time
+        if time <= 60 => $scope.config.cur = $scope.config.mode.easy.0
+        else if time <= 98 => $scope.config.cur = $scope.config.mode.easy.1
+        else if time <= 120 => $scope.config.cur = $scope.config.mode.easy.2
+        else => $scope.config.cur = $scope.config.mode.easy.3
+        if time >= 98 and time <= 101 and $scope.game.state == 2 => $scope.danger = true
+        else if time <= 120 => $scope.danger = false
+        if isHalt! => return
+        r = Math.random!
+        if r < $scope.config.cur.prob.pat.0 => 
+          $scope.debug.d1 += 1
+          $scope.debug.d3 = r
+          $scope.debug.d4 = $scope.config.cur.prob.pat.0
+          $scope.patient.add 1
+        if Math.random! < $scope.config.cur.prob.sup => $scope.supply.active!
+        if $scope.percent.sprite.points.filter(->it.type == 1 and it.variant != 0).length == 0 
+          and Math.random! > 0.8 => 
+            $scope.debug.d2 += 1
+            $scope.patient.add 1
+        $scope.madspeed = $scope.config.cur.decay.mad
+      drain: ->
+        if isHalt! => return
+        if $scope.doctor.hurting => 
+          $scope.doctor.hurting -= 0.2
+          $scope.doctor.hurting >?= 0
+        if $scope.doctor.draining => 
+          $scope.doctor.draining -= 0.2
+          $scope.doctor.draining >?= 0
+        inqueue = $scope.percent.sprite.points.filter(->it.type == 1 and it.variant > 0)
+        die = false
+        for it in inqueue
+          it.life -= ( $scope.config.cur.decay.life * it.variant )
+          if it.life <= 0 => 
+            it.life = 0
+            $scope.doctor.fail!
+            it.variant = 0
+            die = true
+        if die => $scope.patient.update-urgent!
+        inqueue = $scope.percent.sprite.points.filter(->(it.type in [2 3 4]) and it.variant > 0)
+        madmax = 0
+        for it in inqueue
+          if !(it.mad?) => it.mad = 0
+          it.mad += $scope.madspeed
+          if it.mad >= 0.8 => 
+            it.mad = 1
+            it.ismad = true
+            madmax = 1
+        if madmax and !$scope.madmax => 
+          $scope.madmax = parseInt( Math.random!*2 + 1 )
+          $scope.doctor.demading = 0
+        if !$scope.doctor.faint =>
+          inqueue = $scope.percent.sprite.points.filter(->(it.type in [5 6 7 8]) and it.active)
+          for it in inqueue
+            if !(it.countdown?) or it.countdown <= 0 => it.countdown = 1
+            it.countdown -= $scope.config.cur.decay.sup
+            if it.countdown <= 0 =>
+              it.countdown = 1
+              it.active = 0
+              $scope.doctor.drain!
+      tweak: ->
+        $scope.dialog.main!
+        is-pad = if /iPad/.exec(navigator.platform) => true else false
+        try
+          ismin = $scope.scream.is-minimal-view!
+        if $scope.ismin and !ismin and !is-pad=> 
+          document.body.scrollTop = 0
+          $(\#minimal-fix).css display: \block
+        if is-pad or ismin => $(\#minimal-fix).css display: \none
+        $scope.ismin = ismin
+        $scope.is-pad = is-pad
 
+    $interval (->
+      interval.spawn!
+      interval.drain!
+      interval.tweak!
+    ), 100
     $scope.progress = 0
     $scope.loading = true
     $scope.audio.init!
@@ -850,4 +856,20 @@ window.touch = touch = do
     angular.element(\#wrapper).scope().mouse.up(e,true)
   move: (e) ->
     angular.element(\#wrapper).scope().mouse.move(e,true)
+
+
+nbtz = ->
+  $.fn.nodoubletapzoom = ->
+    (e) <- $(this).bind \touchstart, _
+    t2 = e.timeStamp
+    t1 = $(this).data(\lastTouch) or t2
+    dt = t2 - t1
+    fingers = e.originalEvent.touches.length
+    $(this).data \lastTouch, t2
+    if !dt or dt > 500 or fingers > 1 => return
+    e.preventDefault!
+    $(e.target).trigger \click
+
+nbtz jQuery
+$(\body).nodoubletapzoom!
 

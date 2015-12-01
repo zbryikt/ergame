@@ -13,6 +13,7 @@ body {
 }
 body {
   background: #fdfffa;
+  position: relative;
 }
 img {
   -webkit-touch-callout: none;
@@ -1836,7 +1837,7 @@ width: 100%;
   animation: vibrate 0.2s linear infinite;
 }
 #chance .chance-node {
-  width: 17.5%;
+  width: 17%;
   height: 100%;
   margin: 2px;
   display: inline-block;
@@ -3044,7 +3045,7 @@ width: 100%;
   z-index: 6;
   position: absolute;
   display: none;
-  top: 25%;
+  top: 10%;
   left: 30%;
   width: 40%;
   -webkit-touch-callout: none;

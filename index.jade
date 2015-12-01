@@ -28,19 +28,17 @@ html(lang="en")
           a(href="#"): img(src="img/fb.png")
           a(href="#"): img(src="img/twt.png")
       //-div(style="position:absolute;top:10px;left:10px;z-index:10000")
-        | TIME: {{debug.t}}
+        | D1: {{debug.d1}}
         br
-        | T: {{debug.time}}
+        | D2: {{debug.d2}}
         br
-        | XP: {{debug.xp}} 
+        | D3: {{debug.d3}}
         br
-        | YP: {{debug.yp}}
+        | D4: {{debug.d4}}
         br
-        | EX: {{debug.ex}} 
+        | D5: {{debug.d5}}
         br
-        | EY: {{debug.ey}}
-        br
-        | TS: {{debug.try}}
+        | D6: {{debug.d6}}
       #frame: #wrapper
         #loading(ng-if="loading",ng-class="{'fade':progress >= 100}")
           #loading-fig
