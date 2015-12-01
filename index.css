@@ -3110,3 +3110,11 @@ width: 100%;
   -o-animation-delay: 0.2s;
   animation-delay: 0.2s;
 }
+#img-preloader {
+  opacity: 0.01;
+  height: 1px;
+  width: 1px;
+  position: absolute;
+  top: 0;
+  left: 0;
+}

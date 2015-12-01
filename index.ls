@@ -216,6 +216,7 @@ angular.module \ERGame, <[]>
         if des.type in [2 3 4] => des.mad = 0
         $scope.rebuild!
 
+    $scope.mode = \easy
     $scope.config = do
       cur: do
         prob: {pat: [0.05, 0.60, 0.95], sup: 0.01, stay: 0.1}, decay: {life: 0.001, sup: 0.001, mad: 0.001}
@@ -730,8 +731,9 @@ angular.module \ERGame, <[]>
           (buf) <~ @context.decode-audio-data request.response, _, (-> console.log(\fail))
           @buf[name] = buf
           setTimeout ( ~> $scope.$apply ~> 
-            $scope.progress = parseInt(100 * [key for key of @buf].length / @names.length)
-            if $scope.progress >= 100 => $timeout (->$scope.loading = false), 500
+            $scope.progress.current += 1
+            #$scope.progress = parseInt(100 * [key for key of @buf].length / @names.length)
+            #if $scope.progress >= 100 => $timeout (->$scope.loading = false), 500
           ), 500
         request.send!  
       init: ->
@@ -742,7 +744,6 @@ angular.module \ERGame, <[]>
             @[item] = ->
             @[item]pause = ->
             @s[item] = pause: ->
-          $scope.progress = 100
           $scope.loading = false
           return
         @context = new AudioContext!
@@ -753,16 +754,28 @@ angular.module \ERGame, <[]>
             ..src = "snd/#{item}.mp3"
           @[item] = @player item
           @load item, "snd/#{item}.mp3"
+        $scope.progress.total += @names.length
+
+    $scope.progress = do
+      value: 100
+      total: 0
+      current: 0
+      update: ->
+        @value = parseInt(100 * @current / @total)
+        if @value >= 100 => $scope.loading = false
+    $scope.$watch 'progress.total', -> $scope.progress.update!
+    $scope.$watch 'progress.current', -> $scope.progress.update!
+
     $scope.debug = d1: 0, d2: 0
     interval = do
       spawn: ->
         if $scope.dialog.tut or !($scope.game.state in [1 2 4]) => return
         time = (new Date!getTime! / 1000) - $scope.audio.bkt
         $scope.debug.d6 = time
-        if time <= 60 => $scope.config.cur = $scope.config.mode.easy.0
-        else if time <= 98 => $scope.config.cur = $scope.config.mode.easy.1
-        else if time <= 120 => $scope.config.cur = $scope.config.mode.easy.2
-        else => $scope.config.cur = $scope.config.mode.easy.3
+        if time <= 60 => $scope.config.cur = $scope.config.mode[$scope.mode]0
+        else if time <= 98 => $scope.config.cur = $scope.config.mode[$scope.mode]1
+        else if time <= 120 => $scope.config.cur = $scope.config.mode[$scope.mode]2
+        else => $scope.config.cur = $scope.config.mode[$scope.mode]3
         if time >= 98 and time <= 101 and $scope.game.state == 2 => $scope.danger = true
         else if time <= 120 => $scope.danger = false
         if isHalt! => return
@@ -834,7 +847,6 @@ angular.module \ERGame, <[]>
       interval.drain!
       interval.tweak!
     ), 100
-    $scope.progress = 0
     $scope.loading = true
     $scope.audio.init!
     document.body
@@ -842,13 +854,24 @@ angular.module \ERGame, <[]>
       ..ontouchmove = window.touch.move
       ..ontouchend = window.touch.up
 
+    $scope.images = do
+      list: <[img/tutorial/0.png img/gauge/1s.png img/fb.png img/gauge/7s.png img/gauge/4s.png img/gauge/5s.png img/gauge/2s.png img/gauge/0s.png img/gauge/3s.png img/twt.png img/gauge/6s.png img/gauge/9s.png img/gauge/8s.png img/about.png img/game/pause-1.png img/game/pause-0.png img/gauge/energy-0.png img/game/start-1.png img/game/skip-1.png img/game/start-0.png img/game/skip-0.png img/pause/fb-1.png img/gauge/energy-5.png img/game/cont-1.png img/arrow.png img/mute/o1.png img/github.png img/game/landing-1.png img/gauge/counting.png img/game/cont-0.png img/mute/o0.png img/game/landing-0.png img/tutorial/finger1.png img/it-1-0-0.png img/it-1-0-1.png img/pause/reporter-1.png img/favicon.png img/mad/click-2.png img/mad/click-1.png img/pause/fb-0.png img/load/shadow.png img/pause/tutorial-1.png img/gauge/chance-o.png img/mute/x1.png img/cover/over-share-1.png img/gauge/chance-x.png img/pause/reporter-0.png img/mute/x0.png img/cover/over-share-0.png img/pause/link-1.png img/cover/over-report-1.png img/pause/tutorial-0.png img/cover/over-report-0.png img/tutorial/finger2.png img/countdown/2.png img/pause/tm.png img/pause/restart-0.png img/pause/replay-0.png img/pause/restart-1.png img/pause/replay-1.png img/pause/link-0.png img/countdown/1.png img/countdown/3.png img/cover/landing-skip-1.png img/cover/landing-reporter-1.png img/tutorial/6.png img/it-1-1-0.png img/it-1-3-0.png img/it-1-2-0.png img/it-9-0-0.png img/it-2-0-0.png img/it-2-0-1.png img/it-3-0-1.png img/it-3-0-0.png img/tutorial/11.png img/tutorial/10.png img/tutorial/13.png img/it-7-0-1.png img/cover/landing-start-1.png img/it-1-1-1.png img/it-9-1-0.png img/it-11-0-0.png img/it-1-2-1.png img/it-1-3-1.png img/tutorial/doctor.png img/tutorial/12.png img/countdown/go.png img/wheel.png img/tutorial/9.png img/it-6-0-1.png img/it-9-7-0.png img/load/doctor.png img/it-9-2-0.png img/it-9-3-0.png img/it-9-6-0.png img/tutorial/8.png img/tutorial/7.png img/it-9-4-0.png img/it-9-5-0.png img/it-10-0-0.png img/it-2-1-0.png img/it-2-2-0.png img/it-3-2-0.png img/it-3-1-0.png img/tutorial/1.png img/tutorial/5.png img/danger.png img/it-2-2-1.png img/it-2-1-1.png img/it-3-1-1.png img/it-3-2-1.png img/load/text.png img/tutorial/14.png img/tutorial/2.png img/tutorial/4.png img/mad/hungry2.png img/mad/hungry1.png img/mad/hysteria2.png img/mad/hysteria1.png img/mad/gangster2.png img/mad/gangster1.png img/it-4-0-0.png img/it-4-0-1.png img/tutorial/3.png img/logo.png img/lv/8.png img/it-12-0-0.png img/it-5-0-0.png img/cover/it-5-0-0.png img/cover/landing-reporter-0.png img/it-4-2-0.png img/lv/0.png img/it-4-1-0.png img/cover/landing-skip-0.png img/cover/landing-start-0.png img/tutorial/15.png img/it-5-0-1.png img/urgency.png img/cover/it-5-0-1.png img/it-6-0-0.png img/cover/landingscene.png img/cover/exitscene.png img/it-4-2-1.png img/it-4-1-1.png img/it-7-0-0.png img/scenario.png]>
+
+      load: ->
+        root = document.getElementById(\img-preloader)
+        for img in @list =>
+          obj = new Image
+          obj.src = img
+          obj.onload = -> $scope.$apply -> $scope.progress.current += 1
+          root.appendChild(obj)
+        $scope.progress.total += @list.length
+    $scope.images.load!
+
+
 touchflag = false
 #TODO: android browser long press cause problem ( can't slide, popup menu )
 window.touch = touch = do
   down: (e) ->
-    #keys = [k for k of e].join(",")
-    #keys = [k for k of e.touches.0].join(",")
-    #setTimeout (->alert(e.touches.0.clientX)), 100
     touchflag := true
     angular.element(\#wrapper).scope().mouse.down(e,true)
   up: (e) ->
@@ -872,53 +895,3 @@ nbtz = ->
 
 nbtz jQuery
 $(\body).nodoubletapzoom!
-
-imglist = <[
-  img/it-1-0-0.png
-  img/it-1-0-1.png
-  img/it-1-1-0.png
-  img/it-1-1-1.png
-  img/it-1-2-0.png
-  img/it-1-2-1.png
-  img/it-1-3-0.png
-  img/it-1-3-1.png
-  img/it-10-0-0.png
-  img/it-11-0-0.png
-  img/it-12-0-0.png
-  img/it-2-0-0.png
-  img/it-2-0-1.png
-  img/it-2-1-0.png
-  img/it-2-1-1.png
-  img/it-2-2-0.png
-  img/it-2-2-1.png
-  img/it-3-0-0.png
-  img/it-3-0-1.png
-  img/it-3-1-0.png
-  img/it-3-1-1.png
-  img/it-3-2-0.png
-  img/it-3-2-1.png
-  img/it-4-0-0.png
-  img/it-4-0-1.png
-  img/it-4-1-0.png
-  img/it-4-1-1.png
-  img/it-4-2-0.png
-  img/it-4-2-1.png
-  img/it-5-0-0.png
-  img/it-5-0-1.png
-  img/it-6-0-0.png
-  img/it-6-0-1.png
-  img/it-7-0-0.png
-  img/it-7-0-1.png
-  img/it-9-0-0.png
-  img/it-9-1-0.png
-  img/it-9-2-0.png
-  img/it-9-3-0.png
-  img/it-9-4-0.png
-  img/it-9-5-0.png
-  img/it-9-6-0.png
-  img/it-9-7-0.png
-]>
-
-for img in imglist => 
-  obj = new Image
-  obj.src = img

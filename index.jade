@@ -40,12 +40,12 @@ html(lang="en")
         br
         | D6: {{debug.d6}}
       #frame: #wrapper
-        #loading(ng-if="loading",ng-class="{'fade':progress >= 100}")
+        #loading(ng-if="loading",ng-class="{'fade':progress.value >= 100}")
           #loading-fig
             img.base(src="img/load/shadow.png")
-            #loading-progress(ng-attr-style="top:{{100 - progress}}%")
-              img(src="img/load/doctor.png",ng-attr-style="top:-{{100 - progress}}%")
-          #loading-percent {{progress}}&nbsp;%
+            #loading-progress(ng-attr-style="top:{{100 - progress.value}}%")
+              img(src="img/load/doctor.png",ng-attr-style="top:-{{100 - progress.value}}%")
+          #loading-percent {{progress.value}}&nbsp;%
           img#loading-text(src="img/load/text.png")
         #landing(ng-if="game.state==0")
           #landing-reporter
@@ -189,3 +189,4 @@ html(lang="en")
         br
         br
         br
+      #img-preloader
