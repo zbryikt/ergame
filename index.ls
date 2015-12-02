@@ -953,12 +953,17 @@ window.ctrl = do
   skip: (is-touch = false, event) -> @wrap is-touch, ~>
     @scope!dialog.skip true
     @scope!audio.click!
-    event.preventDefault!
+    event.prevent-default!
 
   pause: (is-touch = false, event) -> @wrap is-touch, ~>
     @scope!game.pause!
     @scope!audio.click!
-    event.preventDefault!
+    event.prevent-default!
+
+  mute: (is-touch = false, event) -> @wrap is-touch, ~>
+    @scope!audio.toggle-mute!
+    event.prevent-default!
+    event.cancelBubble = true
 
 
 touchflag = false
