@@ -104,6 +104,7 @@ angular.module \ERGame, <[]>
         $scope.supply.reset!
         $scope.mouse.reset!
         $scope.audio.reset!
+        $scope.dialog.reset!
         $scope.rebuild!
         $scope <<< {madmax: 0}
         $scope.dialog.toggle null, false
@@ -429,6 +430,8 @@ angular.module \ERGame, <[]>
       next: -> $timeout (~> @main true), 200
       type: ""
       h: {i: [], t: []}
+      reset: ->
+        @ <<< {tut: true, show: false, idx: 0, type: ""}
       skip: (hold = false) ->
         for item in @h.i => $interval.cancel item
         for item in @h.t => $timeout.cancel item
@@ -451,7 +454,7 @@ angular.module \ERGame, <[]>
         delete $scope.mouse.forceStay
         delete $scope.mouse.forceMood
         $scope.game.reset!
-        $scope.dialog.tut = false
+        $scope.dialog <<< {tut: false, idx: @step.length - 1}
         $scope.mouse.unlock!
         $(\#score).remove-class \hint
         $scope.doctor
@@ -742,7 +745,12 @@ angular.module \ERGame, <[]>
       s: {}
       buf: {}
       names: <[click count1 count2 blop die menu dindon born click2 bkloop bk]>
-      reset: -> for item in @names => @s[item].pause!
+      reset: ->
+        for item in @names => @s[item].pause!
+        @bkt = 0
+        if @bk =>
+          delete @bk.pausetime
+          delete @bk.starttime
       n: {}
       bkt: 0
       is-mute: false
@@ -878,7 +886,7 @@ angular.module \ERGame, <[]>
               $scope.doctor.drain!
       tweak: ->
         [w,h] = [$(window)width!, $(window)height!]
-        $scope.dialog.main!
+        if $scope.game.state == 3 => $scope.dialog.main!
         is-pad = if /iPad/.exec(navigator.platform) => true else false
         try
           ismin = $scope.scream.is-minimal-view!
