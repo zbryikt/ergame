@@ -60,6 +60,8 @@ img {
   padding: 10px 10px;
   background: #000;
   margin: auto;
+  position: relative;
+  z-index: 13;
 }
 #wrapper {
   -webkit-touch-callout: none;
@@ -69,7 +71,9 @@ img {
   -ms-user-select: none;
   user-select: none;
   width: 100%;
-  position: relative;
+  position: absolute;
+  top: 10px;
+  left: 10px;
   overflow: hidden;
 }
 #wheel {
@@ -1351,11 +1355,18 @@ width: 100%;
   left: 37%;
   width: 35.5%;
   opacity: 1;
-  -ms-animation: blink 0.4s infinite linear;
-  -moz-animation: blink 0.4s infinite linear;
-  -webkit-animation: blink 0.4s infinite linear;
-  -o-animation: blink 0.4s infinite linear;
-  animation: blink 0.4s infinite linear;
+  -ms-animation: blink 0.399s infinite linear;
+  -moz-animation: blink 0.399s infinite linear;
+  -webkit-animation: blink 0.399s infinite linear;
+  -o-animation: blink 0.399s infinite linear;
+  animation: blink 0.399s infinite linear;
+  -webkit-perspective: 1000;
+  -webkit-backface-visibility: hidden;
+  -ms-animation-delay: 0s;
+  -moz-animation-delay: 0s;
+  -webkit-animation-delay: 0s;
+  -o-animation-delay: 0s;
+  animation-delay: 0s;
 }
 #block-mask .type img:nth-of-type(2) {
   -ms-animation-delay: 0.2s;
@@ -2157,7 +2168,7 @@ width: 100%;
   }
 }
 #loading {
-  z-index: 11;
+  z-index: 12;
   background: #fff;
 }
 #loading.fade {
@@ -2409,6 +2420,8 @@ width: 100%;
   -webkit-animation: blink 0.2s infinite linear;
   -o-animation: blink 0.2s infinite linear;
   animation: blink 0.2s infinite linear;
+  -webkit-backface-visibility: hidden;
+  -webkit-perspective: 1000;
 }
 #finger-tap img:nth-of-type(2) {
   -ms-animation-delay: 0.1s;
@@ -2811,6 +2824,8 @@ width: 100%;
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+  -webkit-backface-visibility: hidden;
+  -webkit-perspective: 1000;
 }
 #finger-slide img:nth-of-type(1) {
   -ms-animation: slide1 3s infinite linear;
@@ -3097,11 +3112,16 @@ width: 100%;
 #click-indicator img {
   position: absolute;
   width: 100%;
-  -ms-animation: blink 0.4s infinite linear;
-  -moz-animation: blink 0.4s infinite linear;
-  -webkit-animation: blink 0.4s infinite linear;
-  -o-animation: blink 0.4s infinite linear;
-  animation: blink 0.4s infinite linear;
+  -ms-animation: blink 0.399s infinite linear;
+  -moz-animation: blink 0.399s infinite linear;
+  -webkit-animation: blink 0.399s infinite linear;
+  -o-animation: blink 0.399s infinite linear;
+  animation: blink 0.399s infinite linear;
+  -ms-animation-delay: 0s;
+  -moz-animation-delay: 0s;
+  -webkit-animation-delay: 0s;
+  -o-animation-delay: 0s;
+  animation-delay: 0s;
 }
 #click-indicator img:nth-of-type(2) {
   -ms-animation-delay: 0.2s;
@@ -3117,5 +3137,25 @@ width: 100%;
   position: absolute;
   top: 0;
   left: 0;
-  overflow: hidden;
+  z-index: -1;
+}
+#img-preloader img {
+  width: 1px;
+}
+#deg90 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url("img/90deg.png") center center no-repeat #fff;
+  z-index: 11;
+  background-size: cover;
+}
+#minimal-fix {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 200%;
 }

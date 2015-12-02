@@ -89,6 +89,9 @@ angular.module \ERGame, <[]>
         @set-state 3
         $scope.audio.bkloop 0, true
         $scope.audio.bk.pause true
+      pause: ->
+        @set-state 1
+        $scope.audio.bk.pause!
       start: ->
         @set-state 2
         $scope.audio.bkloop.pause true
@@ -678,18 +681,61 @@ angular.module \ERGame, <[]>
 
     $scope.scream = gajus.Scream width: portrait: 320, landscape: 480
 
-    [doc-w, doc-h] = [$(document)width!, $(document)height! - 50]
-    [cvs-w, cvs-h] = [1024,576]
-    [w1,h1] = if doc-w < 1024 => [doc-w, doc-w * 576 / 1024 ] else [1024,576]
-    [w2,h2] = if doc-h < 576  => [doc-h * 1024 / 576, doc-h] else [1024,576]
-    [w,h] = if h1 > doc-h => [w2,h2] else [w1,h2]
-    $(\#frame).css width: "#{w}px", height: "#{h + if h < 480 => 0 else 10}px"
-    $(\#container).css width: "#{w}px"
-    $(\body).css overflow: \hidden
-    if h < 480 => # TODO: use a more robust approach
-      $(\#frame).css padding: 0
-      $(\#head).css display: \none
-      $(\#foot).css display: \none
+    $scope.dimension = do
+      update: ->
+        [doc-w, doc-h] = [$(window)width!, $(window)height!]
+        [cvs-w, cvs-h] = [1024,576]
+        [w1,h1] = if doc-w < 1024 => [doc-w, doc-w * 576 / 1024 ] else [1024,576]
+        [w2,h2] = if doc-h < 576  => [doc-h * 1024 / 576, doc-h] else [1024,576]
+        [w,h] = if h1 > doc-h => [w2,h2] else [w1,h1]
+        #[w,h] = [320, 480]
+        $(\#frame).css width: "#{w}px", height: "#{h}px"
+        $(\#container).css width: "#{w}px"
+
+        $(\body).css overflow: \hidden
+
+        if doc-w < doc-h => 
+          @portrait = true 
+          if $scope.game.state == 2 => $scope.game.pause!
+        else 
+          @portrait = false
+
+
+        if @portrait =>
+          $(\#frame).css do
+            padding: 0, position: \absolute
+            top: 0, left: 0
+            height: \100%, width: \100%
+          $(\#wrapper).css do
+            width: \100%, height: \100%
+            top: \0, left: \0
+
+        else =>
+          #if w < 480 or h < 480 => 
+          if doc-h - h <= 110 =>
+            $(\#frame).css do
+              padding: \0, position: \fixed
+              top: "#{(doc-h - h) / 2}px", left: "#{(doc-w - w) / 2}px",
+            $(\#wrapper).css do
+              width: "#{w}px", height: "#{h}px"
+              top: \0, left: \0
+            $(\#head).css display: \none
+            $(\#foot).css display: \none
+          else
+            $(\#frame).css do
+              padding: \10px, position: \relative
+              top: \auto, left: \auto
+              height: "#{h + 10}px"
+            $(\#wrapper).css do
+              width: "#{w - 20}px", height: "#{h - 10}px"
+              top: \10px, left: \10px
+            $(\#head).css display: \block
+            $(\#foot).css display: \block
+
+      portrait: false
+      rotate: ->
+    $scope.dimension.update!
+    window.onresize = -> $scope.$apply -> $scope.dimension.update!
     document.ontouchmove = (e) -> if $scope.is-pad or $scope.ismin => return e.prevent-default!
 
     $scope.audio = do
@@ -831,16 +877,20 @@ angular.module \ERGame, <[]>
               it.active = 0
               $scope.doctor.drain!
       tweak: ->
+        [w,h] = [$(window)width!, $(window)height!]
         $scope.dialog.main!
         is-pad = if /iPad/.exec(navigator.platform) => true else false
         try
           ismin = $scope.scream.is-minimal-view!
+          $scope.debug.d1 = ismin
         if $scope.ismin and !ismin and !is-pad=> 
           document.body.scrollTop = 0
           $(\#minimal-fix).css display: \block
         if is-pad or ismin => $(\#minimal-fix).css display: \none
         $scope.ismin = ismin
         $scope.is-pad = is-pad
+        if w != @w or h != @h => $scope.dimension.update!
+        @{w,h} <<< {w,h}
 
     $interval (->
       interval.spawn!
@@ -866,7 +916,25 @@ angular.module \ERGame, <[]>
           root.appendChild(obj)
         $scope.progress.total += @list.length
     $scope.images.load!
+    $scope.blah = -> $scope.debug.d2 = new Date!getTime!
 
+window.ctrl = do
+  _s: null
+  scope: ->
+    if @_s => return that
+    @_s = angular.element(\body).scope!
+  wrap: (is-touch, callback) ->
+    if !is-touch and touchflag => return
+    @scope!$apply ~> callback!
+
+  next: (is-touch = false) -> @wrap is-touch, ~>
+    @scope!dialog.next!
+    @scope!audio.click!
+
+  skip: (is-touch = false, event) -> @wrap is-touch, ~>
+    @scope!dialog.skip true
+    @scope!audio.click!
+    event.preventDefault!
 
 touchflag = false
 #TODO: android browser long press cause problem ( can't slide, popup menu )

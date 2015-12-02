@@ -38,11 +38,15 @@ img
   padding: 10px 10px
   background: #000
   margin: auto
+  position: relative
+  z-index: index(order, 'frame')
 
 #wrapper
   no-selection()
   width: 100%
-  position: relative
+  position: absolute
+  top: 10px
+  left: 10px
   overflow: hidden
 
 #wheel
@@ -87,7 +91,6 @@ for type in (1..12)
 #block-mask
   width: 100%
   height: 100%
-  //background: url(img/it-2-2-1.png) rgba(0,0,0,0.7) center center no-repeat
   background: rgba(65,65,65,0.7)
   z-index: index(order, 'mad-mask')
   position: absolute
@@ -98,7 +101,10 @@ for type in (1..12)
     left: 37%
     width: 35.5%
     opacity: 1
-    animation(blink 0.4s infinite linear)
+    animation(blink 0.399s infinite linear)
+    -webkit-perspective: 1000
+    -webkit-backface-visibility: hidden
+    animation-delay(0.0s)
   .type img:nth-of-type(2)
     animation-delay(0.2s)
 
@@ -518,6 +524,8 @@ for type in (1..12)
 #finger-tap
   img
     animation(blink 0.2s infinite linear)
+    -webkit-backface-visibility: hidden
+    -webkit-perspective: 1000
   img:nth-of-type(2)
     animation-delay(0.1s)
 
@@ -559,6 +567,8 @@ for type in (1..12)
   no-selection()
   img
     no-selection()
+    -webkit-backface-visibility: hidden
+    -webkit-perspective: 1000
   img:nth-of-type(1)
     animation(slide1 3.0s infinite linear)
     z-index: 1
@@ -631,7 +641,8 @@ for type in (1..12)
   img
     position: absolute
     width: 100%
-    animation(blink 0.4s infinite linear)
+    animation(blink 0.399s infinite linear)
+    animation-delay(0.0s)
   img:nth-of-type(2)
     animation-delay(0.2s)
 
@@ -642,4 +653,23 @@ for type in (1..12)
   position: absolute
   top: 0
   left: 0
-  overflow: hidden
+  z-index: -1
+  img
+    width: 1px
+
+#deg90
+  position: absolute
+  top: 0
+  left: 0
+  width: 100%
+  height: 100%
+  background: url(img/90deg.png) center center no-repeat #fff
+  z-index: index(order, 'deg90')
+  background-size: cover
+
+#minimal-fix
+  position: absolute
+  top: 0
+  left: 0
+  width: 100%
+  height: 200%
