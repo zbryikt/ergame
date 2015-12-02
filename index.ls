@@ -772,7 +772,10 @@ angular.module \ERGame, <[]>
           if offset? => src.start 0, offset else src.start 0
           if name == \bk => @bkt = ret.starttime
         ret.pause = (reset = false) ~> 
-          if @n[name] => @n[name].stop 0
+          if @n[name] =>
+            try
+              @n[name].stop 0
+            catch e
           if !reset => ret.pausetime = parseInt( new Date!getTime! / 1000 )
         ret
       load: (name, url) ->
@@ -827,6 +830,8 @@ angular.module \ERGame, <[]>
         else if time <= 98 => $scope.config.cur = $scope.config.mode[$scope.mode]1
         else if time <= 120 => $scope.config.cur = $scope.config.mode[$scope.mode]2
         else => $scope.config.cur = $scope.config.mode[$scope.mode]3
+        $scope.debug.d2 = time
+        $scope.debug.d3 = $scope.config.cur.prob.pat.2
         if time >= 98 and time <= 101 and $scope.game.state == 2 => $scope.danger = true
         else if time <= 120 => $scope.danger = false
         if isHalt! => return
