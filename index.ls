@@ -936,6 +936,12 @@ window.ctrl = do
     @scope!audio.click!
     event.preventDefault!
 
+  pause: (is-touch = false, event) -> @wrap is-touch, ~>
+    @scope!game.pause!
+    @scope!audio.click!
+    event.preventDefault!
+
+
 touchflag = false
 #TODO: android browser long press cause problem ( can't slide, popup menu )
 window.touch = touch = do
