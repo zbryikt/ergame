@@ -436,6 +436,8 @@ angular.module \ERGame, <[]>
           step.fired = false
           if step.reset => step.reset!
       skip: (hold = false) ->
+        $(\#finger-slide).css display: \none
+        $(\#finger-tap).css display: \none
         for item in @h.i => $interval.cancel item
         for item in @h.t => $timeout.cancel item
         if !hold => @clean!
