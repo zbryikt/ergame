@@ -261,6 +261,7 @@ angular.module \ERGame, <[]>
         if $scope.madmax or $scope.doctor.faint => return $scope.demad e
         if @is-locked => return
         if @is-pal-on => return
+        $(\#finger-tap).css display: \none
         offset = $(\#wrapper).offset!
         [ex, ey] = [(e.clientX or e.pageX), (e.clientY or e.pageY)]
         if !ex and !ey => [ex,ey] = [e.touches.0.clientX, e.touches.0.clientY]
@@ -367,6 +368,7 @@ angular.module \ERGame, <[]>
 
     $scope.madmax = 0
     $scope.demad = (e) ->
+      $(\#finger-tap).css display: \none
       prog = 100
       madmax = $scope.percent.sprite.points.filter(->it.ismad) 
       if !madmax.length => $scope.madmax = 0
@@ -579,9 +581,7 @@ angular.module \ERGame, <[]>
                 top: \22%
                 left: \68%
               $scope.madspeed = 0.015
-              $scope.dialog.timeout (->
-                $(\#finger-tap).css display: \none
-              ), 1300
+              #$scope.dialog.timeout (-> $(\#finger-tap).css display: \none), 1300
         * do
             ready: false
             handler: null
@@ -612,7 +612,7 @@ angular.module \ERGame, <[]>
                   top: \30%
                   left: \30%
                 $scope.madspeed = 0.002
-                $scope.dialog.timeout (-> $(\#finger-tap).css display: \none), 1000
+                #$scope.dialog.timeout (-> $(\#finger-tap).css display: \none), 1000
               if $scope.madspeed == 0.002 and $scope.madmax < 1 and @launched == 1 => 
                 @launched = 2
                 $scope.percent.sprite.points.filter(->it.type == 4).0.mad = 0
@@ -640,7 +640,7 @@ angular.module \ERGame, <[]>
                 top: \7%
                 left: \20%
               $scope.dialog.timeout (->
-                $(\#finger-tap).css display: \none
+                #$(\#finger-tap).css display: \none
                 $scope.mouse.unlock!
               ), 1000
         * do
@@ -673,9 +673,7 @@ angular.module \ERGame, <[]>
                 display: \block
                 top: \20%
                 left: \30%
-              $scope.dialog.timeout (->
-                $(\#finger-tap).css display: \none
-              ), 1000
+              #$scope.dialog.timeout (-> $(\#finger-tap).css display: \none), 1000
         * do
             ready: false
             reset: -> @ <<< ready: false, handler: null
