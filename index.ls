@@ -143,14 +143,14 @@ angular.module \ERGame, <[]>
         if $scope.doctor.energy <= 0.0001 =>
           $scope.doctor.faint = true
           $scope.doctor.demading = 0
-      fail: -> 
+      fail: ->
         @
           ..set-mood 7
           ..chance -= 1
           ..chance >?= 0
           ..hurting = 1 # 震動倒數
         if @chance <= 0 => $scope.game.over!
-        $scope.audio.die!
+        if audio => $scope.audio.die!
       reset: ->
         @ <<< {rank: 0, energy: 1, faint: false, chance: 5, hurting: 0, draining: 0}
         if @handler => $timeout.cancel @handler
@@ -523,7 +523,7 @@ angular.module \ERGame, <[]>
               if ret and $scope.doctor.chance == 5 =>
                 $scope.dialog.type = \mini
                 @handler = $scope.dialog.timeout (~> 
-                  $scope.doctor.fail!
+                  $scope.doctor.hurting = 1
                   @handler = null
                 ), 500
               ret
