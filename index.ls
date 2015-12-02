@@ -432,6 +432,9 @@ angular.module \ERGame, <[]>
       h: {i: [], t: []}
       reset: ->
         @ <<< {tut: true, show: false, idx: 0, type: ""}
+        for step in @step =>
+          step.fired = false
+          if step.reset => step.reset!
       skip: (hold = false) ->
         for item in @h.i => $interval.cancel item
         for item in @h.t => $timeout.cancel item
@@ -469,6 +472,7 @@ angular.module \ERGame, <[]>
         * {}
         * do
             ready: false
+            reset: -> @ready = false
             check: ->
               if !@ready and $scope.game.state == 3 => @ready = true
               @ready
@@ -481,6 +485,7 @@ angular.module \ERGame, <[]>
               $scope.dialog.timeout (-> $scope.patient.add 1, 3, 0), 3000
         * do
             ready: false
+            reset: -> @ready = false
             check: ->
               if @ready => return true
               if $scope.percent.sprite.points.filter(->it.type==1 and it.variant==3).length > 0 =>
@@ -499,6 +504,7 @@ angular.module \ERGame, <[]>
                 $scope.mouse.unlock!
               , 3000
         * do
+            reset: -> @handler = null
             check: ->
               ret = ($scope.percent.sprite.points.filter(->it.type==1 and it.variant != 0).length == 0)
               if ret => 
@@ -518,6 +524,7 @@ angular.module \ERGame, <[]>
             $(\#score).remove-class \hint
         * do
             mood: 0
+            reset: -> @ <<< handler: null, mood: 0
             check: ->
               if !(@handler?) => 
                 @handler = $scope.dialog.interval (~>
@@ -537,6 +544,7 @@ angular.module \ERGame, <[]>
             ready: false
             handler: null
             mood-handler: null
+            reset: -> @ <<< {handler: null, mood-handler: null, ready: false, mood: 3}
             check: ->
               has-pat2 = ($scope.percent.sprite.points.filter(->it.type==4 and it.variant > 0).length > 0)
               has-pat1 = ($scope.percent.sprite.points.filter(->it.type==1 and it.variant==2).length > 0)
@@ -564,6 +572,7 @@ angular.module \ERGame, <[]>
         * do
             ready: false
             handler: null
+            reset: -> @ <<< handler: null, ready: false
             check: ->
               if $scope.madspeed == 0.015 and $(\#finger-tap).css(\display) == \none and !@handler =>
                 @handler = $scope.dialog.timeout (~> @ready = true), 2000
@@ -573,6 +582,7 @@ angular.module \ERGame, <[]>
               $scope.mouse.lock!
         * do
             ready: false
+            reset: -> @ready = false
             check: ->
               $scope.dialog.timeout (~> @ready = true), 1700
               @ready
@@ -580,6 +590,7 @@ angular.module \ERGame, <[]>
             launched: 0
             supply: 0
             ready: false
+            reset: -> @ <<< launched: 0, supply: 0, ready: false, handler: null
             check: ->
               if $scope.madmax >= 1 and @launched==0 =>
                 @launched = 1
@@ -622,6 +633,7 @@ angular.module \ERGame, <[]>
         * do
             ready: false
             handler: false
+            reset: -> @ <<< handler: null, ready: false
             check: ->
               if !@handler => 
                 @handler = $scope.dialog.timeout (~> 
@@ -653,6 +665,7 @@ angular.module \ERGame, <[]>
               ), 1000
         * do
             ready: false
+            reset: -> @ <<< ready: false, handler: null
             check: ->
               if !@handler? and $scope.doctor.energy >= 0.999 and $scope.doctor.faint == false =>
                 @handler = $scope.dialog.timeout (~>
