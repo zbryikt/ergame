@@ -4,7 +4,7 @@ doctype html
 - var use = { cdn: false, og: false, favicon: true }
 - var lib = { jquery: true, d3js: false, angular: true, bootstrap: true, semantic: false, fontawesome: true }
 - var assets = "assets"
-- var thumbnail = "thumbnail.png"
+- var thumbnail = "img/thumbnail.jpg"
 - var favicon = "img/favicon.png"
 - var title = "急診人生 - 三分鐘的急診室醫師人生 / 報導者"
 html(lang="en")
@@ -27,7 +27,7 @@ html(lang="en")
         .pull-right
           a(href="#"): img(src="img/fb.png")
           a(href="#"): img(src="img/twt.png")
-      //-div(style="position:absolute;top:10px;left:10px;z-index:10000")
+      //-div(style="position:fixed;top:10px;left:10px;z-index:10000")
         | D1: {{debug.d1}}
         br
         | D2: {{debug.d2}}
@@ -47,6 +47,7 @@ html(lang="en")
               img(src="img/load/doctor.png",ng-attr-style="top:-{{100 - progress.value}}%")
           #loading-percent {{progress.value}}&nbsp;%
           img#loading-text(src="img/load/text.png")
+        #deg90(ng-if="dimension.portrait")
         #landing(ng-if="game.state==0")
           #landing-reporter
             img(src="img/cover/landing-reporter-0.png")
@@ -91,13 +92,13 @@ html(lang="en")
           #gctrl-landing(ng-if="game.state==4",ng-mouseup="game.reset();audio.click();$event.preventDefault()")
             img(src="img/game/landing-0.png")
             img.active(src="img/game/landing-1.png")
-          #gctrl-pause(ng-if="game.state==2",ng-mouseup="game.setState(1);audio.click();$event.preventDefault();audio.bk.pause()")
+          #gctrl-pause(ng-if="game.state==2",onclick="ctrl.pause(false,event)",ontouchstart="ctrl.pause(true,event)")
             img(src="img/game/pause-0.png")
             img.active(src="img/game/pause-1.png")
-          #gctrl-cont(ng-if="game.state==3 && dialog.show",ng-click="dialog.next();audio.click()",onclick="")
+          #gctrl-cont(ng-if="game.state==3 && dialog.show",onclick="ctrl.next(false)",ontouchstart="ctrl.next(true)")
             img(src="img/game/cont-0.png")
             img.active(src="img/game/cont-1.png")
-          #gctrl-skip(ng-if="game.state==3",ng-mouseup="dialog.skip(true);audio.click();$event.preventDefault()")
+          #gctrl-skip(ng-if="game.state==3",onclick="ctrl.skip(false,event)",ontouchstart="ctrl.skip(true,event)")
             img(src="img/game/skip-0.png")
             img.active(src="img/game/skip-1.png")
           #gctrl-start(ng-if="game.state==1",ng-click="game.setState(2);audio.click();audio.bk()")
@@ -178,15 +179,5 @@ html(lang="en")
       #foot
         a.pull-left(href="#"): img(src="img/about.png")
         a.pull-right(href="#"): img(src="img/github.png")
-      #minimal-fix
-        br
-        br
-        br
-        br
-        br
-        br
-        br
-        br
-        br
-        br
+      #minimal-fix &nbsp;
       #img-preloader
