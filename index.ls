@@ -950,8 +950,8 @@ window.ctrl = do
     @scope!dialog.next!
     @scope!audio.click!
 
-  skip: (is-touch = false, event) -> @wrap is-touch, ~>
-    @scope!dialog.skip true
+  skip: (is-touch = false, event, hold = true) -> @wrap is-touch, ~>
+    @scope!dialog.skip hold
     @scope!audio.click!
     event.prevent-default!
 
@@ -964,6 +964,19 @@ window.ctrl = do
     @scope!audio.toggle-mute!
     event.prevent-default!
     event.cancelBubble = true
+
+  replay: (is-touch = false, event) -> @wrap is-touch, ~>
+    @scope!game.reset!
+    @scope!audio.click!
+
+  tutorial: (is-touch = false, event) -> @wrap is-touch, ~>
+    @scope!game.tutorial!
+    @scope!audio.click!
+
+  cont: (is-touch = false, event) -> @wrap is-touch, ~>
+    @scope!game.set-state 2
+    @scope!audio.click!
+    @scope!audio.bk!
 
 
 touchflag = false
