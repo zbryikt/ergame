@@ -2254,7 +2254,8 @@ width: 100%;
   top: auto;
   left: auto;
   bottom: 20px;
-  right: 20px;
+  right: 26px;
+  margin-right: 6%;
   width: 6%;
   height: 10.6%;
 }
@@ -2267,11 +2268,11 @@ width: 100%;
   height: 100%;
 }
 #mute {
-  right: auto;
-  left: 20px;
+  right: 20px;
+  margin-right: 0;
 }
 #game-ctrl div#gctrl-cont {
-  left: -380%;
+  left: -362%;
   width: 351%;
 }
 #game-over {
@@ -2287,12 +2288,12 @@ width: 100%;
   bottom: 20px;
   height: 10.6%;
   width: 21.5%;
-  right: 25px;
-  margin-right: 6%;
+  right: 31px;
+  margin-right: 12%;
 }
 #game-over #gover-reporter {
-  right: 31px;
-  margin-right: 27.5%;
+  right: 37px;
+  margin-right: 33.5%;
 }
 #game-over img {
   width: 100%;
