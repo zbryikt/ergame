@@ -724,9 +724,7 @@ angular.module \ERGame, <[]>
           ret.starttime = parseInt( new Date!getTime! / 1000 ) - (if offset? => offset else 0)
           if looping => src.loop = true
           if offset? => src.start 0, offset else src.start 0
-          if name == \bk => 
-            @bkt = ret.starttime
-            $scope.debug.d5 = @bkt
+          if name == \bk => @bkt = ret.starttime
         ret.pause = (reset = false) ~> 
           if @n[name] => @n[name].stop 0
           if !reset => ret.pausetime = parseInt( new Date!getTime! / 1000 )
@@ -779,7 +777,6 @@ angular.module \ERGame, <[]>
       spawn: ->
         if $scope.dialog.tut or !($scope.game.state in [1 2 4]) => return
         time = (new Date!getTime! / 1000) - $scope.audio.bkt
-        $scope.debug.d6 = time
         if time <= 60 => $scope.config.cur = $scope.config.mode[$scope.mode]0
         else if time <= 98 => $scope.config.cur = $scope.config.mode[$scope.mode]1
         else if time <= 120 => $scope.config.cur = $scope.config.mode[$scope.mode]2
@@ -789,14 +786,10 @@ angular.module \ERGame, <[]>
         if isHalt! => return
         r = Math.random!
         if r < $scope.config.cur.prob.pat.0 => 
-          $scope.debug.d1 += 1
-          $scope.debug.d3 = r
-          $scope.debug.d4 = $scope.config.cur.prob.pat.0
           $scope.patient.add 1
         if Math.random! < $scope.config.cur.prob.sup => $scope.supply.active!
         if $scope.percent.sprite.points.filter(->it.type == 1 and it.variant != 0).length == 0 
           and Math.random! > 0.8 => 
-            $scope.debug.d2 += 1
             $scope.patient.add 1
         $scope.madspeed = $scope.config.cur.decay.mad
       drain: ->
