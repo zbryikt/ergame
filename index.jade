@@ -154,9 +154,12 @@ html(lang="en")
         #finger-tap
           img(src="img/tutorial/finger1.png",draggable="false")
           img(src="img/tutorial/finger2.png",draggable="false")
+        #oops
+          img.dialog-content(src="img/tutorial/oops.png")
+          img.dialog-doctor(src="img/tutorial/doctor.png")
         #dialog(ng-class="dialog.type")
-          img#dialog-content(ng-attr-src="img/tutorial/{{dialog.idx}}.png")
-          img#dialog-doctor(src="img/tutorial/doctor.png")
+          img.dialog-content(ng-attr-src="img/tutorial/{{dialog.idx}}.png")
+          img.dialog-doctor(src="img/tutorial/doctor.png")
         img#wheel(src="img/wheel.png",draggable="false")
         img(src="img/scenario.png",style="width:100%",draggable="false")
         .sprite(ng-repeat="pat in percent.sprite.points",
