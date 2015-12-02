@@ -13,7 +13,7 @@ now = -> new Date! |> ->
 
 _log = console.log
 console.log = (...arg) -> _log.apply null, [now!] ++ arg
-ignore-list = [/^server.ls$/, /^library.jade$/, /^\.[^/]+/, /^node_modules\//,/^assets\//]
+ignore-list = [/^imgs.ls$/, /^server.ls$/, /^library.jade$/, /^\.[^/]+/, /^node_modules\//,/^assets\//]
 ignore-func = (f) -> if f => ignore-list.filter(-> it.exec f.replace(cwd-re, "")replace(/^\.\/+/, ""))length else 0
 
 type-table =
