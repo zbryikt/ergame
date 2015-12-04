@@ -150,7 +150,7 @@ angular.module \ERGame, <[]>
           ..chance >?= 0
           ..hurting = 1 # 震動倒數
         if @chance <= 0 => $scope.game.over!
-        if audio => $scope.audio.die!
+        $scope.audio.die!
       reset: ->
         @ <<< {rank: 0, energy: 1, faint: false, chance: 5, hurting: 0, draining: 0}
         if @handler => $timeout.cancel @handler
@@ -304,13 +304,13 @@ angular.module \ERGame, <[]>
         if isHalt! => return
         if @is-locked or $scope.madmax or $scope.doctor.faint => return
         now = new Date!getTime!
-        if now - @timestamp < 100 => return
+        [ex, ey] = [(e.clientX or e.pageX), (e.clientY or e.pageY)]
+        if !ex and !ey => [ex,ey] = [@last.x, @last.y]
+        if ((ex - @last.x)**2 + (ey - @last.y)**2) < 18 or now - @timestamp < 100 => return
         <~ setTimeout _, 0
         @is-pal-on = false
         $(\#wheel).css({display: "none"})
         offset = $(\#wrapper).offset!
-        [ex, ey] = [(e.clientX or e.pageX), (e.clientY or e.pageY)]
-        if !ex and !ey => [ex,ey] = [@last.x, @last.y]
         [dx, dy] = [ex - @x - offset.left, ey - @y - offset.top]
 
         angle = Math.acos( dx / Math.sqrt( dx ** 2 + dy ** 2 ) ) * 360 / ( Math.PI * 2 )
