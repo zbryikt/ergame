@@ -306,7 +306,8 @@ angular.module \ERGame, <[]>
         now = new Date!getTime!
         [ex, ey] = [(e.clientX or e.pageX), (e.clientY or e.pageY)]
         if !ex and !ey => [ex,ey] = [@last.x, @last.y]
-        if @target and @target == 1 and (((ex - @last.x)**2 + (ey - @last.y)**2) < 18 or now - @timestamp < 100) => return
+        if @target and @target.type == 1 and
+           (((ex - @last.x)**2 + (ey - @last.y)**2) < 18 or now - @timestamp < 100) => return
         <~ setTimeout _, 0
         @is-pal-on = false
         $(\#wheel).css({display: "none"})
@@ -770,7 +771,7 @@ angular.module \ERGame, <[]>
       buf: {}
       names: <[click count1 count2 blop die menu dindon born click2 bkloop bk]>
       reset: ->
-        for item in @names => @s[item].pause!
+        for item in @names => @[item]pause true
         @bkt = 0
         if @bk =>
           delete @bk.pausetime
