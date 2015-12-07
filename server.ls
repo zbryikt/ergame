@@ -13,7 +13,7 @@ now = -> new Date! |> ->
 
 _log = console.log
 console.log = (...arg) -> _log.apply null, [now!] ++ arg
-ignore-list = [/^imgs.ls$/, /^server.ls$/, /^library.jade$/, /^\.[^/]+/, /^node_modules\//,/^assets\//]
+ignore-list = [/^build-assets.ls$/, /^server.ls$/, /^library.jade$/, /^\.[^/]+/, /^node_modules\//,/^assets\//]
 ignore-func = (f) -> if f => ignore-list.filter(-> it.exec f.replace(cwd-re, "")replace(/^\.\/+/, ""))length else 0
 
 type-table =
@@ -253,8 +253,8 @@ update-file = ->
         files = fs.readdir-sync \src/ls/ .map -> "src/ls/#it"
         files = files.filter -> (/\/\./.exec it) == null
         result = [uglify.minify(lsc.compile(fs.read-file-sync(file)toString!,{bare:true}),{fromString:true}).code for file in files].join("")
-        fs.write-file-sync "build.min.js", result
-        console.log "[BUILD] #src --> build.min.js"
+        #fs.write-file-sync "build.min.js", result
+        #console.log "[BUILD] #src --> build.min.js"
       catch
         console.log "[BUILD] #src failed: "
         console.log e.message

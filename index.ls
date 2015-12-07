@@ -773,83 +773,30 @@ angular.module \ERGame, <[]>
     window.onresize = -> $scope.$apply -> $scope.dimension.update!
     document.ontouchmove = (e) -> if $scope.is-pad or $scope.ismin => return e.prevent-default!
 
-    $scope.audio = do
-      s: {}
-      buf: {}
-      names: <[click count1 count2 blop die menu dindon born click2 bkloop bk]>
-      reset: ->
-        for item in @names => @[item]pause true
-        @bkt = 0
-        if @bk =>
-          delete @bk.pausetime
-          delete @bk.starttime
-      n: {}
-      bkt: 0
-      is-mute: false
-      toggle-mute: ->
-        @is-mute = !@is-mute
-        @gain.gain.value = if @is-mute => 0 else 1
-      player: (name) ->
-        ret = (offset, looping = false) ~>
-          if !@buf[name] => return
-          if @n[name] => @n[name]disconnect!
-          @n[name] = src = @context.create-buffer-source!
-          src.buffer = @buf[name]
-          src.connect @gain # @context.destination
-          if ret.pausetime =>
-            offset = ret.pausetime - ret.starttime
-            delete ret.pausetime
-          ret.starttime = parseInt( new Date!getTime! / 1000 ) - (if offset? => offset else 0)
-          if looping => src.loop = true
-          if offset? => src.start 0, offset else src.start 0
-          if name == \bk => @bkt = ret.starttime
-        ret.pause = (reset = false) ~> 
-          if @n[name] =>
-            try
-              @n[name].stop 0
-            catch e
-          if !reset => ret.pausetime = parseInt( new Date!getTime! / 1000 )
-        ret
-      load: (name, url) ->
-        request = new XMLHttpRequest!
-        request.open \GET, url, true
-        request.response-type = \arraybuffer
-        request.onload = ~>
-          (buf) <~ @context.decode-audio-data request.response, _, (-> console.log(\fail))
-          @buf[name] = buf
-          setTimeout ( ~> $scope.$apply ~> 
-            $scope.progress.current += 1
-          ), 500
-        request.send!  
-      init: ->
-        AudioContext = window.AudioContext or window.webkitAudioContext
-        #TODO android browser doesn't support web audio
-        if !AudioContext =>
-          for item in @names =>
-            @[item] = ->
-            @[item]pause = ->
-            @s[item] = pause: ->
-          $scope.loading = false
-          return
-        @context = new AudioContext!
-        @gain = @context.create-gain!
-        @gain.connect @context.destination
-        for item in @names => 
-          @s[item] = new Audio!
-            ..src = "snd/#{item}.mp3"
-          @[item] = @player item
-          @load item, "snd/#{item}.mp3"
-        $scope.progress.total += @names.length
-
     $scope.progress = do
-      value: 100
-      total: 0
-      current: 0
+      value: 0
+      latest: 0
+      use: null
+      count: total: 0, current: 0, update: ->
+      size:  total: 0, current: 0, group: {}, update: (name, value) -> 
+        $scope.progress.set-use \size
+        @group{}[name] <<< value
+        list = [v for k,v of @group]
+        @total = list.reduce(((a,b) -> a + b.total),0)
+        @current = list.reduce(((a,b) -> a + b.current),0)
+      set-use: -> @use = @[it]
+      handler: null
+      transition: ->
+        if @value >= 100 => $timeout (-> $scope.loading = false), 1000
+        if @value >= @latest => return @handler = null
+        @value = ( @value + 3 ) <? @latest
+        @handler = $timeout (~> @transition!), 10
       update: ->
-        @value = parseInt(100 * @current / @total)
-        if @value >= 100 => $scope.loading = false
-    $scope.$watch 'progress.total', -> $scope.progress.update!
-    $scope.$watch 'progress.current', -> $scope.progress.update!
+        if !@use => @use = @count
+        @latest = parseInt(100 * @use.current / @use.total)
+        if !@handler => @transition!
+    $scope.$watch 'progress.count', (-> $scope.progress.update!), true
+    $scope.$watch 'progress.size', (-> $scope.progress.update!), true
 
     $scope.debug = d1: 0, d2: 0
     interval = do
@@ -934,52 +881,214 @@ angular.module \ERGame, <[]>
       interval.tweak!
     ), 100
     $scope.loading = true
-    $scope.audio.init!
     document.body
       ..ontouchstart = window.touch.down
       ..ontouchmove = window.touch.move
       ..ontouchend = window.touch.up
 
-    $scope.images = do
-      list: <[img/tutorial/0.png img/gauge/1s.png img/fb.png img/gauge/7s.png img/gauge/4s.png img/gauge/5s.png img/gauge/2s.png img/gauge/0s.png img/gauge/3s.png img/twt.png img/gauge/6s.png img/gauge/9s.png img/gauge/8s.png img/about.png img/game/pause-1.png img/game/pause-0.png img/gauge/energy-0.png img/game/start-1.png img/game/skip-1.png img/game/start-0.png img/game/skip-0.png img/pause/fb-1.png img/gauge/energy-5.png img/game/cont-1.png img/arrow.png img/mute/o1.png img/github.png img/game/landing-1.png img/gauge/counting.png img/game/cont-0.png img/mute/o0.png img/game/landing-0.png img/tutorial/finger1.png img/it-1-0-0.png img/it-1-0-1.png img/pause/reporter-1.png img/favicon.png img/mad/click-2.png img/mad/click-1.png img/pause/fb-0.png img/load/shadow.png img/pause/tutorial-1.png img/gauge/chance-o.png img/mute/x1.png img/cover/over-share-1.png img/gauge/chance-x.png img/pause/reporter-0.png img/mute/x0.png img/cover/over-share-0.png img/pause/link-1.png img/cover/over-report-1.png img/pause/tutorial-0.png img/cover/over-report-0.png img/tutorial/finger2.png img/countdown/2.png img/pause/tm.png img/pause/restart-0.png img/pause/replay-0.png img/pause/restart-1.png img/pause/replay-1.png img/pause/link-0.png img/countdown/1.png img/countdown/3.png img/cover/landing-skip-1.png img/cover/landing-reporter-1.png img/tutorial/6.png img/it-1-1-0.png img/it-1-3-0.png img/it-1-2-0.png img/it-9-0-0.png img/it-2-0-0.png img/it-2-0-1.png img/it-3-0-1.png img/it-3-0-0.png img/tutorial/11.png img/tutorial/10.png img/tutorial/13.png img/it-7-0-1.png img/cover/landing-start-1.png img/it-1-1-1.png img/it-9-1-0.png img/it-11-0-0.png img/it-1-2-1.png img/it-1-3-1.png img/tutorial/doctor.png img/tutorial/12.png img/countdown/go.png img/wheel.png img/tutorial/9.png img/it-6-0-1.png img/it-9-7-0.png img/load/doctor.png img/it-9-2-0.png img/it-9-3-0.png img/it-9-6-0.png img/tutorial/8.png img/tutorial/7.png img/it-9-4-0.png img/it-9-5-0.png img/it-10-0-0.png img/it-2-1-0.png img/it-2-2-0.png img/it-3-2-0.png img/it-3-1-0.png img/tutorial/1.png img/tutorial/5.png img/danger.png img/it-2-2-1.png img/it-2-1-1.png img/it-3-1-1.png img/it-3-2-1.png img/load/text.png img/tutorial/14.png img/tutorial/2.png img/tutorial/4.png img/mad/hungry2.png img/mad/hungry1.png img/mad/hysteria2.png img/mad/hysteria1.png img/mad/gangster2.png img/mad/gangster1.png img/it-4-0-0.png img/it-4-0-1.png img/tutorial/3.png img/logo.png img/lv/8.png img/it-12-0-0.png img/it-5-0-0.png img/cover/it-5-0-0.png img/cover/landing-reporter-0.png img/it-4-2-0.png img/lv/0.png img/it-4-1-0.png img/cover/landing-skip-0.png img/cover/landing-start-0.png img/tutorial/15.png img/it-5-0-1.png img/urgency.png img/cover/it-5-0-1.png img/it-6-0-0.png img/cover/landingscene.png img/cover/exitscene.png img/it-4-2-1.png img/it-4-1-1.png img/it-7-0-0.png img/scenario.png img/tutorial/oops.png]>
+    $scope.assets = do
+      fetch: (url, type, cb) ->
+        t1 = new Date!getTime!
+        $scope.progress.count.total += 1
+        request = new XMLHttpRequest!
+        request.open \GET, url, true
+        request.response-type = \arraybuffer
+        request.onprogress = (e) -> $scope.$apply -> 
+          $scope.progress.size.update url, {current: e.loaded, total: e.total}
+        request.onload = ~> $scope.$apply ~> 
+          [str,buf] = ["",new Zlib.Gunzip(new Uint8Array request.response).decompress!]
+          for i from 0 til buf.length => str += String.fromCharCode(buf[i])
+          ret = @parse JSON.parse(str), type
+          cb ret
+          t2 = new Date!getTime!
+          console.log "[assets] Process #url spent #{t2 - t1} ms."
+        request.send!
+      parse: (d, type) ->
+        ret = {url: {}, buf: {}}
+        for k,v of d =>
+          data = atob v
+          buf = new ArrayBuffer data.length
+          array = new Uint8Array buf #data.length
+          for i from 0 til data.length => array[i] = data.charCodeAt i
+          blob = new Blob [array], {type: type}
+          ret.buf[k] = buf
+          ret.url[k] = $sce.trustAsResourceUrl(URL.createObjectURL blob)
+        return ret
 
-      load: ->
-        root = document.getElementById(\img-preloader)
-        for img in @list =>
-          obj = new Image
-          obj.src = img
-          obj.onload = -> $scope.$apply -> $scope.progress.current += 1
-          root.appendChild(obj)
-        $scope.progress.total += @list.length
-    $scope.images.load!
+    /*
+    $scope.audio = do
+      s: {}
+      buf: {}
+      names: <[click count1 count2 blop die menu dindon born click2 bkloop bk]>
+      reset: ->
+        for item in @names => @[item]pause true
+        @bkt = 0
+        if @bk =>
+          delete @bk.pausetime
+          delete @bk.starttime
+      n: {}
+      bkt: 0
+      is-mute: false
+      toggle-mute: ->
+        @is-mute = !@is-mute
+        @gain.gain.value = if @is-mute => 0 else 1
+      player: (name) ->
+        ret = (offset, looping = false) ~>
+          if !@buf[name] => return
+          if @n[name] => @n[name]disconnect!
+          @n[name] = src = @context.create-buffer-source!
+          src.buffer = @buf[name]
+          src.connect @gain # @context.destination
+          if ret.pausetime =>
+            offset = ret.pausetime - ret.starttime
+            delete ret.pausetime
+          ret.starttime = parseInt( new Date!getTime! / 1000 ) - (if offset? => offset else 0)
+          if looping => src.loop = true
+          if offset? => src.start 0, offset else src.start 0
+          if name == \bk => @bkt = ret.starttime
+        ret.pause = (reset = false) ~> 
+          if @n[name] =>
+            try
+              @n[name].stop 0
+            catch e
+          if !reset => ret.pausetime = parseInt( new Date!getTime! / 1000 )
+        ret
+      load: (name, url) ->
+        request = new XMLHttpRequest!
+        request.open \GET, url, true
+        request.response-type = \arraybuffer
+        request.onprogress = (e) -> $scope.$apply ->
+          $scope.progress.size.update name, {current: e.loaded, total: e.total}
+        request.onload = ~>
+          (buf) <~ @context.decode-audio-data request.response, _, (-> console.log(\fail))
+          @buf[name] = buf
+          @click2!
+          console.log \click2!
+          setTimeout ( ~> $scope.$apply ~> 
+            $scope.progress.count.current += 1
+          ), 500
+        request.send!  
+      init: ->
+        AudioContext = window.AudioContext or window.webkitAudioContext
+        #TODO android browser doesn't support web audio
+        if !AudioContext =>
+          for item in @names =>
+            @[item] = ->
+            @[item]pause = ->
+            @s[item] = pause: ->
+          $scope.loading = false
+          return
+        $scope.progress.count.total += @names.length
+        @context = new AudioContext!
+        @gain = @context.create-gain!
+        @gain.connect @context.destination
+        @click2 = @player \click2
+        @load \click2, \snd/click2.mp3
+        return
+        ({url,buf}) <~ $scope.assets.fetch \assets/snd.gz, \audio/mpeg, _
+        decode = (name,key) ~>
+          @context.decode-audio-data buf[key], ((ret)~> 
+            @buf[name] = ret
+          ), (-> console.log(\fail))
+        setup = (name,key) ~>
+          @s[name] = new Audio!
+            ..src = url[key].toString!
+          @[name] = @player name
+          #decode name, key
+          @s[name].play!
 
-    $scope.sce = $sce
+        for [name,key] in @names.map(->[it,"snd/#it.mp3"]) =>
+          setup name, key
+    */
+
+    $scope.audio = do
+      s: {}
+      buf: {}
+      names: <[click count1 count2 blop die menu dindon born click2 bkloop bk]>
+      reset: ->
+        for item in @names => @[item]pause true
+        @bkt = 0
+        if @bk =>
+          delete @bk.pausetime
+          delete @bk.starttime
+      n: {}
+      bkt: 0
+      is-mute: false
+      toggle-mute: ->
+        @is-mute = !@is-mute
+        @gain.gain.value = if @is-mute => 0 else 1
+      player: (name) ->
+        ret = (offset, looping = false) ~>
+          if !@buf[name] => return
+          if @n[name] => @n[name]disconnect!
+          @n[name] = src = @context.create-buffer-source!
+          src.buffer = @buf[name]
+          src.connect @gain # @context.destination
+          if ret.pausetime =>
+            offset = ret.pausetime - ret.starttime
+            delete ret.pausetime
+          ret.starttime = parseInt( new Date!getTime! / 1000 ) - (if offset? => offset else 0)
+          if looping => src.loop = true
+          if offset? => src.start 0, offset else src.start 0
+          if name == \bk => @bkt = ret.starttime
+        ret.pause = (reset = false) ~> 
+          if @n[name] =>
+            try
+              @n[name].stop 0
+            catch e
+          if !reset => ret.pausetime = parseInt( new Date!getTime! / 1000 )
+        ret
+      load: (name, url) ->
+        request = new XMLHttpRequest!
+        request.open \GET, url, true
+        request.response-type = \arraybuffer
+        request.onload = ~>
+          (buf) <~ @context.decode-audio-data request.response, _, (-> console.log(\fail))
+          @buf[name] = buf
+          setTimeout ( ~> $scope.$apply ~> 
+            $scope.progress.current += 1
+          ), 500
+        request.send!  
+      init: ->
+        AudioContext = window.AudioContext or window.webkitAudioContext
+        #TODO android browser doesn't support web audio
+        if !AudioContext =>
+          for item in @names =>
+            @[item] = ->
+            @[item]pause = ->
+            @s[item] = pause: ->
+          $scope.loading = false
+          return
+        console.log \here1
+        @context = new AudioContext!
+        @gain = @context.create-gain!
+        @gain.connect @context.destination
+        console.log \here2
+        for item in @names => 
+          @s[item] = new Audio!
+            ..src = "snd/#{item}.mp3"
+          @[item] = @player item
+          @load item, "snd/#{item}.mp3"
+        console.log \here3
+        $scope.progress.total += @names.length
+
+    $scope.audio.init!
+
     $scope.image = do
       url: {}
       init: ->
-        $http do
-          url: \imgs.json
-          method: \GET
-        .success (d) ~> 
-          t1 = new Date!getTime!
-          for k,v of d =>
-            data = atob v
-            array = new Uint8Array data.length
-            for i from 0 til data.length => array[i] = data.charCodeAt i
-            blob = new Blob [array], {type:\image/png}
-            @url[k] = $sce.trustAsResourceUrl(URL.createObjectURL blob)
-          t2 = new Date!getTime!
-          console.log "image unpack and blob time: #{t2 - t1}"
-          @update!
-      update: ->
-        imgs = $(\img)
-        len = imgs.length
-        for idx from 0 til len => 
-          src = imgs[idx].src
+        ({@url,buf}) <~ $scope.assets.fetch \assets/img.gz, \image/png, _
+        [imgs,bks] = [$(\img.src), $(\.img-bk)]
+        for idx from 0 til imgs.length => 
+          item = $(imgs[idx])
+          src = item.attr(\data-src)
           des = @url[src.replace /^.+\/img\//, "img/"]
-          if des? => imgs[idx].src = des
-
-
+          if des? => item.attr(\src, des.toString!)
+        for idx from 0 til bks.length =>
+          item = $(bks[idx])
+          src = item.attr(\data-src)
+          item.css "background-image": "url(#{@url[src].toString!})"
+        
     $scope.image.init!
 
 window.ctrl = do
@@ -1030,7 +1139,6 @@ window.touch = touch = do
   down: (e) ->
     touchflag := true
     angular.element(\#wrapper).scope().mouse.down(e,true)
-    e.prevent-default!
   up: (e) ->
     touchflag := true
     angular.element(\#wrapper).scope().mouse.up(e,true)
