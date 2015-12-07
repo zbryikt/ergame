@@ -39,7 +39,7 @@ html(lang="en")
         br
         | D6: {{debug.d6}}
       #frame(style="height:100%"): #wrapper(style="height:100%")
-        #loading(ng-class="{'fade':progress.value >= 100}")
+        #loading
           #loading-fig
             img.base(src="img/load/shadow.png")
             #loading-progress(ng-attr-style="top:{{100 - progress.value}}%")

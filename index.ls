@@ -934,18 +934,18 @@ angular.module \ERGame, <[]>
         @gain.gain.value = if @is-mute => 0 else 1
       player: (name) ->
         ret = (offset, looping = false) ~>
+          if ret.pausetime =>
+            offset = ret.pausetime - ret.starttime
+            delete ret.pausetime
+          ret.starttime = parseInt( new Date!getTime! / 1000 ) - (if offset? => offset else 0)
+          if name == \bk => @bkt = ret.starttime
           if !@buf[name] => return
           if @n[name] => @n[name]disconnect!
           @n[name] = src = @context.create-buffer-source!
           src.buffer = @buf[name]
           src.connect @gain # @context.destination
-          if ret.pausetime =>
-            offset = ret.pausetime - ret.starttime
-            delete ret.pausetime
-          ret.starttime = parseInt( new Date!getTime! / 1000 ) - (if offset? => offset else 0)
           if looping => src.loop = true
           if offset? => src.start 0, offset else src.start 0
-          if name == \bk => @bkt = ret.starttime
         ret.pause = (reset = false) ~> 
           if @n[name] =>
             try
@@ -957,11 +957,19 @@ angular.module \ERGame, <[]>
         AudioContext = window.AudioContext or window.webkitAudioContext
         #TODO android browser doesn't support web audio
         if !AudioContext =>
+          dummy = (name) ~>
+            ret = (offset, looping = false) ~>
+              if ret.pausetime =>
+                offset = ret.pausetime - ret.starttime
+                delete ret.pausetime
+              ret.starttime = parseInt( new Date!getTime! / 1000 ) - (if offset? => offset else 0)
+              if name == \bk => @bkt = ret.starttime
+            ret.pause = (reset = false) ->
+              if !reset => ret.pausetime = parseInt( new Date!getTime! / 1000 )
+            ret
           for item in @names =>
-            @[item] = ->
-            @[item]pause = ->
+            @[item] = dummy item
             @s[item] = pause: ->
-          $scope.loading = false
           return
         $scope.progress.count.total += @names.length
         @context = new AudioContext!
@@ -969,9 +977,7 @@ angular.module \ERGame, <[]>
         @gain.connect @context.destination
         ({url,buf}) <~ $scope.assets.fetch \assets/snd.gz, \audio/mpeg, _
         decode = (name,key) ~>
-          @context.decode-audio-data buf[key], ((ret)~> 
-            @buf[name] = ret
-          ), (-> console.log(\fail))
+          @context.decode-audio-data buf[key], ((ret)~> @buf[name] = ret), (-> console.log(\fail))
         for [name,key] in @names.map(->[it,"snd/#it.mp3"]) =>
           @[name] = @player name
           decode name, key
@@ -981,6 +987,7 @@ angular.module \ERGame, <[]>
       url: {}
       init: ->
         $scope.progress.count.total++
+        $scope.progress.update!
         ({@url,buf}) <~ $scope.assets.fetch \assets/img.gz, \image/png, _
         [imgs,bks] = [$(\img.src), $(\.img-bk)]
         for idx from 0 til imgs.length => 
@@ -992,7 +999,8 @@ angular.module \ERGame, <[]>
           item = $(bks[idx])
           src = item.attr(\data-src)
           item.css "background-image": "url(#{@url[src].toString!})"
-        $scope.progress.count.current++
+        # a little delay before we actually remove loading panel
+        $timeout (-> $scope.progress.count.current++), 100
         
     $scope.audio.init!
     $scope.image.init!
