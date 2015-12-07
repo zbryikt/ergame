@@ -3,7 +3,12 @@
 [of1x,of1y] = [298,273]
 [dpw,dph] = [59,20]
 angular.module \ERGame, <[]>
-  ..controller \ERGame, <[$scope $interval $timeout]> ++ ($scope, $interval, $timeout) ->
+  ..config <[$compileProvider]> ++ ($compileProvider) ->
+    $compileProvider.imgSrcSanitizationWhitelist(
+      /^\s*(blob):|http:\/\/localhost:9998\/|http:\/\/0media.tw\/|http:\/\/reporter.tw\//
+    )
+
+  ..controller \ERGame, <[$scope $interval $timeout $http $sce]> ++ ($scope, $interval, $timeout, $http, $sce) ->
     $scope.list = [[(i % 4), parseInt(i / 4)] for i from 0 til 12]
     $scope.danger = false
     $scope.pixel = do
@@ -305,6 +310,11 @@ angular.module \ERGame, <[]>
         if @is-locked or $scope.madmax or $scope.doctor.faint => return
         now = new Date!getTime!
         [ex, ey] = [(e.clientX or e.pageX), (e.clientY or e.pageY)]
+        if !ex and !ey => 
+          if e.touches? and e.touches.length =>
+            [ex,ey] = [e.touches.0.clientX, e.touches.0.clientY]
+          else if e.changedTouches? and e.changedTouches.length =>
+            [ex,ey] = [e.changedTouches.0.clientX, e.changedTouches.0.clientY]
         if !ex and !ey => [ex,ey] = [@last.x, @last.y]
         if @target and @target.type == 1 and
            (((ex - @last.x)**2 + (ey - @last.y)**2) < 18 or now - @timestamp < 100) => return
@@ -949,6 +959,41 @@ angular.module \ERGame, <[]>
     $scope.images.load!
     $scope.blah = -> $scope.debug.d2 = new Date!getTime!
 
+    /*request = new XMLHttpRequest!
+    request.open \GET, url, true
+    request.response-type = \arraybuffer
+    request.onload = ~>*/
+
+    $scope.sce = $sce
+    $scope.image = do
+      url: {}
+      init: ->
+        $http do
+          url: \imgs.json
+          method: \GET
+        .success (d) ~> 
+          t1 = new Date!getTime!
+          for k,v of d =>
+            data = atob v
+            array = new Uint8Array data.length
+            for i from 0 til data.length => array[i] = data.charCodeAt i
+            blob = new Blob [array], {type:\image/png}
+            @url[k] = $sce.trustAsResourceUrl(URL.createObjectURL blob)
+            #@url[k] = URL.createObjectURL blob
+          t2 = new Date!getTime!
+          console.log "image unpack and blob time: #{t2 - t1}"
+          @update!
+      update: ->
+        imgs = $(\img)
+        len = imgs.length
+        for idx from 0 til len => 
+          src = imgs[idx].src
+          des = @url[src.replace /^.+\/img\//, "img/"]
+          if des? => imgs[idx].src = des
+
+
+    $scope.image.init!
+
 window.ctrl = do
   _s: null
   scope: ->
@@ -997,24 +1042,10 @@ window.touch = touch = do
   down: (e) ->
     touchflag := true
     angular.element(\#wrapper).scope().mouse.down(e,true)
+    #e.prevent-default!
   up: (e) ->
     touchflag := true
     angular.element(\#wrapper).scope().mouse.up(e,true)
   move: (e) ->
     angular.element(\#wrapper).scope().mouse.move(e,true)
 
-
-nbtz = ->
-  $.fn.nodoubletapzoom = ->
-    (e) <- $(this).bind \touchstart, _
-    t2 = e.timeStamp
-    t1 = $(this).data(\lastTouch) or t2
-    dt = t2 - t1
-    fingers = e.originalEvent.touches.length
-    $(this).data \lastTouch, t2
-    if !dt or dt > 500 or fingers > 1 => return
-    e.preventDefault!
-    $(e.target).trigger \click
-
-nbtz jQuery
-$(\body).nodoubletapzoom!

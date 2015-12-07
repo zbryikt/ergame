@@ -158,7 +158,7 @@ html(lang="en")
           img.dialog-content(src="img/tutorial/oops.png")
           img.dialog-doctor(src="img/tutorial/doctor.png")
         #dialog(ng-class="dialog.type")
-          img.dialog-content(ng-attr-src="img/tutorial/{{dialog.idx}}.png")
+          img.dialog-content(ng-src="{{image.url['img/tutorial/'+dialog.idx+'.png']}}")
           img.dialog-doctor(src="img/tutorial/doctor.png")
         img#wheel(src="img/wheel.png",draggable="false")
         img(src="img/scenario.png",style="width:100%",draggable="false")
@@ -169,16 +169,19 @@ html(lang="en")
           .normal(draggable="false")
           .active(ng-if="pat.type==1 && pat.active==1",ng-class="{'blink': pat.life < 0.3 && pat.variant != 0}",
           ng-attr-style="height:{{100 * (1 - pat.life)}}%",draggable="false")
-            img(ng-attr-src="img/it-{{pat.type}}-{{pat.variant || 0}}-{{pat.active || 0}}.png",draggable="false")
+            img(ng-src="{{image.url['img/it-'+pat.type+'-'+(pat.variant || 0)+'-'+(pat.active || 0)+'.png']}}",
+            draggable="false")
 
-          .active(ng-if="pat.type>=2 && pat.type<=4 && pat.active==1",ng-class="{'blink':pat.mad > 0.6 && pat.mad < 0.8}",
+          .active(ng-if="pat.type>=2 && pat.type<=4 && pat.active==1",
+          ng-class="{'blink':pat.mad > 0.6 && pat.mad < 0.8}",
           ng-attr-style="top:{{100 * (1 - pat.mad)}}%",draggable="false")
-            img(ng-attr-src="img/it-{{pat.type}}-{{pat.variant || 0}}-{{pat.active || 0}}.png",draggable="false",
-            ng-attr-style="position:absolute;top:-{{100 * (1 - pat.mad)}}%")
+            img(ng-src="{{image.url['img/it-'+pat.type+'-'+(pat.variant || 0)+'-'+(pat.active || 0)+'.png']}}",
+            draggable="false", ng-attr-style="position:absolute;top:-{{100 * (1 - pat.mad)}}%")
 
           .active(ng-if="pat.type>=5 && pat.type<=8 && pat.active==1",ng-class="{'blink':pat.countdown < 0.4}",
           draggable="false")
-            img(ng-attr-src="img/it-{{pat.type}}-{{pat.variant || 0}}-{{pat.active || 0}}.png",draggable="false")
+            img(ng-src="{{image.url['img/it-'+pat.type+'-'+(pat.variant || 0)+'-'+(pat.active || 0)+'.png']}}",
+            draggable="false")
       #foot
         a.pull-left(href="#"): img(src="img/about.png")
         a.pull-right(href="#"): img(src="img/github.png")
