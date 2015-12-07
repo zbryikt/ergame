@@ -297,11 +297,10 @@ angular.module \ERGame, <[]>
         @is-pal-on = true
         e.preventDefault!
       move: (e) ->
-        [x,y] = [
+        /*[x,y] = [
           e.clientX or e.pageX or e.touches.0.clientX,
           e.clientY or e.pageY or e.touches.0.clientY
-        ]
-        @{}last <<< {x,y}
+        ]*/
         #TODO prevent long press trigger menu
         #e.preventDefault()
       up: (e, touch = false) -> 
@@ -1031,7 +1030,7 @@ window.touch = touch = do
   down: (e) ->
     touchflag := true
     angular.element(\#wrapper).scope().mouse.down(e,true)
-    #e.prevent-default!
+    e.prevent-default!
   up: (e) ->
     touchflag := true
     angular.element(\#wrapper).scope().mouse.up(e,true)
