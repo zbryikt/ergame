@@ -19,10 +19,8 @@ html(lang="en")
     script(type="text/javascript",src="scream.min.js")
     script(type="text/javascript",src="gunzip.min.js")
     script(type="text/javascript",src="index.js")
-  //-body(ng-app="ERGame",ng-controller="ERGame",ng-mouseup="mouse.up($event)",ng-mousedown="mouse.down($event)",
-     ontouchstart="touch.down(event)", ontouchend="touch.up(event)")
   body(ng-app="ERGame",ng-controller="ERGame",ng-mouseup="mouse.up($event)",ng-mousedown="mouse.down($event)")
-    #container
+    #container(style="height:100%")
       #head
         img#logo(src="img/logo.png")
         .pull-right
@@ -40,8 +38,8 @@ html(lang="en")
         | D5: {{debug.d5}}
         br
         | D6: {{debug.d6}}
-      #frame: #wrapper
-        #loading(ng-show="loading",ng-class="{'fade':progress.value >= 100}")
+      #frame(style="height:100%"): #wrapper(style="height:100%")
+        #loading(ng-class="{'fade':progress.value >= 100}")
           #loading-fig
             img.base(src="img/load/shadow.png")
             #loading-progress(ng-attr-style="top:{{100 - progress.value}}%")
@@ -186,5 +184,5 @@ html(lang="en")
       #foot
         a.pull-left(href="#"): img.src(data-src="img/about.png")
         a.pull-right(href="#"): img.src(data-src="img/github.png")
-      #minimal-fix &nbsp;
+      #minimal-fix(style="display:none") &nbsp;
       #img-preloader

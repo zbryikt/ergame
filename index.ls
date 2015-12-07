@@ -792,8 +792,7 @@ angular.module \ERGame, <[]>
         @value = ( @value + 3 ) <? @latest
         @handler = $timeout (~> @transition!), 10
       update: ->
-        if !@use => @use = @count
-        @latest = parseInt(100 * @use.current / @use.total)
+        @latest = parseInt( 100 * ( @count.current + @size.current ) / ( @count.total + @size.total ) )
         if !@handler => @transition!
     $scope.$watch 'progress.count', (-> $scope.progress.update!), true
     $scope.$watch 'progress.size', (-> $scope.progress.update!), true
@@ -881,6 +880,7 @@ angular.module \ERGame, <[]>
       interval.tweak!
     ), 100
     $scope.loading = true
+    $scope.$watch 'loading', -> if !it => $(\#loading).fade-out!
     document.body
       ..ontouchstart = window.touch.down
       ..ontouchmove = window.touch.move
@@ -889,7 +889,7 @@ angular.module \ERGame, <[]>
     $scope.assets = do
       fetch: (url, type, cb) ->
         t1 = new Date!getTime!
-        $scope.progress.count.total += 1
+        $scope.progress.count.total++
         request = new XMLHttpRequest!
         request.open \GET, url, true
         request.response-type = \arraybuffer
@@ -901,6 +901,7 @@ angular.module \ERGame, <[]>
           ret = @parse JSON.parse(str), type
           cb ret
           t2 = new Date!getTime!
+          $scope.progress.count.current++
           console.log "[assets] Process #url spent #{t2 - t1} ms."
         request.send!
       parse: (d, type) ->
@@ -974,6 +975,7 @@ angular.module \ERGame, <[]>
         for [name,key] in @names.map(->[it,"snd/#it.mp3"]) =>
           @[name] = @player name
           decode name, key
+        $scope.progress.count.current += @names.length
 
     $scope.image = do
       url: {}
@@ -981,7 +983,6 @@ angular.module \ERGame, <[]>
         $scope.progress.count.total++
         ({@url,buf}) <~ $scope.assets.fetch \assets/img.gz, \image/png, _
         [imgs,bks] = [$(\img.src), $(\.img-bk)]
-        if $scope.progress.size.total => $scope.progress.size.total += 1000
         for idx from 0 til imgs.length => 
           item = $(imgs[idx])
           src = item.attr(\data-src)
@@ -991,7 +992,6 @@ angular.module \ERGame, <[]>
           item = $(bks[idx])
           src = item.attr(\data-src)
           item.css "background-image": "url(#{@url[src].toString!})"
-        $scope.progress.size.current += 1000
         $scope.progress.count.current++
         
     $scope.audio.init!
