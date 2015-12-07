@@ -57,10 +57,6 @@ img
   no-selection()
   position: absolute
   z-index: index(order, 'wheel')
-  background-image: url(img/wheel.png)
-  background-size: contain
-  background-position: center center
-  background-repeat: no-repeat
   width: 33%
   margin: -16.5% 0 0 -16.5%
   display: none
@@ -71,18 +67,6 @@ img
     overflow: hidden
   .active img
     width: 100%
-
-for type in (1..12)
-  for variant in 0 1 2 3 4 5 6 7
-    for active in 0 1
-      .it-{type}-{variant}-{active}
-        .base
-          background-image: unquote("url(img/it-"+type+"-0-0.png)")
-        .normal
-          background-image: unquote("url(img/it-"+type+"-"+variant+"-0.png)")
-    //.it-{type}-{variant}-1
-    //  .active
-    //    background-image: unquote("url(img/it-"+type+"-"+variant+"-1.png)")
 
 +keyframes(blink)
   0%
@@ -244,7 +228,6 @@ for type in (1..12)
   right: 2%
   width: 14.648%
   height: 10.416%
-  background-image: url(img/gauge/counting.png)
   background-repeat: no-repeat
   background-size: contain
   z-index: index(order, 'gauge')
@@ -283,7 +266,6 @@ for type in (1..12)
     bottom: 38%
 
 #urgency
-  background-image: url(img/urgency.png)
   background-position: center center
   background-size: cover
   background-repeat: no-repeat
@@ -416,7 +398,6 @@ for type in (1..12)
 #game-over
   z-index: index(order, 'game-over')
   background-color: rgba(65,65,65,0.7)
-  background-image: url(img/cover/exitscene.png)
   text-align: center
   #gover-facebook, #gover-reporter
     position: absolute

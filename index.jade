@@ -103,7 +103,7 @@ html(lang="en")
           #gctrl-start(ng-show="game.state==1",onclick="ctrl.cont(false,event)",ontouchstart="ctrl.cont(true,event)")
             img.src(data-src="img/game/start-0.png")
             img.src.active(data-src="img/game/start-1.png")
-        #game-over(ng-show="game.state==4")
+        #game-over.img-bk(data-src="img/cover/exitscene.png",ng-show="game.state==4")
           #gover-reporter
             img.src(data-src="img/cover/over-report-0.png")
             img.src.active(data-src="img/cover/over-report-1.png")
@@ -118,7 +118,7 @@ html(lang="en")
             each val in [0,1,2,3]
               .score-digit(ng-attr-style="background-image:url({{image.url['img/gauge/'+doctor.score.digit["+val+"]+'s.png']}})")
         #danger(ng-class="{'active':danger}"): img.src(data-src="img/danger.png",draggable="false")
-        #urgency(ng-class="{'active':patient.urgent}")
+        #urgency.img-bk(data-src="img/urgency.png",ng-class="{'active':patient.urgent}")
         #energy(ng-class="{'active':doctor.draining>0}")
           #energy-base
             img.src(data-src="img/gauge/energy-0.png")
@@ -127,7 +127,7 @@ html(lang="en")
         #chance(ng-class="{'active':doctor.hurting>0}")
           each val in [1,2,3,4,5]
             .chance-node(ng-class="{'active':doctor.chance >="+val+"}")
-        #score
+        #score.img-bk(data-src="img/gauge/counting.png")
           each val in [0,1,2,3]
             .score-digit(ng-attr-style="background-image:url({{image.url['img/gauge/'+doctor.score.digit["+val+"]+'s.png']}})")
         #block-mask(ng-show="doctor.faint || madmax")
@@ -164,8 +164,8 @@ html(lang="en")
         .sprite(ng-repeat="pat in percent.sprite.points",
         ng-attr-style="width:{{percent.sprite.size[pat.type].w}}%;height:{{percent.sprite.size[pat.type].h}}%;"+
         "left:{{pat.x}}%;top:{{pat.y}}%",draggable="false",ng-class="pat.cls")
-          .base(draggable="false")
-          .normal(draggable="false")
+          .base(draggable="false",ng-attr-style="background-image:url({{image.url['img/it-'+pat.type+'-0-0.png']}})")
+          .normal(draggable="false",ng-attr-style="background-image:url({{image.url['img/it-'+pat.type+'-'+pat.variant+'-0.png']}})")
           .active(ng-if="pat.type==1 && pat.active==1",ng-class="{'blink': pat.life < 0.3 && pat.variant != 0}",
           ng-attr-style="height:{{100 * (1 - pat.life)}}%",draggable="false")
             img(ng-src="{{image.url['img/it-'+pat.type+'-'+(pat.variant || 0)+'-'+(pat.active || 0)+'.png']}}",
@@ -182,7 +182,7 @@ html(lang="en")
             img(ng-src="{{image.url['img/it-'+pat.type+'-'+(pat.variant || 0)+'-'+(pat.active || 0)+'.png']}}",
             draggable="false")
       #foot
-        a.pull-left(href="#"): img.src(data-src="img/about.png")
-        a.pull-right(href="#"): img.src(data-src="img/github.png")
+        a.pull-left(href="#"): img(src="img/about.png")
+        a.pull-right(href="#"): img(src="img/github.png")
       #minimal-fix(style="display:none") &nbsp;
       #img-preloader
