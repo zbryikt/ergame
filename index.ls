@@ -726,7 +726,6 @@ angular.module \ERGame, <[]>
         [w1,h1] = if doc-w < 1024 => [doc-w, doc-w * 576 / 1024 ] else [1024,576]
         [w2,h2] = if doc-h < 576  => [doc-h * 1024 / 576, doc-h] else [1024,576]
         [w,h] = if h1 > doc-h => [w2,h2] else [w1,h1]
-        #[w,h] = [320, 480]
         $(\#frame).css width: "#{w}px", height: "#{h}px"
         $(\#container).css width: "#{w}px"
 
@@ -749,7 +748,6 @@ angular.module \ERGame, <[]>
             top: \0, left: \0
 
         else =>
-          #if w < 480 or h < 480 => 
           if doc-h - h <= 110 =>
             $(\#frame).css do
               padding: \0, position: \fixed
@@ -822,8 +820,6 @@ angular.module \ERGame, <[]>
           @buf[name] = buf
           setTimeout ( ~> $scope.$apply ~> 
             $scope.progress.current += 1
-            #$scope.progress = parseInt(100 * [key for key of @buf].length / @names.length)
-            #if $scope.progress >= 100 => $timeout (->$scope.loading = false), 500
           ), 500
         request.send!  
       init: ->
@@ -957,12 +953,6 @@ angular.module \ERGame, <[]>
           root.appendChild(obj)
         $scope.progress.total += @list.length
     $scope.images.load!
-    $scope.blah = -> $scope.debug.d2 = new Date!getTime!
-
-    /*request = new XMLHttpRequest!
-    request.open \GET, url, true
-    request.response-type = \arraybuffer
-    request.onload = ~>*/
 
     $scope.sce = $sce
     $scope.image = do
@@ -979,7 +969,6 @@ angular.module \ERGame, <[]>
             for i from 0 til data.length => array[i] = data.charCodeAt i
             blob = new Blob [array], {type:\image/png}
             @url[k] = $sce.trustAsResourceUrl(URL.createObjectURL blob)
-            #@url[k] = URL.createObjectURL blob
           t2 = new Date!getTime!
           console.log "image unpack and blob time: #{t2 - t1}"
           @update!
