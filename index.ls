@@ -915,11 +915,10 @@ angular.module \ERGame, <[]>
           ret.url[k] = $sce.trustAsResourceUrl(URL.createObjectURL blob)
         return ret
 
-    /*
     $scope.audio = do
       s: {}
       buf: {}
-      names: <[click count1 count2 blop die menu dindon born click2 bkloop bk]>
+      names: <[click count1 count2 blop die menu dindon born click2 bkloop bk noop]>
       reset: ->
         for item in @names => @[item]pause true
         @bkt = 0
@@ -953,21 +952,6 @@ angular.module \ERGame, <[]>
             catch e
           if !reset => ret.pausetime = parseInt( new Date!getTime! / 1000 )
         ret
-      load: (name, url) ->
-        request = new XMLHttpRequest!
-        request.open \GET, url, true
-        request.response-type = \arraybuffer
-        request.onprogress = (e) -> $scope.$apply ->
-          $scope.progress.size.update name, {current: e.loaded, total: e.total}
-        request.onload = ~>
-          (buf) <~ @context.decode-audio-data request.response, _, (-> console.log(\fail))
-          @buf[name] = buf
-          @click2!
-          console.log \click2!
-          setTimeout ( ~> $scope.$apply ~> 
-            $scope.progress.count.current += 1
-          ), 500
-        request.send!  
       init: ->
         AudioContext = window.AudioContext or window.webkitAudioContext
         #TODO android browser doesn't support web audio
@@ -982,103 +966,22 @@ angular.module \ERGame, <[]>
         @context = new AudioContext!
         @gain = @context.create-gain!
         @gain.connect @context.destination
-        @click2 = @player \click2
-        @load \click2, \snd/click2.mp3
-        return
         ({url,buf}) <~ $scope.assets.fetch \assets/snd.gz, \audio/mpeg, _
         decode = (name,key) ~>
           @context.decode-audio-data buf[key], ((ret)~> 
             @buf[name] = ret
           ), (-> console.log(\fail))
-        setup = (name,key) ~>
-          @s[name] = new Audio!
-            ..src = url[key].toString!
-          @[name] = @player name
-          #decode name, key
-          @s[name].play!
-
         for [name,key] in @names.map(->[it,"snd/#it.mp3"]) =>
-          setup name, key
-    */
-
-    $scope.audio = do
-      s: {}
-      buf: {}
-      names: <[click count1 count2 blop die menu dindon born click2 bkloop bk]>
-      reset: ->
-        for item in @names => @[item]pause true
-        @bkt = 0
-        if @bk =>
-          delete @bk.pausetime
-          delete @bk.starttime
-      n: {}
-      bkt: 0
-      is-mute: false
-      toggle-mute: ->
-        @is-mute = !@is-mute
-        @gain.gain.value = if @is-mute => 0 else 1
-      player: (name) ->
-        ret = (offset, looping = false) ~>
-          if !@buf[name] => return
-          if @n[name] => @n[name]disconnect!
-          @n[name] = src = @context.create-buffer-source!
-          src.buffer = @buf[name]
-          src.connect @gain # @context.destination
-          if ret.pausetime =>
-            offset = ret.pausetime - ret.starttime
-            delete ret.pausetime
-          ret.starttime = parseInt( new Date!getTime! / 1000 ) - (if offset? => offset else 0)
-          if looping => src.loop = true
-          if offset? => src.start 0, offset else src.start 0
-          if name == \bk => @bkt = ret.starttime
-        ret.pause = (reset = false) ~> 
-          if @n[name] =>
-            try
-              @n[name].stop 0
-            catch e
-          if !reset => ret.pausetime = parseInt( new Date!getTime! / 1000 )
-        ret
-      load: (name, url) ->
-        request = new XMLHttpRequest!
-        request.open \GET, url, true
-        request.response-type = \arraybuffer
-        request.onload = ~>
-          (buf) <~ @context.decode-audio-data request.response, _, (-> console.log(\fail))
-          @buf[name] = buf
-          setTimeout ( ~> $scope.$apply ~> 
-            $scope.progress.current += 1
-          ), 500
-        request.send!  
-      init: ->
-        AudioContext = window.AudioContext or window.webkitAudioContext
-        #TODO android browser doesn't support web audio
-        if !AudioContext =>
-          for item in @names =>
-            @[item] = ->
-            @[item]pause = ->
-            @s[item] = pause: ->
-          $scope.loading = false
-          return
-        console.log \here1
-        @context = new AudioContext!
-        @gain = @context.create-gain!
-        @gain.connect @context.destination
-        console.log \here2
-        for item in @names => 
-          @s[item] = new Audio!
-            ..src = "snd/#{item}.mp3"
-          @[item] = @player item
-          @load item, "snd/#{item}.mp3"
-        console.log \here3
-        $scope.progress.total += @names.length
-
-    $scope.audio.init!
+          @[name] = @player name
+          decode name, key
 
     $scope.image = do
       url: {}
       init: ->
+        $scope.progress.count.total++
         ({@url,buf}) <~ $scope.assets.fetch \assets/img.gz, \image/png, _
         [imgs,bks] = [$(\img.src), $(\.img-bk)]
+        if $scope.progress.size.total => $scope.progress.size.total += 1000
         for idx from 0 til imgs.length => 
           item = $(imgs[idx])
           src = item.attr(\data-src)
@@ -1088,7 +991,10 @@ angular.module \ERGame, <[]>
           item = $(bks[idx])
           src = item.attr(\data-src)
           item.css "background-image": "url(#{@url[src].toString!})"
+        $scope.progress.size.current += 1000
+        $scope.progress.count.current++
         
+    $scope.audio.init!
     $scope.image.init!
 
 window.ctrl = do
@@ -1134,14 +1040,20 @@ window.ctrl = do
 
 
 touchflag = false
+audioinit = false
 #TODO: android browser long press cause problem ( can't slide, popup menu )
 window.touch = touch = do
   down: (e) ->
     touchflag := true
     angular.element(\#wrapper).scope().mouse.down(e,true)
+    # prevent default eats slide-up action, which is needed for ios to enter minimal-view.
+    # only prevent default when it's in minimal view.
+    if angular.element(\#wrapper).scope().is-min => e.prevent-default!
   up: (e) ->
     touchflag := true
     angular.element(\#wrapper).scope().mouse.up(e,true)
+    # force play a no sound everytime touchend in case iphone doesn't play sound...
+    if !audioinit => if angular.element(\#wrapper).scope().audio.noop => that!
   move: (e) ->
     angular.element(\#wrapper).scope().mouse.move(e,true)
 

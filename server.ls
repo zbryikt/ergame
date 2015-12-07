@@ -319,6 +319,6 @@ watcher = chokidar.watch watch-path, ignored: ignore-func, persistent: true
   .on \add, update-file
   .on \change, update-file
 
-http.createServer server .listen 9998, \0.0.0.0
+http.createServer server .listen 9997, \0.0.0.0
 
-console.log "running server on 0.0.0.0:9998"
+console.log "running server on 0.0.0.0:9997"

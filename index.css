@@ -22,6 +22,10 @@ img {
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  outline: none;
 }
 .sprite {
   -webkit-touch-callout: none;
