@@ -132,16 +132,16 @@ html(lang="en")
           each val in [0,1,2,3]
             .score-digit(ng-attr-style="background-image:url({{image.url['img/gauge/'+doctor.score.digit["+val+"]+'s.png']}})")
         #block-mask(ng-show="doctor.faint || madmax")
-          .type(ng-show="doctor.faint && !madmax")
+          .type(ng-show="doctor.faint && !madmax && usedom")
             img.src(data-src="img/mad/hungry1.png")
             img.src(data-src="img/mad/hungry2.png")
-          .type(ng-show="madmax==1")
+          .type(ng-show="madmax==1 && usedom")
             img.src(data-src="img/mad/gangster1.png")
             img.src(data-src="img/mad/gangster2.png")
-          .type(ng-show="madmax==2")
+          .type(ng-show="madmax==2 && usedom")
             img.src(data-src="img/mad/hysteria1.png")
             img.src(data-src="img/mad/hysteria2.png")
-          #click-indicator
+          #click-indicator(ng-show="usedom")
             img.src(data-src="img/mad/click-1.png")
             img.src(data-src="img/mad/click-2.png")
           #block-progress: div(ng-attr-style="width:{{doctor.demading}}%")
@@ -162,15 +162,17 @@ html(lang="en")
           img.src.dialog-doctor(data-src="img/tutorial/doctor.png")
         img#wheel.src(data-src="img/wheel.png",draggable="false")
         img.src(data-src="img/scenario.png",style="width:100%",draggable="false")
-        .sprite(ng-repeat="pat in percent.sprite.points",
-        ng-attr-style="width:{{percent.sprite.size[pat.type].w}}%;height:{{percent.sprite.size[pat.type].h}}%;"+
-        "left:{{pat.x}}%;top:{{pat.y}}%",draggable="false",ng-class="pat.cls")
-          .base(draggable="false",ng-attr-style="background-image:url({{image.url['img/it-'+pat.type+'-0-0.png']}})")
-          .normal(draggable="false",ng-attr-style="background-image:url({{image.url['img/it-'+pat.type+'-'+pat.variant+'-0.png']}})")
-          .active(ng-if="pat.type==1 && pat.active==1",ng-class="{'blink': pat.life < 0.3 && pat.variant != 0}",
-          ng-attr-style="height:{{100 * (1 - pat.life)}}%",draggable="false")
-            img(ng-src="{{image.url['img/it-'+pat.type+'-'+(pat.variant || 0)+'-'+(pat.active || 0)+'.png']}}",
-            draggable="false")
+
+        div(ng-if="usedom")
+          .sprite(ng-repeat="pat in percent.sprite.points",
+          ng-attr-style="width:{{percent.sprite.size[pat.type].w}}%;height:{{percent.sprite.size[pat.type].h}}%;"+
+          "left:{{pat.x}}%;top:{{pat.y}}%",draggable="false",ng-class="pat.cls")
+            .base(draggable="false",ng-attr-style="background-image:url({{image.url['img/it-'+pat.type+'-0-0.png']}})")
+            .normal(draggable="false",ng-attr-style="background-image:url({{image.url['img/it-'+pat.type+'-'+pat.variant+'-0.png']}})")
+            .active(ng-if="pat.type==1 && pat.active==1",ng-class="{'blink': pat.life < 0.3 && pat.variant != 0}",
+            ng-attr-style="height:{{100 * (1 - pat.life)}}%",draggable="false")
+              img(ng-src="{{image.url['img/it-'+pat.type+'-'+(pat.variant || 0)+'-'+(pat.active || 0)+'.png']}}",
+              draggable="false")
 
           .active(ng-if="pat.type>=2 && pat.type<=4 && pat.active==1",
           ng-class="{'blink':pat.mad > 0.6 && pat.mad < 0.8}",
@@ -182,6 +184,7 @@ html(lang="en")
           draggable="false")
             img(ng-src="{{image.url['img/it-'+pat.type+'-'+(pat.variant || 0)+'-'+(pat.active || 0)+'.png']}}",
             draggable="false")
+
       #foot
         a.pull-left(href="#"): img(src="img/about.png")
         a.pull-right(href="#"): img(src="img/github.png")

@@ -225,11 +225,10 @@ angular.module \ERGame, <[]>
         if des.type in [2 3 4] => des.mad = 0
         $scope.rebuild!
 
-    $scope.mode = \easy
+    $scope.mode = \hard
     $scope.config = do
       cur: do
         prob: {pat: [0.05, 0.60, 0.95], sup: 0.01, stay: 0.1}, decay: {life: 0.001, sup: 0.001, mad: 0.001}
-      # trivial mode
       mode: do
         trivial: [
           * prob: {pat: [0.00, 0.60, 0.95], sup: 0.01, stay: 0.1}, decay: {life: 0.001, sup: 0.001, mad: 0.001}
@@ -237,19 +236,23 @@ angular.module \ERGame, <[]>
           * prob: {pat: [0.00, 0.60, 0.95], sup: 0.01, stay: 0.1}, decay: {life: 0.001, sup: 0.001, mad: 0.001}
           * prob: {pat: [0.00, 0.60, 0.95], sup: 0.01, stay: 0.1}, decay: {life: 0.001, sup: 0.001, mad: 0.001}
         ]
-        # easy mode
         easy: [
           * prob: {pat: [0.02, 0.60, 0.95], sup: 0.01, stay: 0.1}, decay: {life: 0.001, sup: 0.005, mad: 0.001}
           * prob: {pat: [0.04, 0.50, 0.82], sup: 0.02, stay: 0.2}, decay: {life: 0.002, sup: 0.008, mad: 0.002}
           * prob: {pat: [0.08, 0.40, 0.70], sup: 0.04, stay: 0.4}, decay: {life: 0.003, sup: 0.011, mad: 0.003}
           * prob: {pat: [0.12, 0.30, 0.60], sup: 0.10, stay: 0.5}, decay: {life: 0.006, sup: 0.014, mad: 0.006}
         ]
-        # normal mode
         normal: [
           * prob: {pat: [0.02, 0.45, 0.95], sup: 0.01, stay: 0.1}, decay: {life: 0.002, sup: 0.005, mad: 0.001}
           * prob: {pat: [0.06, 0.40, 0.80], sup: 0.03, stay: 0.3}, decay: {life: 0.003, sup: 0.015, mad: 0.003}
           * prob: {pat: [0.14, 0.30, 0.50], sup: 0.09, stay: 0.5}, decay: {life: 0.005, sup: 0.020, mad: 0.005}
           * prob: {pat: [0.22, 0.10, 0.20], sup: 0.15, stay: 0.6}, decay: {life: 0.006, sup: 0.025, mad: 0.007}
+        ]
+        hard: [
+          * prob: {pat: [0.02, 0.10, 0.95], sup: 0.25, stay: 0.6}, decay: {life: 0.006, sup: 0.025, mad: 0.007}
+          * prob: {pat: [0.02, 0.10, 0.95], sup: 0.25, stay: 0.6}, decay: {life: 0.006, sup: 0.025, mad: 0.007}
+          * prob: {pat: [0.02, 0.10, 0.95], sup: 0.25, stay: 0.6}, decay: {life: 0.006, sup: 0.025, mad: 0.007}
+          * prob: {pat: [0.02, 0.10, 0.95], sup: 0.25, stay: 0.6}, decay: {life: 0.006, sup: 0.025, mad: 0.007}
         ]
 
     $scope.mouse = do
@@ -1001,20 +1004,14 @@ angular.module \ERGame, <[]>
           item = $(bks[idx])
           src = item.attr(\data-src)
           item.css "background-image": "url(#{@url[src].toString!})"
-        # a little delay before we actually remove loading panel
         for k,v of @url => 
-          ret = /img\/it-(\d+)-/.exec k
-          if !ret => continue
-          type = ret.1
           $scope.progress.count.total++
           @img[k] = img = new Image!
           img.src = v.toString!
-          img.style
-            ..width = $scope.percent.sprite.size[type].w
-            ..height = $scope.percent.sprite.size[type].h
           img.onload = -> 
             $scope.progress.count.current++
             document.body.appendChild img
+        # a little delay before we actually remove loading panel
         $timeout (-> $scope.progress.count.current++), 100
         $scope.$watch 'loading', (-> $scope.canvas.init!)
         
@@ -1043,12 +1040,30 @@ angular.module \ERGame, <[]>
         @e.width = w * 100
         @e.height = h * 100
         @ctx = @e.getContext \2d
+        if $scope.usedom => return
+        <~ $interval _, 100
         @ctx.fillStyle = "rgba(0,0,0,0.0)"
         @ctx.fillRect 0, 0, 1024, 576
+        img = $scope.image.img["img/scenario.png"]
+        @ctx.drawImage img, 0, 0, w * 100, h * 100
         for it in $scope.percent.sprite.points =>
-          img = $scope.image.img["img/it-#{it.type}-0-0.png"]
+          img = $scope.image.img["img/it-#{it.type}-#{it.variant or 0}-0.png"]
           dim = $scope.percent.sprite.size[it.type]
           @ctx.drawImage img, it.x * w, it.y * h, dim.w * w, dim.h * h
+        if $scope.doctor.faint or $scope.madmax =>
+          ts = parseInt(new Date!getTime! / 250)
+          mod = ( ts % 2 ) + 1
+          [mw,mh] = [w * 35.5, w * 35.5]
+          [mx,my] = [(100 * w - mw)/2, (100 * h - mh)/2]
+          if $scope.doctor.faint and !$scope.madmax =>
+            img = $scope.image.img["img/mad/hungry#mod.png"]
+          else if $scope.madmax == 1 =>
+            img = $scope.image.img["img/mad/gangster#mod.png"]
+          else =>
+            img = $scope.image.img["img/mad/hysteria#mod.png"]
+          @ctx.drawImage img, mx, my, mw, mh
+    # check : http://stackoverflow.com/questions/17861447/html5-canvas-drawimage-how-to-apply-antialiasing
+    $scope.usedom = true
 
 window.ctrl = do
   _s: null
