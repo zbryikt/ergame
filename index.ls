@@ -1005,6 +1005,17 @@ angular.module \ERGame, <[]>
     $scope.audio.init!
     $scope.image.init!
 
+    vizchange = [
+      <[hidden visibilitychange]>
+      <[mozHidden mozvisibilitychange]>
+      <[msHidden msvisibilitychange]>
+      <[webkitHidden webkitvisibilitychange]>
+    ].filter(->document[it.0]?).0
+    if vizchange =>
+      document.addEventListener vizchange.1, (->
+        if !document[vizchange.0] => $scope.game.pause!
+      ), false
+
 window.ctrl = do
   _s: null
   scope: ->
