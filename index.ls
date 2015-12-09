@@ -430,7 +430,7 @@ angular.module \ERGame, <[]>
         @ctx = @canvas.getContext \2d
         @img = new Image!
         @img.src = \mask.png
-        @img.onload = ~> 
+        @img.onload = ~>
           @ctx.drawImage @img, 0, 0, 1024, 576
           @ready = true
 
@@ -725,6 +725,7 @@ angular.module \ERGame, <[]>
         [w1,h1] = if doc-w < 1024 => [doc-w, doc-w * 576 / 1024 ] else [1024,576]
         [w2,h2] = if doc-h < 576  => [doc-h * 1024 / 576, doc-h] else [1024,576]
         [w,h] = if h1 > doc-h => [w2,h2] else [w1,h1]
+        @ <<< {w,h}
         $(\#frame).css width: "#{w}px", height: "#{h}px"
         $(\#container).css width: "#{w}px"
 
@@ -985,6 +986,7 @@ angular.module \ERGame, <[]>
 
     $scope.image = do
       url: {}
+      img: {}
       init: ->
         $scope.progress.count.total++
         $scope.progress.update!
@@ -1000,7 +1002,21 @@ angular.module \ERGame, <[]>
           src = item.attr(\data-src)
           item.css "background-image": "url(#{@url[src].toString!})"
         # a little delay before we actually remove loading panel
+        for k,v of @url => 
+          ret = /img\/it-(\d+)-/.exec k
+          if !ret => continue
+          type = ret.1
+          $scope.progress.count.total++
+          @img[k] = img = new Image!
+          img.src = v.toString!
+          img.style
+            ..width = $scope.percent.sprite.size[type].w
+            ..height = $scope.percent.sprite.size[type].h
+          img.onload = -> 
+            $scope.progress.count.current++
+            document.body.appendChild img
         $timeout (-> $scope.progress.count.current++), 100
+        $scope.$watch 'loading', (-> $scope.canvas.init!)
         
     $scope.audio.init!
     $scope.image.init!
@@ -1016,6 +1032,23 @@ angular.module \ERGame, <[]>
         if document[vizchange.0] => $scope.game.pause!
       ), false
       document.addEventListener \pagehide, (-> $scope.game.pause!), false
+
+    $scope.canvas = do
+      e: null
+      ctx: null
+      init: ->
+        @e = document.getElementById(\main-canvas)
+        {w,h} = $scope.dimension{w,h}
+        [w,h] = [w/100,h/100]
+        @e.width = w * 100
+        @e.height = h * 100
+        @ctx = @e.getContext \2d
+        @ctx.fillStyle = "rgba(0,0,0,0.0)"
+        @ctx.fillRect 0, 0, 1024, 576
+        for it in $scope.percent.sprite.points =>
+          img = $scope.image.img["img/it-#{it.type}-0-0.png"]
+          dim = $scope.percent.sprite.size[it.type]
+          @ctx.drawImage img, it.x * w, it.y * h, dim.w * w, dim.h * h
 
 window.ctrl = do
   _s: null
