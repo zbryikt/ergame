@@ -1013,8 +1013,9 @@ angular.module \ERGame, <[]>
     ].filter(->document[it.0]?).0
     if vizchange =>
       document.addEventListener vizchange.1, (->
-        if !document[vizchange.0] => $scope.game.pause!
+        if document[vizchange.0] => $scope.game.pause!
       ), false
+      document.addEventListener \pagehide, (-> $scope.game.pause!), false
 
 window.ctrl = do
   _s: null
