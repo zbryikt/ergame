@@ -92,7 +92,7 @@ angular.module \ERGame, <[]>
         @state = it
       tutorial: ->
         @set-state 3
-        $scope.audio.bkloop 0, true
+        $scope.audio.bkloop 0, true, true
         $scope.audio.bk.pause true
       last-state: 0
       pause: ->
@@ -233,7 +233,7 @@ angular.module \ERGame, <[]>
         if des.type in [2 3 4] => des.mad = 0
         $scope.rebuild!
 
-    $scope.mode = \hard
+    $scope.mode = \easy
     $scope.config = do
       cur: do
         prob: {pat: [0.05, 0.60, 0.95], sup: 0.01, stay: 0.1}, decay: {life: 0.001, sup: 0.001, mad: 0.001}
