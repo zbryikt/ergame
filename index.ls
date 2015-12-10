@@ -277,7 +277,8 @@ angular.module \ERGame, <[]>
         if $scope.madmax or $scope.doctor.faint => return $scope.demad e
         if @is-locked => return
         if @is-pal-on => return
-        $(\#finger-tap).css display: \none
+        #$(\#finger-tap).css display: \none
+        $scope.dialog.finger.isOn = false
         offset = $(\#wrapper).offset!
         [ex, ey] = [(e.clientX or e.pageX), (e.clientY or e.pageY)]
         if !ex and !ey => [ex,ey] = [e.touches.0.clientX, e.touches.0.clientY]
@@ -389,7 +390,8 @@ angular.module \ERGame, <[]>
 
     $scope.madmax = 0
     $scope.demad = (e) ->
-      $(\#finger-tap).css display: \none
+      #$(\#finger-tap).css display: \none
+      $scope.dialog.finger.isOn = false
       prog = 100
       madmax = $scope.percent.sprite.points.filter(->it.ismad) 
       if !madmax.length => $scope.madmax = 0
@@ -453,8 +455,10 @@ angular.module \ERGame, <[]>
       next: -> $timeout (~> @main true), 200
       type: ""
       h: {i: [], t: []}
+      finger: value: 1, isOn: false
       reset: ->
         @ <<< {tut: true, show: false, idx: 0, type: ""}
+        @finger <<< {value: 1, isOn: false}
         for step in @step =>
           step.fired = false
           if step.reset => step.reset!
@@ -602,18 +606,23 @@ angular.module \ERGame, <[]>
               return @ready
             fire: ->
               $interval.cancel @mood-handler
+              $scope.dialog.finger <<< { isOn: true, y: 144.76, x: 795.6}
+              /*
               $(\#finger-tap).css do
                 display: \block
                 top: \22%
                 left: \68%
+              */
               $scope.madspeed = 0.015
-              $scope.dialog.timeout (-> $(\#finger-tap).css display: \none), 2300
+              $scope.dialog.timeout (-> $scope.dialog.finger <<< {isOn: false}), 2300
+              #$scope.dialog.timeout (-> $(\#finger-tap).css display: \none), 2300
         * do
             ready: false
             handler: null
             reset: -> @ <<< handler: null, ready: false
             check: ->
-              if $scope.madspeed == 0.015 and $(\#finger-tap).css(\display) == \none and !@handler =>
+              #if $scope.madspeed == 0.015 and $(\#finger-tap).css(\display) == \none and !@handler =>
+              if $scope.madspeed == 0.015 and !$scope.dialog.finger.isOn and !@handler =>
                 @handler = $scope.dialog.timeout (~> @ready = true), 1000
               @ready
             fire: ->
@@ -633,10 +642,13 @@ angular.module \ERGame, <[]>
             check: ->
               if $scope.madmax >= 1 and @launched==0 =>
                 @launched = 1
+                $scope.dialog.finger <<< { isOn: true, y: 197.4, x: 351}
+                /*
                 $(\#finger-tap).css do
                   display: \block
                   top: \30%
                   left: \30%
+                */
                 $scope.madspeed = 0.002
                 #$scope.dialog.timeout (-> $(\#finger-tap).css display: \none), 1000
               if $scope.madspeed == 0.002 and $scope.madmax < 1 and @launched == 1 => 
@@ -656,10 +668,11 @@ angular.module \ERGame, <[]>
               $scope.supply.active 0, false
               $scope.supply.active 1, true
               $scope.supply.active 2, false
-              $(\#finger-tap).css do
+              $scope.dialog.finger <<< { isOn: true, y: 46.06, x: 234}
+              /*$(\#finger-tap).css do
                 display: \block
                 top: \7%
-                left: \20%
+                left: \20%*/
               $scope.dialog.timeout (->
                 #$(\#finger-tap).css display: \none
                 $scope.mouse.unlock!
@@ -685,10 +698,11 @@ angular.module \ERGame, <[]>
               $scope.doctor.energy = 0
               $scope.doctor.faint = true
               $scope.doctor.demading = 0
-              $(\#finger-tap).css do
+              $scope.dialog.finger <<< { isOn: true, y: 131.6, x: 351}
+              /*$(\#finger-tap).css do
                 display: \block
                 top: \20%
-                left: \30%
+                left: \30%*/
               #$scope.dialog.timeout (-> $(\#finger-tap).css display: \none), 1000
         * do
             ready: false
@@ -1105,9 +1119,15 @@ angular.module \ERGame, <[]>
               @ctx.drawImage img,
                 0, 0, img.width,  img.height, des.x, des.y, des.w, des.h
 
-        if $scope.doctor.faint or $scope.madmax =>
+        if $scope.doctor.faint or $scope.madmax or 
+          ($scope.dialog.show and !$scope.dialog.type) or 
+          $scope.game.state == 5 =>
           @ctx.fillStyle = "rgba(65,65,65,0.7)"
           @ctx.fillRect 0, 0, 1170, 658
+        if $scope.patient.urgent =>
+          img = $scope.image.img["img/urgency.png"]
+          @ctx.drawImage img, 0, 0, 1170, 658
+        if $scope.doctor.faint or $scope.madmax =>
           ts = parseInt(new Date!getTime! / 250)
           mod = ( ts % 2 ) + 1
           [mw,mh] = [11.70 * 35.5, 11.70 * 35.5]
@@ -1119,6 +1139,24 @@ angular.module \ERGame, <[]>
           else =>
             img = $scope.image.img["img/mad/hysteria#mod.png"]
           @ctx.drawImage img, mx, my, mw, mh
+        if $scope.dialog.show =>
+          img1 = $scope.image.img["img/tutorial/#{$scope.dialog.idx}.png"]
+          img2 = $scope.image.img["img/tutorial/doctor.png"]
+          if $scope.dialog.type == \mini
+            @ctx.drawImage img1, 386.1, 263.2, 514.8, 263.853
+          else
+            @ctx.drawImage img1, 81.9, 85.54, 702, 490.249
+            @ctx.drawImage img2, 819, 111.86, 234, 433.45
+        if $scope.game.state == 5 =>
+          img = $scope.image.img["img/countdown/#{($scope.game.countdown.value - 1) or \go}.png"]
+          @ctx.drawImage img, 409.5, 148.5, 351, 351
+        if $scope.dialog.finger.isOn =>
+          ts = parseInt(new Date!getTime! / 100)
+          mod = ( ts % 2 ) + 1
+          f = $scope.dialog.finger
+          img = $scope.image.img["img/tutorial/finger#mod.png"]
+          @ctx.drawImage img, f.x, f.y, 292.5, 292.5
+
     $scope.usedom = false
 
 window.ctrl = do
