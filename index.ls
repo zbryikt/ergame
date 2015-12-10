@@ -94,9 +94,17 @@ angular.module \ERGame, <[]>
         @set-state 3
         $scope.audio.bkloop 0, true
         $scope.audio.bk.pause true
+      last-state: 0
       pause: ->
-        @set-state 1
+        if @state <= 1 => return
         $scope.audio.bk.pause!
+        $scope.audio.bkloop.pause!
+        @last-state = @state
+        @set-state 1
+      resume: ->
+        @set-state (@last-state or 2)
+        if @last-state == 2 => $scope.audio.bk!
+        if @last-state == 3 => $scope.audio.bkloop!
       start: ->
         @set-state 2
         $scope.audio.bkloop.pause true
@@ -125,7 +133,7 @@ angular.module \ERGame, <[]>
           else => 
             $scope.game.set-state 2
             $scope.audio.bkloop.pause true
-            $scope.audio.bk!
+            $scope.audio.bk 0, false, true
         start: ->
           $scope.game.set-state 5
           @value = 5
@@ -937,8 +945,10 @@ angular.module \ERGame, <[]>
         @is-mute = !@is-mute
         @gain.gain.value = if @is-mute => 0 else 1
       player: (name) ->
-        ret = (offset, looping = false) ~>
-          if ret.pausetime =>
+        ret = (offset, looping = false, reset = false) ~>
+          if reset =>
+            delete ret.pausetime
+          else if ret.pausetime =>
             offset = ret.pausetime - ret.starttime
             delete ret.pausetime
           ret.starttime = parseInt( new Date!getTime! / 1000 ) - (if offset? => offset else 0)
@@ -1100,9 +1110,8 @@ window.ctrl = do
     @scope!audio.click!
 
   cont: (is-touch = false, event) -> @wrap is-touch, ~>
-    @scope!game.set-state 2
     @scope!audio.click!
-    @scope!audio.bk!
+    @scope!game.resume!
 
 
 touchflag = false

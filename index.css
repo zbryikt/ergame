@@ -65,7 +65,7 @@ img {
   background: #000;
   margin: auto;
   position: relative;
-  z-index: 13;
+  z-index: 14;
 }
 #wrapper {
   -webkit-touch-callout: none;
@@ -1019,7 +1019,7 @@ width: 100%;
   }
 }
 #loading {
-  z-index: 12;
+  z-index: 13;
   background: #fff;
 }
 #loading.fade {
@@ -1080,6 +1080,7 @@ width: 100%;
 #pause {
   background-color: rgba(65,65,65,0.7);
   text-align: center;
+  z-index: 10;
 }
 #pause div {
   display: inline-block;
@@ -1101,7 +1102,7 @@ width: 100%;
 }
 #game-ctrl,
 #mute {
-  z-index: 10;
+  z-index: 11;
   top: auto;
   left: auto;
   bottom: 20px;
@@ -2002,7 +2003,7 @@ width: 100%;
   background-position: center center;
   background-repeat: no-repeat;
   background-color: #fff;
-  z-index: 11;
+  z-index: 12;
   background-size: cover;
 }
 #minimal-fix {
