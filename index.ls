@@ -1018,7 +1018,36 @@ angular.module \ERGame, <[]>
         # a little delay before we actually remove loading panel
         $timeout (-> $scope.progress.count.current++), 100
         $scope.$watch 'loading', (-> $scope.canvas.init!)
+      /* maunally downsampling. look like we don't need this ....
+      canvas: null
+      ctx: null
       downsample: ->
+        if !@canvas =>
+          @canvas = document.createElement("canvas")
+          @canvas <<< {width: 1024, height: 576}
+          @ctx = @canvas.getContext \2d
+        {w,h} = $scope.dimension{w,h}
+        [w,h] = [w/100,h/100]
+        for k,v of @url =>
+          ret = /img\/it-(\d+)/.exec k
+          if !ret => continue
+          type = ret.1
+          dim = $scope.percent.sprite.size[type]
+          img = $scope.image.img["img/it-#{it.type}-#{it.variant or 0}-0.png"]
+          raw = {w: img.width, h: img.height}
+          des = {w: dim.w * w, h: dim.h * h}
+          rate = {w: (des.w / raw.w)**0.25, h :(des.h / raw.h)**0.25}
+          cur = {} <<< raw
+          data = null
+          for i from 0 til 4 =>
+            if data => @ctx.putImageData data, 0, 0
+            cur.w *= rate.w
+            cur.h *= rate.h
+            @ctx.drawImageData img, 0, 0, cur.w, cur.h
+            data = @ctx.getImageData 0, 0, cur.w, cur.h
+
+          0, 0, img.width,  img.height, it.x * w, it.y * h, dim.w * w, dim.h * h
+        */
         
     $scope.audio.init!
     $scope.image.init!
@@ -1045,6 +1074,11 @@ angular.module \ERGame, <[]>
         @e.width = w * 100
         @e.height = h * 100
         @ctx = @e.getContext \2d
+        @ctx.imageSmoothingEnabled = true
+        @ctx.mozImageSmoothingEnabled = true
+        @ctx.webkitImageSmoothingEnabled = true
+        @ctx.msImageSmoothingEnabled = true
+
         if $scope.usedom => return
         <~ $interval _, 100
         @ctx.fillStyle = "rgba(0,0,0,0.0)"
@@ -1081,8 +1115,7 @@ angular.module \ERGame, <[]>
           else =>
             img = $scope.image.img["img/mad/hysteria#mod.png"]
           @ctx.drawImage img, mx, my, mw, mh
-    # check : http://stackoverflow.com/questions/17861447/html5-canvas-drawimage-how-to-apply-antialiasing
-    $scope.usedom = true
+    $scope.usedom = false
 
 window.ctrl = do
   _s: null
