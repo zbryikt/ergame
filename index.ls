@@ -602,14 +602,14 @@ angular.module \ERGame, <[]>
                 top: \22%
                 left: \68%
               $scope.madspeed = 0.015
-              #$scope.dialog.timeout (-> $(\#finger-tap).css display: \none), 1300
+              $scope.dialog.timeout (-> $(\#finger-tap).css display: \none), 2300
         * do
             ready: false
             handler: null
             reset: -> @ <<< handler: null, ready: false
             check: ->
               if $scope.madspeed == 0.015 and $(\#finger-tap).css(\display) == \none and !@handler =>
-                @handler = $scope.dialog.timeout (~> @ready = true), 2000
+                @handler = $scope.dialog.timeout (~> @ready = true), 1000
               @ready
             fire: ->
               $scope.madspeed = 0.04
@@ -618,7 +618,7 @@ angular.module \ERGame, <[]>
             ready: false
             reset: -> @ready = false
             check: ->
-              $scope.dialog.timeout (~> @ready = true), 1700
+              if $scope.madmax => @ready = true
               @ready
         * do
             launched: 0
