@@ -1115,7 +1115,7 @@ angular.module \ERGame, <[]>
           else =>
             img = $scope.image.img["img/mad/hysteria#mod.png"]
           @ctx.drawImage img, mx, my, mw, mh
-    $scope.usedom = false
+    $scope.usedom = true
 
 window.ctrl = do
   _s: null
