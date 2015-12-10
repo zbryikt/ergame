@@ -233,7 +233,7 @@ angular.module \ERGame, <[]>
         if des.type in [2 3 4] => des.mad = 0
         $scope.rebuild!
 
-    $scope.mode = \easy
+    $scope.mode = \hard
     $scope.config = do
       cur: do
         prob: {pat: [0.05, 0.60, 0.95], sup: 0.01, stay: 0.1}, decay: {life: 0.001, sup: 0.001, mad: 0.001}
@@ -1057,9 +1057,17 @@ angular.module \ERGame, <[]>
           @ctx.drawImage img, it.x * w, it.y * h, dim.w * w, dim.h * h
           if it.active =>
             img = $scope.image.img["img/it-#{it.type}-#{it.variant or 0}-1.png"]
-            @ctx.drawImage img,
-              0, 0, img.width, ( 1 - it.life ) * img.height,
-              it.x * w, it.y * h, dim.w * w, dim.h * h * ( 1 - it.life )
+            if it.type ==1 =>
+              @ctx.drawImage img,
+                0, 0, img.width, (1 - it.life) * img.height,
+                it.x * w, it.y * h, dim.w * w, (1 - it.life) * dim.h * h
+            else if it.type <= 4 =>
+              @ctx.drawImage img,
+                0, ( 1 - it.mad ) * img.height, img.width, it.mad * img.height,
+                it.x * w, it.y * h + ( 1 - it.mad ) * dim.h * h, dim.w * w, it.mad * dim.h * h
+            else if it.type >=5 =>
+              @ctx.drawImage img,
+                0, 0, img.width,  img.height, it.x * w, it.y * h, dim.w * w, dim.h * h
 
         if $scope.doctor.faint or $scope.madmax =>
           ts = parseInt(new Date!getTime! / 250)
