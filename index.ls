@@ -86,6 +86,7 @@ angular.module \ERGame, <[]>
         $timeout (->
           r = parseInt($scope.doctor.score.value / 10)
           if r >= 6 => r--
+          if r >= 6 => r = 6
           $scope.doctor.rank = r
         ), 500
       set-state: -> 
