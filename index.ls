@@ -1008,9 +1008,7 @@ angular.module \ERGame, <[]>
           $scope.progress.count.total++
           @img[k] = img = new Image!
           img.src = v.toString!
-          img.onload = -> 
-            $scope.progress.count.current++
-            document.body.appendChild img
+          img.onload = -> $scope.progress.count.current++
         # a little delay before we actually remove loading panel
         $timeout (-> $scope.progress.count.current++), 100
         $scope.$watch 'loading', (-> $scope.canvas.init!)
