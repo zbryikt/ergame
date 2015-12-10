@@ -643,10 +643,6 @@ angular.module \ERGame, <[]>
                     @supply = ( @supply + 1 ) % 3
                     $scope.supply.active @supply
                   ), 500
-                  $(\#arrow).css do
-                    display: \block
-                    top: \25%
-                    left: \35%
                   @ready = true
                 ), 1000
               @ready
@@ -655,7 +651,6 @@ angular.module \ERGame, <[]>
               $scope.supply.active 0, false
               $scope.supply.active 1, true
               $scope.supply.active 2, false
-              $(\#arrow).css display: \none
               $(\#finger-tap).css do
                 display: \block
                 top: \7%
@@ -676,17 +671,12 @@ angular.module \ERGame, <[]>
                   $scope.doctor.set-mood 7
                   $scope.rebuild!
                   $scope.doctor.energy -= 0.1
-                  $(\#arrow).css do
-                    display: \block
-                    top: \10%
-                    left: \31%
                 ), 3000
               @ready
             fire: ->
         * do
             check: -> true
             fire: ->
-              $(\#arrow).css display: \none
               $scope.doctor.energy = 0
               $scope.doctor.faint = true
               $scope.doctor.demading = 0
