@@ -995,6 +995,7 @@ angular.module \ERGame, <[]>
     $scope.image = do
       url: {}
       img: {}
+      zoom: {}
       init: ->
         $scope.progress.count.total++
         $scope.progress.update!
@@ -1017,6 +1018,7 @@ angular.module \ERGame, <[]>
         # a little delay before we actually remove loading panel
         $timeout (-> $scope.progress.count.current++), 100
         $scope.$watch 'loading', (-> $scope.canvas.init!)
+      downsample: ->
         
     $scope.audio.init!
     $scope.image.init!
@@ -1053,6 +1055,12 @@ angular.module \ERGame, <[]>
           img = $scope.image.img["img/it-#{it.type}-#{it.variant or 0}-0.png"]
           dim = $scope.percent.sprite.size[it.type]
           @ctx.drawImage img, it.x * w, it.y * h, dim.w * w, dim.h * h
+          if it.active =>
+            img = $scope.image.img["img/it-#{it.type}-#{it.variant or 0}-1.png"]
+            @ctx.drawImage img,
+              0, 0, img.width, ( 1 - it.life ) * img.height,
+              it.x * w, it.y * h, dim.w * w, dim.h * h * ( 1 - it.life )
+
         if $scope.doctor.faint or $scope.madmax =>
           ts = parseInt(new Date!getTime! / 250)
           mod = ( ts % 2 ) + 1
