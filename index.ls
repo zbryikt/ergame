@@ -1106,10 +1106,12 @@ angular.module \ERGame, <[]>
                 0, 0, img.width,  img.height, des.x, des.y, des.w, des.h
 
         if $scope.doctor.faint or $scope.madmax =>
+          @ctx.fillStyle = "rgba(65,65,65,0.7)"
+          @ctx.fillRect 0, 0, 1170, 658
           ts = parseInt(new Date!getTime! / 250)
           mod = ( ts % 2 ) + 1
-          [mw,mh] = [w * 35.5, w * 35.5]
-          [mx,my] = [(100 * w - mw)/2, (100 * h - mh)/2]
+          [mw,mh] = [11.70 * 35.5, 11.70 * 35.5]
+          [mx,my] = [(1170 - mw) * 0.6, (658 - mh) * 0.4]
           if $scope.doctor.faint and !$scope.madmax =>
             img = $scope.image.img["img/mad/hungry#mod.png"]
           else if $scope.madmax == 1 =>
@@ -1117,7 +1119,7 @@ angular.module \ERGame, <[]>
           else =>
             img = $scope.image.img["img/mad/hysteria#mod.png"]
           @ctx.drawImage img, mx, my, mw, mh
-    $scope.usedom = true
+    $scope.usedom = false
 
 window.ctrl = do
   _s: null
