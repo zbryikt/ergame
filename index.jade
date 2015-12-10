@@ -174,16 +174,16 @@ html(lang="en")
               img(ng-src="{{image.url['img/it-'+pat.type+'-'+(pat.variant || 0)+'-'+(pat.active || 0)+'.png']}}",
               draggable="false")
 
-          .active(ng-if="pat.type>=2 && pat.type<=4 && pat.active==1",
-          ng-class="{'blink':pat.mad > 0.6 && pat.mad < 0.8}",
-          ng-attr-style="top:{{100 * (1 - pat.mad)}}%",draggable="false")
-            img(ng-src="{{image.url['img/it-'+pat.type+'-'+(pat.variant || 0)+'-'+(pat.active || 0)+'.png']}}",
-            draggable="false", ng-attr-style="position:absolute;top:-{{100 * (1 - pat.mad)}}%")
+            .active(ng-if="pat.type>=2 && pat.type<=4 && pat.active==1",
+            ng-class="{'blink':pat.mad > 0.6 && pat.mad < 0.8}",
+            ng-attr-style="top:{{100 * (1 - pat.mad)}}%",draggable="false")
+              img(ng-src="{{image.url['img/it-'+pat.type+'-'+(pat.variant || 0)+'-'+(pat.active || 0)+'.png']}}",
+              draggable="false", ng-attr-style="position:absolute;top:-{{100 * (1 - pat.mad)}}%")
 
-          .active(ng-if="pat.type>=5 && pat.type<=8 && pat.active==1",ng-class="{'blink':pat.countdown < 0.4}",
-          draggable="false")
-            img(ng-src="{{image.url['img/it-'+pat.type+'-'+(pat.variant || 0)+'-'+(pat.active || 0)+'.png']}}",
+            .active(ng-if="pat.type>=5 && pat.type<=8 && pat.active==1",ng-class="{'blink':pat.countdown < 0.4}",
             draggable="false")
+              img(ng-src="{{image.url['img/it-'+pat.type+'-'+(pat.variant || 0)+'-'+(pat.active || 0)+'.png']}}",
+              draggable="false")
 
       #foot
         a.pull-left(href="#"): img(src="img/about.png")
