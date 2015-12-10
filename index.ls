@@ -1071,8 +1071,8 @@ angular.module \ERGame, <[]>
         @e = document.getElementById(\main-canvas)
         {w,h} = $scope.dimension{w,h}
         [w,h] = [w/100,h/100]
-        @e.width = w * 100
-        @e.height = h * 100
+        @e <<< {width: 1170, height: 658}
+        @e.style <<< {width: "#{w * 100}px", height: "#{h * 100}px"}
         @ctx = @e.getContext \2d
         @ctx.imageSmoothingEnabled = true
         @ctx.mozImageSmoothingEnabled = true
@@ -1082,26 +1082,28 @@ angular.module \ERGame, <[]>
         if $scope.usedom => return
         <~ $interval _, 100
         @ctx.fillStyle = "rgba(0,0,0,0.0)"
-        @ctx.fillRect 0, 0, 1024, 576
+        @ctx.fillRect 0, 0, 1170, 658
         img = $scope.image.img["img/scenario.png"]
-        @ctx.drawImage img, 0, 0, w * 100, h * 100
+        @ctx.drawImage img, 0, 0, 1170, 658
         for it in $scope.percent.sprite.points =>
           img = $scope.image.img["img/it-#{it.type}-#{it.variant or 0}-0.png"]
           dim = $scope.percent.sprite.size[it.type]
-          @ctx.drawImage img, it.x * w, it.y * h, dim.w * w, dim.h * h
+          des = {w: dim.w * 11.70, h: dim.h * 6.58, x: it.x * 11.70, y: it.y * 6.58}
+
+          @ctx.drawImage img, des.x, des.y, des.w, des.h
           if it.active =>
             img = $scope.image.img["img/it-#{it.type}-#{it.variant or 0}-1.png"]
             if it.type ==1 =>
               @ctx.drawImage img,
                 0, 0, img.width, (1 - it.life) * img.height,
-                it.x * w, it.y * h, dim.w * w, (1 - it.life) * dim.h * h
+                des.x, des.y, des.w, (1 - it.life) * des.h
             else if it.type <= 4 =>
               @ctx.drawImage img,
                 0, ( 1 - it.mad ) * img.height, img.width, it.mad * img.height,
-                it.x * w, it.y * h + ( 1 - it.mad ) * dim.h * h, dim.w * w, it.mad * dim.h * h
+                des.x, des.y + ( 1 - it.mad ) * des.h, des.w, it.mad * des.h
             else if it.type >=5 =>
               @ctx.drawImage img,
-                0, 0, img.width,  img.height, it.x * w, it.y * h, dim.w * w, dim.h * h
+                0, 0, img.width,  img.height, des.x, des.y, des.w, des.h
 
         if $scope.doctor.faint or $scope.madmax =>
           ts = parseInt(new Date!getTime! / 250)
