@@ -531,7 +531,6 @@ angular.module \ERGame, <[]>
         * do
             reset: -> @ <<< handler: null
             check: ->
-
               if $scope.doctor.chance < 5 =>
                 $(\#oops).css display: \block
                 $scope.doctor.chance = 5
@@ -582,6 +581,12 @@ angular.module \ERGame, <[]>
             mood-handler: null
             reset: -> @ <<< {handler: null, mood-handler: null, ready: false, mood: 3}
             check: ->
+              if $scope.doctor.chance < 5 =>
+                $(\#oops).css display: \block
+                $scope.doctor.chance = 5
+                $scope.patient.reset!
+                set-timeout (~> $(\#oops).css display: \none), 800
+
               has-pat2 = ($scope.percent.sprite.points.filter(->it.type==4 and it.variant > 0).length > 0)
               has-pat1 = ($scope.percent.sprite.points.filter(->it.type==1 and it.variant==2).length > 0)
               if has-pat2 and !@handler? => 
