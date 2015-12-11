@@ -162,7 +162,7 @@ html(lang="en")
           img.dialog-content(ng-src="{{image.url['img/tutorial/'+dialog.idx+'.png']}}")
           img.src.dialog-doctor(data-src="img/tutorial/doctor.png")
         img#wheel.src(data-src="img/wheel.png",draggable="false")
-        img.src(data-src="img/scenario.png",style="width:100%",draggable="false")
+        img.src(ng-if="usedom",data-src="img/scenario.png",style="width:100%",draggable="false")
 
         div(ng-if="usedom")
           .sprite(ng-repeat="pat in percent.sprite.points",
