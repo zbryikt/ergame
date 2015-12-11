@@ -890,7 +890,9 @@ angular.module \ERGame, <[]>
         if $scope.ismin and !ismin and !is-pad=> 
           document.body.scrollTop = 0
           $(\#minimal-fix).css display: \block
-        if is-pad or ismin => $(\#minimal-fix).css display: \none
+        # this is not gonna work in i5. don't do this work instead.
+        #if is-pad or ismin =>
+        #  $(\#minimal-fix).css display: \none
         $scope.ismin = ismin
         $scope.is-pad = is-pad
         if w != @w or h != @h => $scope.dimension.update!
