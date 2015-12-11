@@ -1,12 +1,12 @@
 {
   "author": "Kirby Wu",
-  "name": "template",
-  "description": "simple, quick template for bootstrap a page",
+  "name": "ERGame",
+  "description": "Life in Emergency Room the Game",
   "version": "0.0.1",
-  "homepage": "https://github.com/zbryikt/template",
+  "homepage": "https://github.com/zbryikt/ergame",
   "repository": {
     "type": "git",
-    "url": "https://github.com/zbryikt/template"
+    "url": "https://github.com/zbryikt/ergame"
   },
   "engines": {
     "node": ">=0.12.6",
