@@ -391,7 +391,6 @@ angular.module \ERGame, <[]>
 
     $scope.madmax = 0
     $scope.demad = (e) ->
-      #$(\#finger-tap).css display: \none
       $scope.dialog.finger.isOn = false
       prog = 100
       madmax = $scope.percent.sprite.points.filter(->it.ismad) 
@@ -608,21 +607,13 @@ angular.module \ERGame, <[]>
             fire: ->
               $interval.cancel @mood-handler
               $scope.dialog.finger <<< { isOn: true, y: 144.76, x: 795.6}
-              /*
-              $(\#finger-tap).css do
-                display: \block
-                top: \22%
-                left: \68%
-              */
               $scope.madspeed = 0.015
               $scope.dialog.timeout (-> $scope.dialog.finger <<< {isOn: false}), 2300
-              #$scope.dialog.timeout (-> $(\#finger-tap).css display: \none), 2300
         * do
             ready: false
             handler: null
             reset: -> @ <<< handler: null, ready: false
             check: ->
-              #if $scope.madspeed == 0.015 and $(\#finger-tap).css(\display) == \none and !@handler =>
               if $scope.madspeed == 0.015 and !$scope.dialog.finger.isOn and !@handler =>
                 @handler = $scope.dialog.timeout (~> @ready = true), 1000
               @ready
@@ -644,14 +635,7 @@ angular.module \ERGame, <[]>
               if $scope.madmax >= 1 and @launched==0 =>
                 @launched = 1
                 $scope.dialog.finger <<< { isOn: true, y: 197.4, x: 351}
-                /*
-                $(\#finger-tap).css do
-                  display: \block
-                  top: \30%
-                  left: \30%
-                */
                 $scope.madspeed = 0.002
-                #$scope.dialog.timeout (-> $(\#finger-tap).css display: \none), 1000
               if $scope.madspeed == 0.002 and $scope.madmax < 1 and @launched == 1 => 
                 @launched = 2
                 $scope.percent.sprite.points.filter(->it.type == 4).0.mad = 0
@@ -670,14 +654,7 @@ angular.module \ERGame, <[]>
               $scope.supply.active 1, true
               $scope.supply.active 2, false
               $scope.dialog.finger <<< { isOn: true, y: 46.06, x: 234}
-              /*$(\#finger-tap).css do
-                display: \block
-                top: \7%
-                left: \20%*/
-              $scope.dialog.timeout (->
-                #$(\#finger-tap).css display: \none
-                $scope.mouse.unlock!
-              ), 1000
+              $scope.dialog.timeout (-> $scope.mouse.unlock!), 1000
         * do
             ready: false
             handler: false
@@ -700,11 +677,6 @@ angular.module \ERGame, <[]>
               $scope.doctor.faint = true
               $scope.doctor.demading = 0
               $scope.dialog.finger <<< { isOn: true, y: 131.6, x: 351}
-              /*$(\#finger-tap).css do
-                display: \block
-                top: \20%
-                left: \30%*/
-              #$scope.dialog.timeout (-> $(\#finger-tap).css display: \none), 1000
         * do
             ready: false
             reset: -> @ <<< ready: false, handler: null
