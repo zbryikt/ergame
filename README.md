@@ -1,32 +1,23 @@
-template
+急診人生
 ========
 
-a web template, for simple frontend. it contains a simple webserver, watch daemon, and a makefile for offline building. It uses jade, styl and livescript to build a web page.
 
+急診人生 - 三分鐘的急診室醫師人生，透過新聞遊戲化的方式讓讀者體驗三分鐘的急診室醫師生活。
 
 Usage
-========
+--------
 
-Simply edit index.jade, index.styl and index.ls, and type 'make' to build these into index.html, index.css and index.js.
+請預先安裝 nodejs. 接著，使用終端機 / 命令提示字元程式切換到專案根目錄:
+```
+    npm install
+    ./node_modules/.bin/lsc server
+```
 
-You can also watch all your changes and build them automatically. To do so, run
-
-    npm i
-
-once (for installing all dependencies), then run
-
-    npm start
-
-It will start watching all styl, jade and livescript changes, and also run a simple web server listening on localhost:9999.
+然後用瀏覽器開啟[http://localhost:9997](http://localhost:9997)
 
 
-Configuration
-========
+License
+--------
 
-Options about CDN, Open Graph, Favicon, thumbnail and used libraries are available in index.jade:
+MIT License
 
-    - var use = { cdn: false, og: false, favicon: true }
-    - var lib = { jquery: true, d3js: false, angular: true, bootstrap: true, semantic: false }
-    - var assets = "assets"
-    - var thumbnail = "thumbnail.png"
-    - var favicon = "thumbnail.png"
