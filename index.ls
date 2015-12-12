@@ -1209,6 +1209,18 @@ window.ctrl = do
       description: "一款富含真實情境的經典急診室經營夢幻之作，為台灣第一個急診室新聞遊戲。遊戲背景鎖定在台灣的一間大型醫學中心，面對健保體制的崩壞、沒膽改革的政府以及愛跑大醫院看病的人民，擁有拯救急診室命運能力的鍵盤醫師，將在一次又一次的真實的醫療突發狀況中突圍，試圖拯救病患的生命。你，將在人類的極限體力、醫生的使命和病患的生命中作出抉擇，準備好了嗎？"
     FB.ui obj, (->)
 
+  copy: ->
+    @scope!audio.click!
+    copybtn = '#pause-link'
+    clipboard = new Clipboard copybtn
+    clipboard.on \success, ->
+    # $(copybtn).tooltip({title: '拷好囉', trigger: 'click'}).tooltip('show')
+    # setTimeout((->$(copybtn).tooltip('hide')), 1000)
+    clipboard.on \error, ->
+    # $(copybtn).tooltip({title: '抱歉你的瀏覽器不行喔', trigger: 'click'}).tooltip('show')
+    # setTimeout((->$(copybtn).tooltip('hide')), 1000)
+
+
 
 touchflag = false
 audioinit = false
