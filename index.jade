@@ -106,7 +106,7 @@ html(lang="en")
             img.src(data-src="img/game/start-0.png")
             img.src.active(data-src="img/game/start-1.png")
         #game-over.img-bk(data-src="img/cover/exitscene.png",ng-show="game.state==4")
-          #gover-facebook
+          #gover-facebook(ng-click="share(doctor.rank)")
             img.src(data-src="img/cover/over-share-0.png")
             img.src.active(data-src="img/cover/over-share-1.png")
           #gover-reporter
@@ -191,3 +191,20 @@ html(lang="en")
         a.pull-right(href="http://github.com/zbryikt/ergame/",target="_blank"): img(src="img/github.png")
       #minimal-fix(style="display:none") &nbsp;
       #img-preloader
+    #fb-root
+    script.
+      (function(d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+        js = d.createElement(s); js.id = id;
+        js.src = "//connect.facebook.net/zh_TW/sdk.js#xfbml=1&appId=646775858745770&version=v2.0";
+        fjs.parentNode.insertBefore(js, fjs);
+
+      }(document, 'script', 'facebook-jssdk'));</script>
+    script.
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+      ga('create', 'UA-52410923-1', 'auto');
+      ga('send', 'pageview');
