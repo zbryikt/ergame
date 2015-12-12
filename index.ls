@@ -1232,7 +1232,8 @@ window.touch = touch = do
     angular.element(\#wrapper).scope().mouse.down(e,true)
     # prevent default eats slide-up action, which is needed for ios to enter minimal-view.
     # only prevent default when it's in minimal view.
-    if angular.element(\#wrapper).scope().is-min => e.prevent-default!
+    s = angular.element(\#wrapper).scope()
+    if s.is-min or s.is-ipad => e.prevent-default!
   up: (e) ->
     touchflag := true
     angular.element(\#wrapper).scope().mouse.up(e,true)
