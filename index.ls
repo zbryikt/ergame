@@ -607,7 +607,7 @@ angular.module \ERGame, <[]>
               return @ready
             fire: ->
               $interval.cancel @mood-handler
-              $scope.dialog.finger <<< { isOn: true, y: 344, x: 800, small: true}
+              $scope.dialog.finger <<< { isOn: true, y: [344,266], x: [750,1000], small: true}
               $scope.madspeed = 0.015
               $scope.dialog.timeout (-> $scope.dialog.finger <<< {isOn: false, small: false}), 2300
         * do
@@ -1132,7 +1132,10 @@ angular.module \ERGame, <[]>
           f = $scope.dialog.finger
           if f.small =>
             img = $scope.image.img["img/mad/click-#mod.png"]
-            @ctx.drawImage img, f.x, f.y, 70.2, 114.426
+            if f.x.length =>
+              for i from 0 til f.x.length =>
+                @ctx.drawImage img, f.x[i], f.y[i], 70.2, 114.426
+            else @ctx.drawImage img, f.x, f.y, 70.2, 114.426
           else
             img = $scope.image.img["img/tutorial/finger#mod.png"]
             @ctx.drawImage img, f.x, f.y, 292.5, 292.5

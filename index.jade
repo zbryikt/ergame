@@ -150,7 +150,7 @@ html(lang="en")
           #click-indicator(ng-show="usedom")
             img.src(data-src="img/mad/click-1.png")
             img.src(data-src="img/mad/click-2.png")
-          #block-progress: div(ng-attr-style="width:{{doctor.demading}}%")
+          #block-progress(ng-show="!dialog.show"): div(ng-attr-style="width:{{doctor.demading}}%")
         #arrow
           img.src(data-src="img/arrow.png",draggable="false")
         #finger-slide
