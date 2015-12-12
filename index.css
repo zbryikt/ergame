@@ -892,7 +892,8 @@ width: 100%;
   background-repeat: no-repeat;
   z-index: 7;
 }
-#landing div {
+#landing div,
+#landing a {
   position: absolute;
   width: 24%;
   height: 13%;
@@ -915,9 +916,12 @@ width: 100%;
   z-index: 6;
 }
 #landing div img,
+#landing a img,
 #pause div img,
+#pause a img,
 #game-ctrl div img,
 #game-over div img,
+#game-over a img,
 #mute div img {
   position: absolute;
   top: 0;
@@ -926,16 +930,22 @@ width: 100%;
   cursor: pointer;
 }
 #landing div img.active,
+#landing a img.active,
 #pause div img.active,
+#pause a img.active,
 #game-ctrl div img.active,
 #game-over div img.active,
+#game-over a img.active,
 #mute div img.active {
   display: none;
 }
 #landing div:hover img.active,
+#landing a:hover img.active,
 #pause div:hover img.active,
+#pause a:hover img.active,
 #game-ctrl div:hover img.active,
 #game-over div:hover img.active,
+#game-over a:hover img.active,
 #mute div:hover img.active {
   display: block;
 }
@@ -1081,7 +1091,8 @@ width: 100%;
   text-align: center;
   z-index: 10;
 }
-#pause div {
+#pause div,
+#pause a {
   display: inline-block;
   position: relative;
   width: 12%;

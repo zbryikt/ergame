@@ -258,7 +258,7 @@ img
   z-index: index(order, 'cover')
 
 #landing 
-  div
+  div, a
     position: absolute
     width: 24%
     height: 13%
@@ -276,7 +276,7 @@ img
     z-index: index(order, 'urgent')
 
 
-#landing div, #pause div, #game-ctrl div, #game-over div, #mute div
+#landing div, #landing a, #pause div, #pause a, #game-ctrl div, #game-over div, #game-over a, #mute div
   img
     position: absolute
     top: 0
@@ -354,7 +354,7 @@ img
   background-color: rgba(65,65,65,0.7)
   text-align: center
   z-index: index(order, 'pause')
-  div
+  div, a
     display: inline-block
     position: relative
     width: 12%
@@ -438,11 +438,11 @@ img
   overflow: hidden
   transition(left 3s ease-out)
 #game-over #gover-rank-active img
-    position: relative
-    height: 100%
-    width: auto
-    position: relative
-    transition(left 3s ease-out)
+  position: relative
+  height: 100%
+  width: auto
+  position: relative
+  transition(left 3s ease-out)
 
 #countdown
   background: rgba(65,65,65,0.7)

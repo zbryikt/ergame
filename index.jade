@@ -50,7 +50,7 @@ html(lang="en")
         #deg90.img-bk(ng-show="dimension.portrait",data-src="img/90deg.png")
         canvas#main-canvas
         #landing.img-bk(ng-show="game.state==0",data-src="img/cover/landingscene.png")
-          #landing-reporter
+          a#landing-reporter(ng-click="audio.click()",href="https://twreporter.atavist.com/emergency-content",target="_blank")
             img.src(data-src="img/cover/landing-reporter-0.png")
             img.src.active(data-src="img/cover/landing-reporter-1.png")
           #landing-start(onclick="ctrl.tutorial(false,event)",ontouchstart="ctrl.tutorial(true,event)")
@@ -68,13 +68,13 @@ html(lang="en")
           #pause-link
             img.src(data-src="img/pause/link-0.png")
             img.src.active(data-src="img/pause/link-1.png")
-          #pause-reporter
+          a#pause-reporter(ng-click="audio.click()",href="https://twreporter.atavist.com/emergency-content",target="_blank")
             img.src(data-src="img/pause/reporter-0.png")
             img.src.active(data-src="img/pause/reporter-1.png")
-          #pause-facebook
+          #pause-facebook(onclick="ctrl.sharegame(false,event)",ontouchtstart="ctrl.sharegame(true,event)")
             img.src(data-src="img/pause/fb-0.png")
             img.src.active(data-src="img/pause/fb-1.png")
-          #pause-tutorial
+          #pause-tutorial(onclick="ctrl.resettutorial(false,event)",ontouchstart="ctrl.resettutorial(true,event)")
             img.src(data-src="img/pause/tutorial-0.png")
             img.src.active(data-src="img/pause/tutorial-1.png")
           #pause-replay(onclick="ctrl.replay(false,event)",ontouchstart="ctrl.replay(true,event)")
@@ -109,7 +109,7 @@ html(lang="en")
           #gover-facebook(onclick="ctrl.share(false,event)",ontouchstart="ctrl.share(true,event)")
             img.src(data-src="img/cover/over-share-0.png")
             img.src.active(data-src="img/cover/over-share-1.png")
-          #gover-reporter
+          a#gover-reporter(ng-click="audio.click()",href="https://twreporter.atavist.com/emergency-content",target="_blank")
             img.src(data-src="img/cover/over-report-0.png")
             img.src.active(data-src="img/cover/over-report-1.png")
           #gover-rank
