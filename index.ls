@@ -761,6 +761,7 @@ angular.module \ERGame, <[]>
               top: \10px, left: \10px
             $(\#head).css display: \block
             $(\#foot).css display: \block
+        $(\#prehide).css(\display, \none)
 
       portrait: false
       rotate: ->
