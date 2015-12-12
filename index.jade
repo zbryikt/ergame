@@ -106,7 +106,7 @@ html(lang="en")
             img.src(data-src="img/game/start-0.png")
             img.src.active(data-src="img/game/start-1.png")
         #game-over.img-bk(data-src="img/cover/exitscene.png",ng-show="game.state==4")
-          #gover-facebook(ng-click="share(doctor.rank, doctor.score.value)")
+          #gover-facebook(onclick="ctrl.share(false,event)",ontouchstart="ctrl.share(true,event)")
             img.src(data-src="img/cover/over-share-0.png")
             img.src.active(data-src="img/cover/over-share-1.png")
           #gover-reporter
