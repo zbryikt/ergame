@@ -763,6 +763,7 @@ angular.module \ERGame, <[]>
             $(\#head).css display: \block
             $(\#foot).css display: \block
         $(\#prehide).css(\display, \none)
+        if $scope.canvas and $scope.canvas.e => $scope.canvas.update!
 
       portrait: false
       rotate: ->
@@ -1010,37 +1011,7 @@ angular.module \ERGame, <[]>
         # a little delay before we actually remove loading panel
         $timeout (-> $scope.progress.count.current++), 100
         $scope.$watch 'loading', (-> $scope.canvas.init!)
-      /* maunally downsampling. look like we don't need this ....
-      canvas: null
-      ctx: null
-      downsample: ->
-        if !@canvas =>
-          @canvas = document.createElement("canvas")
-          @canvas <<< {width: 1024, height: 576}
-          @ctx = @canvas.getContext \2d
-        {w,h} = $scope.dimension{w,h}
-        [w,h] = [w/100,h/100]
-        for k,v of @url =>
-          ret = /img\/it-(\d+)/.exec k
-          if !ret => continue
-          type = ret.1
-          dim = $scope.percent.sprite.size[type]
-          img = $scope.image.img["img/it-#{it.type}-#{it.variant or 0}-0.png"]
-          raw = {w: img.width, h: img.height}
-          des = {w: dim.w * w, h: dim.h * h}
-          rate = {w: (des.w / raw.w)**0.25, h :(des.h / raw.h)**0.25}
-          cur = {} <<< raw
-          data = null
-          for i from 0 til 4 =>
-            if data => @ctx.putImageData data, 0, 0
-            cur.w *= rate.w
-            cur.h *= rate.h
-            @ctx.drawImageData img, 0, 0, cur.w, cur.h
-            data = @ctx.getImageData 0, 0, cur.w, cur.h
 
-          0, 0, img.width,  img.height, it.x * w, it.y * h, dim.w * w, dim.h * h
-        */
-        
     $scope.audio.init!
     $scope.image.init!
 
@@ -1061,18 +1032,23 @@ angular.module \ERGame, <[]>
       ctx: null
       init: ->
         @e = document.getElementById(\main-canvas)
-        {w,h} = $scope.dimension{w,h}
-        [w,h] = [w/100,h/100]
-        @e <<< {width: 1170, height: 658}
-        @e.style <<< {width: "#{w * 100}px", height: "#{h * 100}px"}
         @ctx = @e.getContext \2d
         @ctx.imageSmoothingEnabled = true
         @ctx.mozImageSmoothingEnabled = true
         @ctx.webkitImageSmoothingEnabled = true
         @ctx.msImageSmoothingEnabled = true
-
         if $scope.usedom => return
-        <~ $interval _, 100
+        @update!
+        if !@handler => @handler = $interval (~> @draw!), 100
+      update: ->
+        if !@e => return @init!
+        {w,h} = $scope.dimension{w,h}
+        [w,h] = [w/100,h/100]
+        if @w == w and @h == h => return
+        @e <<< {width: 1170, height: 658}
+        @e.style <<< {width: "#{w * 100}px", height: "#{h * 100}px"}
+        @ <<< {w,h}
+      draw: ->
         @ctx.fillStyle = "rgba(0,0,0,0.0)"
         @ctx.fillRect 0, 0, 1170, 658
         img = $scope.image.img["img/scenario.png"]
