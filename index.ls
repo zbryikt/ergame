@@ -958,6 +958,7 @@ angular.module \ERGame, <[]>
       init: ->
         AudioContext = window.AudioContext or window.webkitAudioContext
         #TODO android browser doesn't support web audio
+        if /Android.+Firefox.+/.exec(navigator.userAgent) => AudioContext = null
         if !AudioContext =>
           dummy = (name) ~>
             ret = (offset, looping = false) ~>
