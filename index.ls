@@ -1143,17 +1143,6 @@ angular.module \ERGame, <[]>
 
     $scope.usedom = false
 
-    /*$scope.share = (rank, score) ->
-      title = <[見習醫生 實習醫生 住院醫生 總住院醫生 研究醫生 主治醫生 醫龍]>
-      obj = do
-        method: \feed
-        link: \http://0media.tw/p/ergame/
-        name: "我在急診人生救了 #{score} 個人，獲得「#{title[rank]}」稱號！"
-        caption: "急診人生 - 三分鐘的急診室醫師人生 / 報導者 x 0media"
-        picture: "http://0media.tw/p/ergame/rank/s#{score}.png"
-        description: "一款富含真實情境的經典急診室經營夢幻之作，為台灣第一個急診室新聞遊戲。遊戲背景鎖定在台灣的一間大型醫學中心，面對健保體制的崩壞、沒膽改革的政府以及愛跑大醫院看病的人民，擁有拯救急診室命運能力的鍵盤醫師，將在一次又一次的真實的醫療突發狀況中突圍，試圖拯救病患的生命。你，將在人類的極限體力、醫生的使命和病患的生命中作出抉擇，準備好了嗎？"
-      FB.ui obj, (->)*/
-
     # params for sharing in FB
     args = do
       app_id: \646775858745770
@@ -1225,34 +1214,6 @@ window.ctrl = do
   cont: (is-touch = false, event) -> @wrap is-touch, ~>
     @scope!audio.click!
     @scope!game.resume!
-
-  /*share: (is-touch = false, event) -> @wrap is-touch, ~>
-    @scope!audio.click!
-    @scope!share @scope!doctor.rank, @scope!doctor.score.value*/
-
-  /*sharegame: (is-touch = false, event) -> @wrap is-touch, ~>
-    @scope!audio.click!
-    args = do
-      app_id: \646775858745770
-      display: \popup
-      caption: \twreporter.atavist.com
-      picture: \http://0media.tw/p/ergame/img/thumbnail.jpg
-      link: \http://0media.tw/p/ergame/
-      redirect_uri: \http://0media.tw/p/ergame/
-      description: "一款富含真實情境的經典急診室經營夢幻之作，為台灣第一個急診室新聞遊戲。遊戲背景鎖定在台灣的一間大型醫學中心，面對健保體制的崩壞、沒膽改革的政府以及愛跑大醫院看病的人民，擁有拯救急診室命運能力的鍵盤醫師，將在一次又一次的真實的醫療突發狀況中突圍，試圖拯救病患的生命。你，將在人類的極限體力、醫生的使命和病患的生命中作出抉擇，準備好了嗎？"
-    params = ["#k=#{encodeURIComponent(v)}" for k,v of args].join(\&)
-
-    console.log params
-    window.open "http://www.facebook.com/dialog/feed?#params"
-    return
-    obj = do
-      method: \feed
-      link: \http://0media.tw/p/ergame/
-      name: "急診人生 - 三分鐘的急診室醫師人生 / 報導者 x 0media"
-      caption: "twreporter.atavist.com"
-      picture: "http://0media.tw/p/ergame/img/thumbnail.jpg"
-      description: "一款富含真實情境的經典急診室經營夢幻之作，為台灣第一個急診室新聞遊戲。遊戲背景鎖定在台灣的一間大型醫學中心，面對健保體制的崩壞、沒膽改革的政府以及愛跑大醫院看病的人民，擁有拯救急診室命運能力的鍵盤醫師，將在一次又一次的真實的醫療突發狀況中突圍，試圖拯救病患的生命。你，將在人類的極限體力、醫生的使命和病患的生命中作出抉擇，準備好了嗎？"
-    FB.ui obj, (->)*/
 
   copy: ->
     @scope!audio.click!
