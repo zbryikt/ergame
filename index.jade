@@ -21,9 +21,11 @@ html(lang="en")
     script(type="text/javascript",src="gunzip.min.js")
     script(type="text/javascript",src="index.js")
     script(type="text/javascript",src="clipboard.min.js")
+    style(type="text/css")
+      .prehide { display: none }
   body(ng-app="ERGame",ng-controller="ERGame",ng-mouseup="mouse.up($event)",ng-mousedown="mouse.down($event)")
     #container(style="height:100%")
-      #head
+      #head.prehide
         img#logo(src="img/logo.png")
         .pull-right
           a(href="https://www.facebook.com/twreporter/",target="_blank"): img(src="img/fb.png")
@@ -188,7 +190,7 @@ html(lang="en")
               img(ng-src="{{image.url['img/it-'+pat.type+'-'+(pat.variant || 0)+'-'+(pat.active || 0)+'.png']}}",
               draggable="false")
 
-      #foot
+      #foot.prehide
         a.pull-left(href="https://www.twreporter.org/a/about-us-footer",target="_blank"): img(src="img/about.png")
         a.pull-right(href="http://github.com/zbryikt/ergame/",target="_blank"): img(src="img/github.png")
       #minimal-fix(style="display:none") &nbsp;

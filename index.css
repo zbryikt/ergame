@@ -1215,6 +1215,7 @@ width: 100%;
 #head {
   text-align: center;
   font-size: 32px;
+  display: block;
 }
 #head .pull-right {
   margin: 8px 0;
