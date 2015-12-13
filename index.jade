@@ -29,8 +29,8 @@ html(lang="en")
       #head
         img#logo(src="img/logo.png")
         .pull-right
-          a(href="https://www.facebook.com/twreporter/",target="_blank"): img(src="img/fb.png")
-          a(href="#"): img(src="img/twt.png")
+          a(ng-href="https://www.facebook.com/dialog/feed?{{share.game}}",target="_blank"): img(src="img/fb.png")
+          a(ng-href="https://twitter.com/intent/tweet?url={{share.link}}",target="_blank"): img(src="img/twt.png")
       //-div(style="position:fixed;top:10px;left:10px;z-index:10000")
         | D1: {{debug.d1}}
         br
