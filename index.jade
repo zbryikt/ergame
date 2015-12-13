@@ -27,7 +27,8 @@ html(lang="en")
     #prehide
     #container(style="height:100%")
       #head
-        img#logo(src="img/logo.png")
+        a(href="https://www.twreporter.org/",target="_blank"): img#logo1(src="img/logo1.png")
+        a(href="http://0media.tw/",target="_blank"): img#logo2(src="img/logo2.png")
         .pull-right
           a(ng-href="https://www.facebook.com/dialog/feed?{{share.game}}",target="_blank"): img(src="img/fb.png")
           a(ng-href="https://twitter.com/intent/tweet?url={{share.link}}",target="_blank"): img(src="img/twt.png")

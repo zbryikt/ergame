@@ -1226,9 +1226,11 @@ width: 100%;
   width: 18px;
   margin-left: 16px;
 }
-#logo {
-  width: 300px;
-  margin: 15px;
+#logo1,
+#logo2 {
+  height: 38px;
+  margin: 15px 0;
+  border: 0;
 }
 #container {
   max-width: 1024px;
