@@ -330,7 +330,7 @@ angular.module \ERGame, <[]>
             [ex,ey] = [e.changedTouches.0.clientX, e.changedTouches.0.clientY]
         if !ex and !ey => [ex,ey] = [@last.x, @last.y]
         if @target and @target.type == 1 and
-           (((ex - @last.x)**2 + (ey - @last.y)**2) < 18 or now - @timestamp < 100) => return
+           (((ex - @last.x)**2 + (ey - @last.y)**2) < 72 or now - @timestamp < 100) => return
         <~ setTimeout _, 0
         @is-pal-on = false
         $(\#wheel).css({display: "none"})
