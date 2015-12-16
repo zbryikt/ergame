@@ -720,6 +720,8 @@ angular.module \ERGame, <[]>
         [w1,h1] = if doc-w < 1024 => [doc-w, doc-w * 576 / 1024 ] else [1024,576]
         [w2,h2] = if doc-h < 576  => [doc-h * 1024 / 576, doc-h] else [1024,576]
         [w,h] = if h1 > doc-h => [w2,h2] else [w1,h1]
+        w *= 0.9
+        h *= 0.9
         @ <<< {w,h}
         $(\#frame).css width: "#{w}px", height: "#{h}px"
         $(\#container).css width: "#{w}px"
