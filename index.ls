@@ -1124,7 +1124,7 @@ angular.module \ERGame, <[]>
     args = do
       app_id: \646775858745770
       display: \popup
-      caption: \twreporter.atavist.com
+      caption: \www.twreporter.org
       picture: \http://0media.tw/p/ergame/img/thumbnail.jpg
       link: \http://0media.tw/p/ergame/
       redirect_uri: \http://0media.tw/p/ergame/
