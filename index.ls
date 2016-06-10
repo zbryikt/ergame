@@ -995,7 +995,11 @@ angular.module \ERGame, <[]>
       init: ->
         $scope.progress.count.total++
         $scope.progress.update!
-        ({@url,buf}) <~ $scope.assets.fetch \assets/img.gz, \image/png, _
+        isEn = /en/.exec(window.location.search or (navigator.languages or [])[0] or navigator.language or "en")
+        if /zh/.exec(window.location.search) => isEn = false
+        # localized configuration
+        img-assets = if isEn => \assets/img.gz else \assets/img.gz
+        ({@url,buf}) <~ $scope.assets.fetch img-assets, \image/png, _
         [imgs,bks] = [$(\img.src), $(\.img-bk)]
         for idx from 0 til imgs.length =>
           item = $(imgs[idx])

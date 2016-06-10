@@ -52,6 +52,17 @@ html(lang="en")
               img(src="img/load/doctor.png",ng-attr-style="top:-{{100 - progress.value}}%")
           #loading-percent {{progress.value}}&nbsp;%
           img#loading-text(src="img/load/text.png")
+          script.
+            var isEn = (
+              /en/.exec(
+                window.location.search ||
+                (navigator.languages || [])[0] ||
+                navigator.language ||
+                "en")
+            );
+            if(/zh/.exec(window.location.search)) isEn = false;
+            if(isEn) document.getElementById("loading-text").setAttribute("src", "img/load/text-en.png");
+
         #deg90.img-bk(ng-show="dimension.portrait",data-src="img/90deg.png")
         canvas#main-canvas
         #landing.img-bk(ng-show="game.state==0",data-src="img/cover/landingscene.png")
