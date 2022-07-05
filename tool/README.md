@@ -1,0 +1,1 @@
+`build-assets.ls` uses repo structure before refactoring ( 93ee129 ~ 94b4d2d ), and not yet been patched. additional code rewrite may be needed, or at least the old repo will be needed to run `build-assets.ls`.
