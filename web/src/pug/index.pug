@@ -1,0 +1,194 @@
+doctype html
+-
+  var assets = "assets"
+  var thumbnail = "img/thumbnail.jpg"
+  var favicon = "img/favicon.png"
+  var title = "急診人生 - 三分鐘的急診室醫師人生 / 報導者"
+html(lang="en")
+  head(prefix="og: http://ogp.me/ns#")
+    meta(charset="utf-8")
+    meta(name='viewport',
+    content='width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=0.0')
+    title= title
+    meta(property="og:locale",content="zh_TW")
+    meta(property="og:image",content=`${thumbnail}`)
+    meta(property="og:image:type",content="image/png")
+    meta(property="og:image:width",content="200")
+    meta(property="og:image:height",content="200")
+    link(rel="icon",type="image/x-icon",href="#{favicon}")
+    script(type="text/javascript",src=`${assets}/lib/jquery/1.10.2/jquery.min.js`)
+    script(type="text/javascript",src=`${assets}/lib/angular/1.2.3/angular.min.js`)
+    link(rel="stylesheet",type="text/css",href=`${assets}/lib/bootstrap/3.0.2/css/bootstrap.min.css`)
+    script(type="text/javascript",src=`${assets}/lib/bootstrap/3.0.2/js/bootstrap.min.js`)
+    link(rel="stylesheet",type="text/css",href=`${assets}/lib/fontawesome/4.4.0/css/font-awesome.min.css`)
+    link(rel="stylesheet",type="text/css",href="css/index.css")
+    script(type="text/javascript",src=`${assets}/lib/scream/scream.min.js`)
+    script(type="text/javascript",src=`${assets}/lib/gunzip/gunzip.min.js`)
+    script(type="text/javascript",src="js/index.js")
+  body(ng-app="ERGame",ng-controller="ERGame",ng-mouseup="mouse.up($event)",ng-mousedown="mouse.down($event)")
+    #container(style="height:100%")
+      #head
+        img#logo(src="assets/img/logo.png")
+        .pull-right
+          a(href="#"): img(src="assets/img/fb.png")
+          a(href="#"): img(src="assets/img/twt.png")
+      //-div(style="position:fixed;top:10px;left:10px;z-index:10000")
+        | D1: {{debug.d1}}
+        br
+        | D2: {{debug.d2}}
+        br
+        | D3: {{debug.d3}}
+        br
+        | D4: {{debug.d4}}
+        br
+        | D5: {{debug.d5}}
+        br
+        | D6: {{debug.d6}}
+      #frame(style="height:100%"): #wrapper(style="height:100%")
+        #loading(ng-class="{'fade':progress.value >= 100}")
+          #loading-fig
+            img.base(src="assets/img/load/shadow.png")
+            #loading-progress(ng-attr-style="top:{{100 - progress.value}}%")
+              img(src="assets/img/load/doctor.png",ng-attr-style="top:-{{100 - progress.value}}%")
+          #loading-percent {{progress.value}}&nbsp;%
+          img#loading-text(src="assets/img/load/text.png")
+        #deg90.img-bk(ng-show="dimension.portrait",data-src="assets/img/90deg.png")
+        #landing.img-bk(ng-show="game.state==0",data-src="assets/img/cover/landingscene.png")
+          #landing-reporter
+            img.src(data-src="assets/img/cover/landing-reporter-0.png")
+            img.src.active(data-src="assets/img/cover/landing-reporter-1.png")
+          #landing-start(onclick="ctrl.tutorial(false,event)",ontouchstart="ctrl.tutorial(true,event)")
+            img.src(data-src="assets/img/cover/landing-start-0.png")
+            img.src.active(data-src="assets/img/cover/landing-start-1.png")
+          #landing-skip(onclick="ctrl.skip(false,event,false)",ontouchstart="ctrl.skip(true,event,false)")
+            img.src(data-src="assets/img/cover/landing-skip-0.png")
+            img.src.active(data-src="assets/img/cover/landing-skip-1.png")
+        #countdown(ng-show="game.state==5")
+          img.src(data-src="assets/img/countdown/3.png",ng-show="game.countdown.value==4")
+          img.src(data-src="assets/img/countdown/2.png",ng-show="game.countdown.value==3")
+          img.src(data-src="assets/img/countdown/1.png",ng-show="game.countdown.value==2")
+          img.src(data-src="assets/img/countdown/go.png",ng-show="game.countdown.value==1")
+        #pause(ng-show="game.state==1")
+          #pause-link
+            img.src(data-src="assets/img/pause/link-0.png")
+            img.src.active(data-src="assets/img/pause/link-1.png")
+          #pause-reporter
+            img.src(data-src="assets/img/pause/reporter-0.png")
+            img.src.active(data-src="assets/img/pause/reporter-1.png")
+          #pause-facebook
+            img.src(data-src="assets/img/pause/fb-0.png")
+            img.src.active(data-src="assets/img/pause/fb-1.png")
+          #pause-tutorial
+            img.src(data-src="assets/img/pause/tutorial-0.png")
+            img.src.active(data-src="assets/img/pause/tutorial-1.png")
+          #pause-replay(onclick="ctrl.replay(false,event)",ontouchstart="ctrl.replay(true,event)")
+            img.src(data-src="assets/img/pause/replay-0.png")
+            img.src.active(data-src="assets/img/pause/replay-1.png")
+          #pause-tm
+            img.src(data-src="assets/img/pause/tm.png")
+        #mute(onmouseup="ctrl.mute(false,event)",ontouchstart="ctrl.mute(true,event)")
+          div(ng-show="audio.isMute")
+            img.src(data-src="assets/img/mute/x0.png")
+            img.src.active(data-src="assets/img/mute/x1.png")
+          div(ng-show="!audio.isMute")
+            img.src(data-src="assets/img/mute/o0.png")
+            img.src.active(data-src="assets/img/mute/o1.png")
+        #game-ctrl(ng-show="game.state>0")
+          #gctrl-landing(ng-show="game.state==4",ng-mouseup="game.reset();audio.click();$event.preventDefault()")
+            img.src(data-src="assets/img/game/landing-0.png")
+            img.src.active(data-src="assets/img/game/landing-1.png")
+          #gctrl-pause(ng-show="game.state==2",onmouseup="ctrl.pause(false,event)",ontouchstart="ctrl.pause(true,event)")
+            img.src(data-src="assets/img/game/pause-0.png")
+            img.src.active(data-src="assets/img/game/pause-1.png")
+          #gctrl-cont(ng-show="game.state==3 && dialog.show",onclick="ctrl.next(false)",ontouchstart="ctrl.next(true)")
+            img(data-src="assets/img/game/cont-0.png")
+            img.active(data-src="assets/img/game/cont-1.png")
+          #gctrl-skip(ng-show="game.state==3",onclick="ctrl.skip(false,event)",ontouchstart="ctrl.skip(true,event)")
+            img.src(data-src="assets/img/game/skip-0.png")
+            img.src.active(data-src="assets/img/game/skip-1.png")
+          #gctrl-start(ng-show="game.state==1",onclick="ctrl.cont(false,event)",ontouchstart="ctrl.cont(true,event)")
+            img.src(data-src="assets/img/game/start-0.png")
+            img.src.active(data-src="assets/img/game/start-1.png")
+        #game-over(ng-show="game.state==4")
+          #gover-reporter
+            img.src(data-src="assets/img/cover/over-report-0.png")
+            img.src.active(data-src="assets/img/cover/over-report-1.png")
+          #gover-facebook
+            img.src(data-src="assets/img/cover/over-share-0.png")
+            img.src.active(data-src="assets/img/cover/over-share-1.png")
+          #gover-rank
+            img#govevr-rank-bas.src(data-src="assets/img/lv/0.png")
+            #gover-rank-active(ng-attr-style="left:{{doctor.rank * 14.746094}}%")
+              img.src(data-src="assets/img/lv/8.png",ng-attr-style="left:-{{doctor.rank * 125.5}}%")
+          .score
+            each val in [0,1,2,3]
+              .score-digit(ng-attr-style="background-image:url({{image.url['assets/img/gauge/'+doctor.score.digit["+val+"]+'s.png']}})")
+        #danger(ng-class="{'active':danger}"): img.src(data-src="assets/img/danger.png",draggable="false")
+        #urgency(ng-class="{'active':patient.urgent}")
+        #energy(ng-class="{'active':doctor.draining>0}")
+          #energy-base
+            img.src(data-src="assets/img/gauge/energy-0.png")
+          #energy-current(ng-attr-style="left:-{{(1 - doctor.energy) * 99 + 1.0738255}}%")
+            img.src(data-src="assets/img/gauge/energy-5.png",ng-attr-style="left:{{(1 - doctor.energy) * 99 + 1.0738255}}%")
+        #chance(ng-class="{'active':doctor.hurting>0}")
+          each val in [1,2,3,4,5]
+            .chance-node(ng-class="{'active':doctor.chance >="+val+"}")
+        #score
+          each val in [0,1,2,3]
+            .score-digit(ng-attr-style="background-image:url({{image.url['assets/img/gauge/'+doctor.score.digit["+val+"]+'s.png']}})")
+        #block-mask(ng-show="doctor.faint || madmax")
+          .type(ng-show="doctor.faint && !madmax")
+            img.src(data-src="assets/img/mad/hungry1.png")
+            img.src(data-src="assets/img/mad/hungry2.png")
+          .type(ng-show="madmax==1")
+            img.src(data-src="assets/img/mad/gangster1.png")
+            img.src(data-src="assets/img/mad/gangster2.png")
+          .type(ng-show="madmax==2")
+            img.src(data-src="assets/img/mad/hysteria1.png")
+            img.src(data-src="assets/img/mad/hysteria2.png")
+          #click-indicator
+            img.src(data-src="assets/img/mad/click-1.png")
+            img.src(data-src="assets/img/mad/click-2.png")
+          #block-progress: div(ng-attr-style="width:{{doctor.demading}}%")
+        #arrow
+          img.src(data-src="assets/img/arrow.png",draggable="false")
+        #finger-slide
+          img.src(data-src="assets/img/tutorial/finger1.png",draggable="false")
+          img.src(data-src="assets/img/tutorial/finger2.png",draggable="false")
+          img.src(data-src="assets/img/wheel.png",draggable="false")
+        #finger-tap
+          img.src(data-src="assets/img/tutorial/finger1.png",draggable="false")
+          img.src(data-src="assets/img/tutorial/finger2.png",draggable="false")
+        #oops
+          img.src.dialog-content(data-src="assets/img/tutorial/oops.png")
+          img.src.dialog-doctor(data-src="assets/img/tutorial/doctor.png")
+        #dialog(ng-class="dialog.type")
+          img.dialog-content(ng-src="{{image.url['assets/img/tutorial/'+dialog.idx+'.png']}}")
+          img.src.dialog-doctor(data-src="assets/img/tutorial/doctor.png")
+        img#wheel.src(data-src="assets/img/wheel.png",draggable="false")
+        img.src(data-src="assets/img/scenario.png",style="width:100%",draggable="false")
+        .sprite(ng-repeat="pat in percent.sprite.points",
+        ng-attr-style="width:{{percent.sprite.size[pat.type].w}}%;height:{{percent.sprite.size[pat.type].h}}%;"+
+        "left:{{pat.x}}%;top:{{pat.y}}%",draggable="false",ng-class="pat.cls")
+          .base(draggable="false")
+          .normal(draggable="false")
+          .active(ng-if="pat.type==1 && pat.active==1",ng-class="{'blink': pat.life < 0.3 && pat.variant != 0}",
+          ng-attr-style="height:{{100 * (1 - pat.life)}}%",draggable="false")
+            img(ng-src="{{image.url['assets/img/it-'+pat.type+'-'+(pat.variant || 0)+'-'+(pat.active || 0)+'.png']}}",
+            draggable="false")
+
+          .active(ng-if="pat.type>=2 && pat.type<=4 && pat.active==1",
+          ng-class="{'blink':pat.mad > 0.6 && pat.mad < 0.8}",
+          ng-attr-style="top:{{100 * (1 - pat.mad)}}%",draggable="false")
+            img(ng-src="{{image.url['assets/img/it-'+pat.type+'-'+(pat.variant || 0)+'-'+(pat.active || 0)+'.png']}}",
+            draggable="false", ng-attr-style="position:absolute;top:-{{100 * (1 - pat.mad)}}%")
+
+          .active(ng-if="pat.type>=5 && pat.type<=8 && pat.active==1",ng-class="{'blink':pat.countdown < 0.4}",
+          draggable="false")
+            img(ng-src="{{image.url['assets/img/it-'+pat.type+'-'+(pat.variant || 0)+'-'+(pat.active || 0)+'.png']}}",
+            draggable="false")
+      #foot
+        a.pull-left(href="#"): img.src(data-src="assets/img/about.png")
+        a.pull-right(href="#"): img.src(data-src="assets/img/github.png")
+      #minimal-fix(style="display:none") &nbsp;
+      #img-preloader
