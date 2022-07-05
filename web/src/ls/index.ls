@@ -346,7 +346,7 @@ angular.module \ERGame, <[]>
           ..width = 1024
         @ctx = @canvas.getContext \2d
         @img = new Image!
-        @img.src = \mask.png
+        @img.src = \assets/img/mask.png
         @img.onload = ~> 
           @ctx.drawImage @img, 0, 0, 1024, 576
           @ready = true

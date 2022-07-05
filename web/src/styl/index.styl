@@ -45,7 +45,7 @@ img
   no-selection()
   position: absolute
   z-index: index(order, 'wheel')
-  background-image: url(img/wheel.png)
+  background-image: url(../assets/img/wheel.png)
   background-size: contain
   background-position: center center
   background-repeat: no-repeat
@@ -65,12 +65,12 @@ for type in (1..12)
     for active in 0 1
       .it-{type}-{variant}-{active}
         .base
-          background-image: unquote("url(img/it-"+type+"-0-0.png)")
+          background-image: unquote("url(../assets/img/it-"+type+"-0-0.png)")
         .normal
-          background-image: unquote("url(img/it-"+type+"-"+variant+"-0.png)")
+          background-image: unquote("url(../assets/img/it-"+type+"-"+variant+"-0.png)")
     //.it-{type}-{variant}-1
     //  .active
-    //    background-image: unquote("url(img/it-"+type+"-"+variant+"-1.png)")
+    //    background-image: unquote("url(../assets/img/it-"+type+"-"+variant+"-1.png)")
 
 +keyframes(blink)
   0%
@@ -83,7 +83,7 @@ for type in (1..12)
 #block-mask
   width: 100%
   height: 100%
-  //background: url(img/it-2-2-1.png) rgba(0,0,0,0.7) center center no-repeat
+  //background: url(../assets/img/it-2-2-1.png) rgba(0,0,0,0.7) center center no-repeat
   background: rgba(65,65,65,0.7)
   z-index: index(order, 'mad-mask')
   position: absolute
@@ -102,7 +102,7 @@ for type in (1..12)
 #hit-mask
   width: 100%
   height: 100%
-  background: url(mask.png) center center
+  background: url(assets/img/mask.png) center center
   background-size: contain
   z-index: index(order, 'hit-mask')
   position: absolute
@@ -176,10 +176,10 @@ for type in (1..12)
   background-repeat: no-repeat
 
 #energy-base
-  background-image: url(img/gauge/energy-0.png)
+  background-image: url(../assets/img/gauge/energy-0.png)
 #energy-current 
   z-index: index(order, 'gauge-current')
-  background-image: url(img/gauge/energy-5.png)
+  background-image: url(../assets/img/gauge/energy-5.png)
   transition(width 0.5s ease-in-out)
 
 +keyframes(vibrate)
@@ -211,11 +211,11 @@ for type in (1..12)
   height: 100%
   margin: 2px
   display: inline-block
-  background-image: url(img/gauge/chance-x.png)
+  background-image: url(../assets/img/gauge/chance-x.png)
   background-size: contain
   background-repeat: no-repeat
   &.active
-    background-image: url(img/gauge/chance-o.png)
+    background-image: url(../assets/img/gauge/chance-o.png)
 
 +keyframes(beat)
   0%
@@ -228,7 +228,7 @@ for type in (1..12)
   right: 2%
   width: 14.648%
   height: 10.416%
-  background-image: url(img/gauge/counting.png)
+  background-image: url(../assets/img/gauge/counting.png)
   background-repeat: no-repeat
   background-size: contain
   z-index: index(order, 'gauge')
@@ -260,7 +260,7 @@ for type in (1..12)
   z-index: index(order, 'cover')
 
 #landing 
-  background-image: url(img/cover/landingscene.png)
+  background-image: url(../assets/img/cover/landingscene.png)
   div
     position: absolute
     width: 24%
@@ -321,7 +321,7 @@ for type in (1..12)
 #game-over
   z-index: index(order, 'game-over')
   background-color: rgba(65,65,65,0.7)
-  background-image: url(img/cover/exitscene.png)
+  background-image: url(../assets/img/cover/exitscene.png)
   text-align: center
   div
     top: 45%

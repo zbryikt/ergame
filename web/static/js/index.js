@@ -1,1 +1,1065 @@
-var ref$,w,h,patw,path,of1x,of1y,dpw,dph,x$;ref$=[1170,658],w=ref$[0],h=ref$[1],ref$=[193,278],patw=ref$[0],path=ref$[1],ref$=[298,273],of1x=ref$[0],of1y=ref$[1],ref$=[59,20],dpw=ref$[0],dph=ref$[1],x$=angular.module("ERGame",[]),x$.controller("ERGame",["$scope","$interval","$timeout"].concat(function(t,e,n){var r,i,a,o,s,c,u;for(r=[],i=0;12>i;++i)a=i,r.push([a%4,parseInt(a/4)]);return t.list=r,t.pixel={scene:{w:1170,h:658},sprite:{size:[{w:0,h:0},{w:101,h:142},{w:108,h:229},{w:108,h:229},{w:291,h:245},{w:316,h:269},{w:105,h:196},{w:146,h:239},{w:98,h:60},{w:306,h:298},{w:191,h:240},{w:104,h:136},{w:238,h:184}],points:[{x:591,y:-19,type:6}].concat([{x:317,y:-3,type:5}],[{x:687,y:-36,type:7}],[{x:503,y:65,type:8}],[{x:507,y:54,type:9,variant:1}],[{x:249,y:184,type:11}],function(){var t,e,n=[];for(t=0;3>t;++t)for(o=t,e=0;4>e;++e)s=e,n.push({x:293+59*s+-127*o,y:222+20*s+47*o,type:1,variant:0,active:1});return n}(),[{x:857,y:100,type:4,variant:0,active:1}],[{x:870,y:272,type:12}],function(){var t,e=[];for(t=0;5>t;++t)a=t,e.push({x:749+66*a,y:227+24*a,type:2,variant:0,active:1});return e}(),[{x:623,y:279,type:3,variant:0,active:1},{x:520,y:341,type:10},{x:730,y:387,type:4,variant:0,active:1},{x:335,y:387,type:4,variant:0,active:1},{x:493,y:418,type:3,variant:0,active:1},{x:678,y:418,type:2,variant:0,active:1}])}},t.percent={sprite:{size:function(){var e,n,r,i=[];for(e=0,r=(n=t.pixel.sprite.size).length;r>e;++e)c=n[e],i.push({w:100*c.w/t.pixel.scene.w,h:100*c.h/t.pixel.scene.h});return i}(),points:function(){var e,n,r,i=[];for(e=0,r=(n=t.pixel.sprite.points).length;r>e;++e)c=n[e],i.push({x:100*c.x/t.pixel.scene.w,y:100*c.y/t.pixel.scene.h,type:c.type,variant:c.variant,active:c.active});return i}()}},t.rebuild=function(e){var n,r,i,a=[];for(n=0,i=(r=t.percent.sprite.points).length;i>n;++n)e=r[n],a.push(e.cls=(e.active?["active"]:[]).concat(["it-"+e.type+"-"+(e.variant||0)+"-"+(e.active||0)]));return a},t.game={state:0,setState:function(t){return this.state=t},start:function(){return this.setState(5),this.countdown.start()},reset:function(){return t.patient.reset(),t.doctor.reset(),t.supply.reset(),t.mouse.reset(),t.rebuild(),t.madmax=0,t.dialog.toggle(null,!1),this.state=0},countdown:{handler:null,value:0,count:function(){var e=this;return this.value=this.value-1,this.value?n(function(){return e.count()},650):t.game.setState(2)},start:function(){return this.value=5,this.count()}}},t.doctor={sprite:t.percent.sprite.points.filter(function(t){return 9===t.type})[0],handler:null,energy:1,faint:!1,chance:5,hurting:0,fail:function(){var e;return e=this,e.setMood(7),e.chance-=1,e.chance>=0||(e.chance=0),e.hurting=1,this.chance<=0?t.game.setState(4):void 0},reset:function(){return this.energy=1,this.faint=!1,this.chance=5,this.hurting=0,this.handler&&n.cancel(this.handler),this.setMood(1)},score:{digit:[0,0,0,0],value:0},resetLater:function(){var e=this;return this.handler&&n.cancel(this.handler),this.handler=n(function(){return e.setMood(1),e.handler=null,t.rebuild()},1e3)},setMood:function(t){return this.sprite.variant=t,t>1?this.resetLater():void 0}},t.$watch("doctor.score.value",function(){var e,n,r,i=[];for(e=t.doctor.score,n=0;4>n;++n)r=n,i.push(e.digit[3-r]=parseInt(e.value/Math.pow(10,r))%Math.pow(10,r+1));return i}),t.supply={sprite:t.percent.sprite.points.filter(function(t){var e;return 5===(e=t.type)||6===e||7===e||8===e}),reset:function(){var t,e,n,r,i=[];for(t=0,n=(e=this.sprite).length;n>t;++t)r=e[t],i.push((r.active=0,r.countdown=-1,r));return i},active:function(t,e){var n,r,i;return null==e&&(e=!0),n=null==t?parseInt(Math.random()*this.sprite.length):t,e?(this.sprite[n].active=1,this.sprite[n].countdown=1):(this.sprite[n].active=0,i=(r=this.sprite[n]).countdown,delete r.countdown,i)}},t.patient={lvprob:[[.6,.9],[.4,.8],[.3,.3]],reset:function(){var e,n,r,i,a=[];for(e=t.percent.sprite.points.filter(function(t){return t.type>=1&&t.type<=4}),n=0,r=e.length;r>n;++n)i=e[n],a.push((i.variant=0,i.mad=0,i.life=1,i));return a},add:function(e,n,r){var i,a,o,s,c,u;return i=t.percent.sprite.points.filter(function(t){return t.type===e&&0===t.variant}),0!==i.length?(a=parseInt(3*Math.random()+1),1===e?(o=Math.random(),a=o<this.lvprob[0][0]?1:o<this.lvprob[0][1]?2:3):a=parseInt(2*Math.random()+1),e>1&&(2>=a||(a=2)),null!=n&&(a=n),s=null!=r?r:parseInt(Math.random()*i.length),c=i[s],c.variant=a,1===c.type&&(c.life=1),(2===(u=c.type)||3===u||4===u)&&(c.mad=0),t.rebuild()):void 0}},t.mouse={x:0,y:0,target:null,reset:function(){return this.target=null},lock:function(){return this.isLocked=!0},unlock:function(){return this.isLocked=!1},down:function(e,n){var r,i,a,o,s,c,d,l,h;if(!u()&&!(this.isLocked||t.madmax||t.doctor.faint)&&(r=$("#wrapper").offset(),i=[e.clientX-r.left,e.clientY-r.top],this.x=i[0],this.y=i[1],i=i,a=i[0],o=i[1],n=t.hitmask.resolve(a,o))){if(1===n.type){if(0===n.variant)return;for(s=t.percent.sprite.points.filter(function(t){return 1===t.type}),c=0,d=0,l=s.length;l>d;++d)h=s[d],h.variant>c&&(c=h.variant);if(3===c&&n.variant<c)return void(this.target=null)}if(this.target=n,n&&1===n.type)return $("#wheel").css({display:"block",top:o+"px",left:a+"px"}),t.rebuild()}},up:function(e){var n=this;if(!u()&&!(this.isLocked||t.madmax||t.doctor.faint))return setTimeout(function(){var r,i,a,o,s,c,u;return $("#wheel").css({display:"none"}),r=$("#wrapper").offset(),i=[e.clientX-n.x-r.left,e.clientY-n.y-r.top],a=i[0],o=i[1],s=360*Math.acos(a/Math.sqrt(Math.pow(a,2)+Math.pow(o,2)))/(2*Math.PI),o>0&&(s=360-s),(s>=320||10>=s)&&(c=3),s>10&&61>=s&&(c=2),s>61&&112>s&&(c=1),n.target&&(1===n.target.type?(n.target.variant===c?1===n.target.variant?(u=Math.random()<.5?2:4+parseInt(3*Math.random()),null!=n.forceMood&&(u=n.forceMood),t.doctor.setMood(u),2===u&&(t.doctor.score.value+=1)):(null==n.forceStay&&Math.random()>.5?(t.doctor.setMood(3),t.patient.add(parseInt(3*Math.random()+2))):n.forceStay?(t.doctor.setMood(3),t.patient.add(4,2,0)):t.doctor.setMood(2),t.doctor.score.value+=1):t.doctor.fail(),n.target.variant=0,t.rebuild()):n.target.type>=2&&n.target.type<=4?(n.target.mad>.8&&(n.target.mad=.8),(i=n.target).mad<=.8||(i.mad=.8),n.target.mad-=.2,(i=n.target).mad>=0||(i.mad=0)):n.target.type>=5&&n.target.type<=8&&n.target.active&&(t.doctor.energy+=.1,(i=t.doctor).energy<=1||(i.energy=1),t.doctor.setMood(2),t.rebuild(),n.target.active=0,n.target.countdown=1)),n.target=null},0)}},t.madmax=0,t.demad=function(e){var n,r,i;return n=t.percent.sprite.points.filter(function(t){return null!=t.mad&&t.mad>=1}),n.length||(t.madmax=0),n.length?((r=n[0]).mad<=.8||(r.mad=.8),n[0].mad-=.1,(r=n[0]).mad>=0||(r.mad=0)):t.doctor.faint&&(i=t.doctor,i.energy+=.1,i.energy<=1||(i.energy=1),1===t.doctor.energy&&(t.doctor.faint=!1)),e.preventDefault(),!1},t.rebuild(),u=function(){return 2!==t.game.state&&3!==t.game.state||t.dialog.show===!0?!0:!1},e(function(){return u()||t.dialog.tut?void 0:(Math.random()<.1&&t.patient.add(1),Math.random()<.1?t.supply.active():void 0)},100),t.madspeed=.002,e(function(e){var n,r,i,a,o,s=[];if(!u()){for(t.doctor.hurting&&(t.doctor.hurting-=.2,(n=t.doctor).hurting>=0||(n.hurting=0)),r=t.percent.sprite.points.filter(function(t){return 1===t.type&&t.variant>0}),i=0,a=r.length;a>i;++i)e=r[i],e.life-=.004*e.variant,e.life<=0&&(e.life=0,t.doctor.fail(),e.variant=0);for(r=t.percent.sprite.points.filter(function(t){var e;return(2===(e=t.type)||3===e||4===e)&&t.variant>0}),o=0,i=0,a=r.length;a>i;++i)e=r[i],null==e.mad&&(e.mad=0),e.mad+=t.madspeed,e.mad>=.8&&(e.mad=1,o=1);if(o&&!t.madmax&&(t.madmax=parseInt(2*Math.random()+1)),!t.doctor.faint){for(r=t.percent.sprite.points.filter(function(t){var e;return(5===(e=t.type)||6===e||7===e||8===e)&&t.active}),i=0,a=r.length;a>i;++i)e=r[i],(null==e.countdown||e.countdown<=0)&&(e.countdown=1),e.countdown-=.025,e.countdown<=0&&(e.countdown=1,e.active=0,t.doctor.energy-=.2,(n=t.doctor).energy>=0||(n.energy=0),0===t.doctor.energy&&s.push(t.doctor.faint=!0));return s}}},100),t.$watch("madmax",function(t){return t?$("#wheel").css({display:"none"}):void 0}),t.hitmask={ready:!1,get:function(t,e){return this.ready?this.ctx.getImageData(t,e,1,1).data:[0,0,0,0]},resolve:function(e,n){var r,i,a;return r=this.get(e,n),i=r[0],0===i?null:(a=1===i?4*r[1]+r[2]:r[2],t.percent.sprite.points.filter(function(t){return t.type===i})[a])},init:function(){var t,e=this;return t=this.canvas=document.createElement("canvas"),t.height=576,t.width=1024,this.ctx=this.canvas.getContext("2d"),this.img=new Image,this.img.src="mask.png",this.img.onload=function(){return e.ctx.drawImage(e.img,0,0,1024,576),e.ready=!0}}},t.hitmask.init(),t.dialog={tut:!0,show:!1,idx:0,next:function(){var t=this;return n(function(){return t.main(!0)},200)},type:"",h:{i:[],t:[]},skip:function(){var t,r,i,a;for(t=0,i=(r=this.h.i).length;i>t;++t)a=r[t],e.cancel(a);for(t=0,i=(r=this.h.t).length;i>t;++t)a=r[t],n.cancel(a);return this.idx=this.step.length-2,this.toggle(0,!0)},interval:function(t,n){var r;return r=e(t,n),this.h.i.push(r),r},timeout:function(t,e){var r;return r=n(t,e),this.h.t.push(r),r},clean:function(){var e;return delete t.mouse.forceStay,delete t.mouse.forceMood,t.dialog.tut=!1,t.mouse.unlock(),$("#score").removeClass("hint"),e=t.doctor,e.chance=5,e.hurting=0,e.faint=!1,e.energy=1,e.setMood(2),t.game.setState(2)},step:[{},{ready:!1,check:function(){return this.ready||2!==t.game.state||(t.game.state=3,this.ready=!0),this.ready},fire:function(){return t.mouse.forceStay=!1,t.mouse.forceMood=1,t.mouse.lock(),t.dialog.timeout(function(){return t.patient.add(1,1,0)},1e3),t.dialog.timeout(function(){return t.patient.add(1,2,0)},2e3),t.dialog.timeout(function(){return t.patient.add(1,3,0)},3e3)}},{ready:!1,check:function(){var e=this;return this.ready?!0:(t.percent.sprite.points.filter(function(t){return 1===t.type&&3===t.variant}).length>0&&t.dialog.timeout(function(){return e.ready=!0},1e3),!1)}},{check:function(){return!0}},{check:function(){return!0},fire:function(){return $("#finger-slide").css({display:"block",top:"33%",left:"22%"}),setTimeout(function(){return $("#finger-slide").css({display:"none"}),t.mouse.unlock()},3e3)}},{check:function(){var e,n=this;return e=0===t.percent.sprite.points.filter(function(t){return 1===t.type&&0!==t.variant}).length,e&&(t.dialog.type="mini",this.handler=t.dialog.timeout(function(){return t.doctor.fail(),n.handler=null},500)),e},fire:function(){var e;return e=t.doctor,e.chance=5,e.hurting=0,this.handler?n.cancel(this.handler):void 0}},{check:function(){return $("#score").addClass("hint"),!0},fire:function(){return $("#score").removeClass("hint")}},{mood:0,check:function(){var e=this;return null==this.handler&&(this.handler=t.dialog.interval(function(){return t.doctor.setMood(e.mood+4),t.rebuild(),e.mood=(e.mood+1)%3},500)),!0},fire:function(){return t.doctor.setMood(1),t.rebuild(),e.cancel(this.handler),t.mouse.forceStay=!0,t.patient.add(1,2,0)}},{mood:3,ready:!1,handler:null,moodHandler:null,check:function(){var e,n,r=this;return e=t.percent.sprite.points.filter(function(t){return 4===t.type&&t.variant>0}).length>0,n=t.percent.sprite.points.filter(function(t){return 1===t.type&&2===t.variant}).length>0,e&&null==this.handler&&(this.handler=t.dialog.timeout(function(){return r.ready=!0},1e3)),e||n||t.patient.add(1,2,parseInt(1+4*Math.random())),this.ready&&!this.moodHandler&&(this.moodHandler=t.dialog.interval(function(){return t.doctor.setMood(r.mood),t.rebuild(),r.mood=4-r.mood},500)),this.ready},fire:function(){return e.cancel(this.moodHandler),$("#finger-tap").css({display:"block",top:"22%",left:"68%"}),t.madspeed=.02,t.dialog.timeout(function(){return $("#finger-tap").css({display:"none"})},1300)}},{ready:!1,handler:null,check:function(){var e=this;return.02!==t.madspeed||"none"!==$("#finger-tap").css("display")||this.handler||(this.handler=t.dialog.timeout(function(){return e.ready=!0},2e3)),this.ready},fire:function(){return t.mouse.lock()}},{launched:0,supply:0,ready:!1,check:function(){var e=this;return t.madmax>=1&&0===this.launched&&(this.launched=1,$("#finger-tap").css({display:"block",top:"30%",left:"30%"}),t.madspeed=.002,t.dialog.timeout(function(){return $("#finger-tap").css({display:"none"})},1e3)),.002===t.madspeed&&t.madmax<1&&1===this.launched&&(this.launched=2,t.percent.sprite.points.filter(function(t){return 4===t.type})[0].mad=0,t.dialog.timeout(function(){return e.handler=t.dialog.interval(function(){return t.supply.active(e.supply,!1),e.supply=(e.supply+1)%4,t.supply.active(e.supply)},500),$("#arrow").css({display:"block",top:"25%",left:"35%"}),e.ready=!0},1e3)),this.ready},fire:function(){return e.cancel(this.handler),t.supply.active(0,!1),t.supply.active(1,!0),t.supply.active(2,!1),t.supply.active(3,!1),$("#arrow").css({display:"none"}),$("#finger-tap").css({display:"block",top:"7%",left:"20%"}),t.dialog.timeout(function(){return $("#finger-tap").css({display:"none"})},1e3)}},{ready:!1,handler:!1,check:function(){var e=this;return this.handler||(this.handler=t.dialog.timeout(function(){return e.ready=!0,t.supply.active(1,!1),t.doctor.setMood(7),t.rebuild(),t.doctor.energy-=.1,$("#arrow").css({display:"block",top:"10%",left:"31%"})},3e3)),this.ready},fire:function(){return $("#arrow").css({display:"none"}),t.doctor.energy=0,t.doctor.faint=!0,$("#finger-tap").css({display:"block",top:"20%",left:"30%"}),t.dialog.timeout(function(){return $("#finger-tap").css({display:"none"})},1e3)}},{ready:!1,check:function(){var e=this;return console.log("hit"),null==this.handler&&1===t.doctor.energy&&t.doctor.faint===!1&&(this.handler=t.dialog.timeout(function(){return e.ready=!0,t.dialog.type=""},1e3)),this.ready},fire:function(){return t.dialog.clean()}},{check:function(){return!1}}],main:function(t){return null==t&&(t=!1),t&&this.step[this.idx]&&this.step[this.idx].fire&&!this.step[this.idx].fired&&(this.step[this.idx].fire(),this.step[this.idx].fired=!0),!this.show||t?this.step[this.idx+1]&&this.step[this.idx+1].check()?this.toggle(this.idx+1,!0):this.toggle(0,!1):void 0},toggle:function(t,e){var n=this;return t&&(this.idx=t),setTimeout(function(){return n.show=null==e?!n.show:e,n.show?$("#dialog").fadeIn():$("#dialog").fadeOut()},0)}},e(function(){return t.dialog.main()},100)}));
+var ref$, w, h, patw, path, of1x, of1y, dpw, dph, x$;
+ref$ = [1170, 658], w = ref$[0], h = ref$[1];
+ref$ = [193, 278], patw = ref$[0], path = ref$[1];
+ref$ = [298, 273], of1x = ref$[0], of1y = ref$[1];
+ref$ = [59, 20], dpw = ref$[0], dph = ref$[1];
+x$ = angular.module('ERGame', []);
+x$.controller('ERGame', ['$scope', '$interval', '$timeout'].concat(function($scope, $interval, $timeout){
+  var res$, i$, i, r, c, p, isHalt;
+  res$ = [];
+  for (i$ = 0; i$ < 12; ++i$) {
+    i = i$;
+    res$.push([i % 4, parseInt(i / 4)]);
+  }
+  $scope.list = res$;
+  $scope.pixel = {
+    scene: {
+      w: 1170,
+      h: 658
+    },
+    sprite: {
+      size: [
+        {
+          w: 0,
+          h: 0
+        }, {
+          w: 101,
+          h: 142
+        }, {
+          w: 108,
+          h: 229
+        }, {
+          w: 108,
+          h: 229
+        }, {
+          w: 291,
+          h: 245
+        }, {
+          w: 316,
+          h: 269
+        }, {
+          w: 105,
+          h: 196
+        }, {
+          w: 146,
+          h: 239
+        }, {
+          w: 98,
+          h: 60
+        }, {
+          w: 306,
+          h: 298
+        }, {
+          w: 191,
+          h: 240
+        }, {
+          w: 104,
+          h: 136
+        }, {
+          w: 238,
+          h: 184
+        }
+      ],
+      points: [{
+        x: 591,
+        y: -19,
+        type: 6
+      }].concat([{
+        x: 317,
+        y: -3,
+        type: 5
+      }], [{
+        x: 687,
+        y: -36,
+        type: 7
+      }], [{
+        x: 503,
+        y: 65,
+        type: 8
+      }], [{
+        x: 507,
+        y: 54,
+        type: 9,
+        variant: 1
+      }], [{
+        x: 249,
+        y: 184,
+        type: 11
+      }], (function(){
+        var i$, j$, results$ = [];
+        for (i$ = 0; i$ < 3; ++i$) {
+          r = i$;
+          for (j$ = 0; j$ < 4; ++j$) {
+            c = j$;
+            results$.push({
+              x: 293 + c * 59 + r * -127,
+              y: 222 + c * 20 + r * 47,
+              type: 1,
+              variant: 0,
+              active: 1
+            });
+          }
+        }
+        return results$;
+      }()), [{
+        x: 857,
+        y: 100,
+        type: 4,
+        variant: 0,
+        active: 1
+      }], [{
+        x: 870,
+        y: 272,
+        type: 12
+      }], (function(){
+        var i$, results$ = [];
+        for (i$ = 0; i$ < 5; ++i$) {
+          i = i$;
+          results$.push({
+            x: 749 + i * 66,
+            y: 227 + i * 24,
+            type: 2,
+            variant: 0,
+            active: 1
+          });
+        }
+        return results$;
+      }()), [
+        {
+          x: 623,
+          y: 279,
+          type: 3,
+          variant: 0,
+          active: 1
+        }, {
+          x: 520,
+          y: 341,
+          type: 10
+        }, {
+          x: 730,
+          y: 387,
+          type: 4,
+          variant: 0,
+          active: 1
+        }, {
+          x: 335,
+          y: 387,
+          type: 4,
+          variant: 0,
+          active: 1
+        }, {
+          x: 493,
+          y: 418,
+          type: 3,
+          variant: 0,
+          active: 1
+        }, {
+          x: 678,
+          y: 418,
+          type: 2,
+          variant: 0,
+          active: 1
+        }
+      ])
+    }
+  };
+  $scope.percent = {
+    sprite: {
+      size: (function(){
+        var i$, ref$, len$, results$ = [];
+        for (i$ = 0, len$ = (ref$ = $scope.pixel.sprite.size).length; i$ < len$; ++i$) {
+          p = ref$[i$];
+          results$.push({
+            w: 100 * p.w / $scope.pixel.scene.w,
+            h: 100 * p.h / $scope.pixel.scene.h
+          });
+        }
+        return results$;
+      }()),
+      points: (function(){
+        var i$, ref$, len$, results$ = [];
+        for (i$ = 0, len$ = (ref$ = $scope.pixel.sprite.points).length; i$ < len$; ++i$) {
+          p = ref$[i$];
+          results$.push({
+            x: 100 * p.x / $scope.pixel.scene.w,
+            y: 100 * p.y / $scope.pixel.scene.h,
+            type: p.type,
+            variant: p.variant,
+            active: p.active
+          });
+        }
+        return results$;
+      }())
+    }
+  };
+  $scope.rebuild = function(it){
+    var i$, ref$, len$, results$ = [];
+    for (i$ = 0, len$ = (ref$ = $scope.percent.sprite.points).length; i$ < len$; ++i$) {
+      it = ref$[i$];
+      results$.push(it.cls = (it.active
+        ? ['active']
+        : []).concat(["it-" + it.type + "-" + (it.variant || 0) + "-" + (it.active || 0)]));
+    }
+    return results$;
+  };
+  $scope.game = {
+    state: 0,
+    setState: function(it){
+      return this.state = it;
+    },
+    start: function(){
+      this.setState(5);
+      return this.countdown.start();
+    },
+    reset: function(){
+      $scope.patient.reset();
+      $scope.doctor.reset();
+      $scope.supply.reset();
+      $scope.mouse.reset();
+      $scope.rebuild();
+      $scope.madmax = 0;
+      $scope.dialog.toggle(null, false);
+      return this.state = 0;
+    },
+    countdown: {
+      handler: null,
+      value: 0,
+      count: function(){
+        var this$ = this;
+        this.value = this.value - 1;
+        if (this.value) {
+          return $timeout(function(){
+            return this$.count();
+          }, 650);
+        } else {
+          return $scope.game.setState(2);
+        }
+      },
+      start: function(){
+        this.value = 5;
+        return this.count();
+      }
+    }
+  };
+  $scope.doctor = {
+    sprite: $scope.percent.sprite.points.filter(function(it){
+      return it.type === 9;
+    })[0],
+    handler: null,
+    energy: 1,
+    faint: false,
+    chance: 5,
+    hurting: 0,
+    fail: function(){
+      var x$;
+      x$ = this;
+      x$.setMood(7);
+      x$.chance -= 1;
+      x$.chance >= 0 || (x$.chance = 0);
+      x$.hurting = 1;
+      if (this.chance <= 0) {
+        return $scope.game.setState(4);
+      }
+    },
+    reset: function(){
+      this.energy = 1;
+      this.faint = false;
+      this.chance = 5;
+      this.hurting = 0;
+      if (this.handler) {
+        $timeout.cancel(this.handler);
+      }
+      return this.setMood(1);
+    },
+    score: {
+      digit: [0, 0, 0, 0],
+      value: 0
+    },
+    resetLater: function(){
+      var this$ = this;
+      if (this.handler) {
+        $timeout.cancel(this.handler);
+      }
+      return this.handler = $timeout(function(){
+        this$.setMood(1);
+        this$.handler = null;
+        return $scope.rebuild();
+      }, 1000);
+    },
+    setMood: function(it){
+      this.sprite.variant = it;
+      if (it > 1) {
+        return this.resetLater();
+      }
+    }
+  };
+  $scope.$watch('doctor.score.value', function(){
+    var score, i$, i, results$ = [];
+    score = $scope.doctor.score;
+    for (i$ = 0; i$ < 4; ++i$) {
+      i = i$;
+      results$.push(score.digit[3 - i] = parseInt(score.value / Math.pow(10, i)) % Math.pow(10, i + 1));
+    }
+    return results$;
+  });
+  $scope.supply = {
+    sprite: $scope.percent.sprite.points.filter(function(it){
+      var ref$;
+      return (ref$ = it.type) === 5 || ref$ === 6 || ref$ === 7 || ref$ === 8;
+    }),
+    reset: function(){
+      var i$, ref$, len$, item, results$ = [];
+      for (i$ = 0, len$ = (ref$ = this.sprite).length; i$ < len$; ++i$) {
+        item = ref$[i$];
+        results$.push((item.active = 0, item.countdown = -1, item));
+      }
+      return results$;
+    },
+    active: function(defidx, isOn){
+      var idx, ref$, ref1$;
+      isOn == null && (isOn = true);
+      if (defidx == null) {
+        idx = parseInt(Math.random() * this.sprite.length);
+      } else {
+        idx = defidx;
+      }
+      if (!isOn) {
+        this.sprite[idx].active = 0;
+        return ref1$ = (ref$ = this.sprite[idx]).countdown, delete ref$.countdown, ref1$;
+      } else {
+        this.sprite[idx].active = 1;
+        return this.sprite[idx].countdown = 1;
+      }
+    }
+  };
+  $scope.patient = {
+    lvprob: [[0.6, 0.9], [0.4, 0.8], [0.3, 0.3]],
+    reset: function(){
+      var remains, i$, len$, item, results$ = [];
+      remains = $scope.percent.sprite.points.filter(function(it){
+        return it.type >= 1 && it.type <= 4;
+      });
+      for (i$ = 0, len$ = remains.length; i$ < len$; ++i$) {
+        item = remains[i$];
+        results$.push((item.variant = 0, item.mad = 0, item.life = 1, item));
+      }
+      return results$;
+    },
+    add: function(area, defvar, defpos){
+      var remains, variant, dice, idx, des, ref$;
+      remains = $scope.percent.sprite.points.filter(function(it){
+        return it.type === area && it.variant === 0;
+      });
+      if (remains.length === 0) {
+        return;
+      }
+      variant = parseInt(Math.random() * 3 + 1);
+      if (area === 1) {
+        dice = Math.random();
+        if (dice < this.lvprob[0][0]) {
+          variant = 1;
+        } else if (dice < this.lvprob[0][1]) {
+          variant = 2;
+        } else {
+          variant = 3;
+        }
+      } else {
+        variant = parseInt(Math.random() * 2 + 1);
+      }
+      if (area > 1) {
+        variant <= 2 || (variant = 2);
+      }
+      if (defvar != null) {
+        variant = defvar;
+      }
+      idx = defpos != null
+        ? defpos
+        : parseInt(Math.random() * remains.length);
+      des = remains[idx];
+      des.variant = variant;
+      if (des.type === 1) {
+        des.life = 1;
+      }
+      if ((ref$ = des.type) === 2 || ref$ === 3 || ref$ === 4) {
+        des.mad = 0;
+      }
+      return $scope.rebuild();
+    }
+  };
+  $scope.mouse = {
+    x: 0,
+    y: 0,
+    target: null,
+    reset: function(){
+      return this.target = null;
+    },
+    lock: function(){
+      return this.isLocked = true;
+    },
+    unlock: function(){
+      return this.isLocked = false;
+    },
+    down: function(e, target){
+      var offset, ref$, x, y, pat, max, i$, len$, item;
+      if (isHalt()) {
+        return;
+      }
+      if (this.isLocked || $scope.madmax || $scope.doctor.faint) {
+        return;
+      }
+      offset = $('#wrapper').offset();
+      ref$ = (ref$ = [e.clientX - offset.left, e.clientY - offset.top], this.x = ref$[0], this.y = ref$[1], ref$), x = ref$[0], y = ref$[1];
+      target = $scope.hitmask.resolve(x, y);
+      if (!target) {
+        return;
+      }
+      if (target.type === 1) {
+        if (target.variant === 0) {
+          return;
+        }
+        pat = $scope.percent.sprite.points.filter(function(it){
+          return it.type === 1;
+        });
+        max = 0;
+        for (i$ = 0, len$ = pat.length; i$ < len$; ++i$) {
+          item = pat[i$];
+          if (item.variant > max) {
+            max = item.variant;
+          }
+        }
+        if (max === 3 && target.variant < max) {
+          this.target = null;
+          return;
+        }
+      }
+      this.target = target;
+      if (!target || target.type !== 1) {
+        return;
+      }
+      $('#wheel').css({
+        display: "block",
+        top: y + "px",
+        left: x + "px"
+      });
+      return $scope.rebuild();
+    },
+    up: function(e){
+      var this$ = this;
+      if (isHalt()) {
+        return;
+      }
+      if (this.isLocked || $scope.madmax || $scope.doctor.faint) {
+        return;
+      }
+      return setTimeout(function(){
+        var offset, ref$, dx, dy, angle, type, mood;
+        $('#wheel').css({
+          display: "none"
+        });
+        offset = $('#wrapper').offset();
+        ref$ = [e.clientX - this$.x - offset.left, e.clientY - this$.y - offset.top], dx = ref$[0], dy = ref$[1];
+        angle = Math.acos(dx / Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2))) * 360 / (Math.PI * 2);
+        if (dy > 0) {
+          angle = 360 - angle;
+        }
+        if (angle >= 320 || angle <= 10) {
+          type = 3;
+        }
+        if (angle > 10 && angle <= 61) {
+          type = 2;
+        }
+        if (angle > 61 && angle < 112) {
+          type = 1;
+        }
+        if (this$.target) {
+          if (this$.target.type === 1) {
+            if (this$.target.variant === type) {
+              if (this$.target.variant === 1) {
+                mood = Math.random() < 0.5
+                  ? 2
+                  : 4 + parseInt(Math.random() * 3);
+                if (this$.forceMood != null) {
+                  mood = this$.forceMood;
+                }
+                $scope.doctor.setMood(mood);
+                if (mood === 2) {
+                  $scope.doctor.score.value += 1;
+                }
+              } else {
+                if (!(this$.forceStay != null) && Math.random() > 0.5) {
+                  $scope.doctor.setMood(3);
+                  $scope.patient.add(parseInt(3 * Math.random() + 2));
+                } else if (this$.forceStay) {
+                  $scope.doctor.setMood(3);
+                  $scope.patient.add(4, 2, 0);
+                } else {
+                  $scope.doctor.setMood(2);
+                }
+                $scope.doctor.score.value += 1;
+              }
+            } else {
+              $scope.doctor.fail();
+            }
+            this$.target.variant = 0;
+            $scope.rebuild();
+          } else if (this$.target.type >= 2 && this$.target.type <= 4) {
+            if (this$.target.mad > 0.8) {
+              this$.target.mad = 0.8;
+            }
+            (ref$ = this$.target).mad <= 0.8 || (ref$.mad = 0.8);
+            this$.target.mad -= 0.2;
+            (ref$ = this$.target).mad >= 0 || (ref$.mad = 0);
+          } else if (this$.target.type >= 5 && this$.target.type <= 8 && this$.target.active) {
+            $scope.doctor.energy += 0.1;
+            (ref$ = $scope.doctor).energy <= 1 || (ref$.energy = 1);
+            $scope.doctor.setMood(2);
+            $scope.rebuild();
+            this$.target.active = 0;
+            this$.target.countdown = 1;
+          }
+        }
+        return this$.target = null;
+      }, 0);
+    }
+  };
+  $scope.madmax = 0;
+  $scope.demad = function(e){
+    var madmax, ref$, x$;
+    madmax = $scope.percent.sprite.points.filter(function(it){
+      return it.mad != null && it.mad >= 1;
+    });
+    if (!madmax.length) {
+      $scope.madmax = 0;
+    }
+    if (madmax.length) {
+      (ref$ = madmax[0]).mad <= 0.8 || (ref$.mad = 0.8);
+      madmax[0].mad -= 0.1;
+      (ref$ = madmax[0]).mad >= 0 || (ref$.mad = 0);
+    } else if ($scope.doctor.faint) {
+      x$ = $scope.doctor;
+      x$.energy += 0.1;
+      x$.energy <= 1 || (x$.energy = 1);
+      if ($scope.doctor.energy === 1) {
+        $scope.doctor.faint = false;
+      }
+    }
+    e.preventDefault();
+    return false;
+  };
+  $scope.rebuild();
+  isHalt = function(){
+    if (($scope.game.state !== 2 && $scope.game.state !== 3) || $scope.dialog.show === true) {
+      return true;
+    }
+    return false;
+  };
+  $interval(function(){
+    if (isHalt()) {
+      return;
+    }
+    if ($scope.dialog.tut) {
+      return;
+    }
+    if (Math.random() < 0.1) {
+      $scope.patient.add(1);
+    }
+    if (Math.random() < 0.1) {
+      return $scope.supply.active();
+    }
+  }, 100);
+  $scope.madspeed = 0.002;
+  $interval(function(it){
+    var ref$, inqueue, i$, len$, madmax, results$ = [];
+    if (isHalt()) {
+      return;
+    }
+    if ($scope.doctor.hurting) {
+      $scope.doctor.hurting -= 0.2;
+      (ref$ = $scope.doctor).hurting >= 0 || (ref$.hurting = 0);
+    }
+    inqueue = $scope.percent.sprite.points.filter(function(it){
+      return it.type === 1 && it.variant > 0;
+    });
+    for (i$ = 0, len$ = inqueue.length; i$ < len$; ++i$) {
+      it = inqueue[i$];
+      it.life -= 0.004 * it.variant;
+      if (it.life <= 0) {
+        it.life = 0;
+        $scope.doctor.fail();
+        it.variant = 0;
+      }
+    }
+    inqueue = $scope.percent.sprite.points.filter(function(it){
+      var ref$;
+      return ((ref$ = it.type) === 2 || ref$ === 3 || ref$ === 4) && it.variant > 0;
+    });
+    madmax = 0;
+    for (i$ = 0, len$ = inqueue.length; i$ < len$; ++i$) {
+      it = inqueue[i$];
+      if (!(it.mad != null)) {
+        it.mad = 0;
+      }
+      it.mad += $scope.madspeed;
+      if (it.mad >= 0.8) {
+        it.mad = 1;
+        madmax = 1;
+      }
+    }
+    if (madmax && !$scope.madmax) {
+      $scope.madmax = parseInt(Math.random() * 2 + 1);
+    }
+    if (!$scope.doctor.faint) {
+      inqueue = $scope.percent.sprite.points.filter(function(it){
+        var ref$;
+        return ((ref$ = it.type) === 5 || ref$ === 6 || ref$ === 7 || ref$ === 8) && it.active;
+      });
+      for (i$ = 0, len$ = inqueue.length; i$ < len$; ++i$) {
+        it = inqueue[i$];
+        if (!(it.countdown != null) || it.countdown <= 0) {
+          it.countdown = 1;
+        }
+        it.countdown -= 0.025;
+        if (it.countdown <= 0) {
+          it.countdown = 1;
+          it.active = 0;
+          $scope.doctor.energy -= 0.2;
+          (ref$ = $scope.doctor).energy >= 0 || (ref$.energy = 0);
+          if ($scope.doctor.energy === 0) {
+            results$.push($scope.doctor.faint = true);
+          }
+        }
+      }
+      return results$;
+    }
+  }, 100);
+  $scope.$watch('madmax', function(it){
+    if (it) {
+      return $('#wheel').css({
+        display: "none"
+      });
+    }
+  });
+  $scope.hitmask = {
+    ready: false,
+    get: function(x, y){
+      if (!this.ready) {
+        return [0, 0, 0, 0];
+      }
+      return this.ctx.getImageData(x, y, 1, 1).data;
+    },
+    resolve: function(x, y){
+      var color, type, order;
+      color = this.get(x, y);
+      type = color[0];
+      if (type === 0) {
+        return null;
+      } else if (type === 1) {
+        order = color[1] * 4 + color[2];
+      } else {
+        order = color[2];
+      }
+      return $scope.percent.sprite.points.filter(function(it){
+        return it.type === type;
+      })[order];
+    },
+    init: function(){
+      var x$, this$ = this;
+      x$ = this.canvas = document.createElement("canvas");
+      x$.height = 576;
+      x$.width = 1024;
+      this.ctx = this.canvas.getContext('2d');
+      this.img = new Image();
+      this.img.src = 'assets/img/mask.png';
+      return this.img.onload = function(){
+        this$.ctx.drawImage(this$.img, 0, 0, 1024, 576);
+        return this$.ready = true;
+      };
+    }
+  };
+  $scope.hitmask.init();
+  $scope.dialog = {
+    tut: true,
+    show: false,
+    idx: 0,
+    next: function(){
+      var this$ = this;
+      return $timeout(function(){
+        return this$.main(true);
+      }, 200);
+    },
+    type: "",
+    h: {
+      i: [],
+      t: []
+    },
+    skip: function(){
+      var i$, ref$, len$, item;
+      for (i$ = 0, len$ = (ref$ = this.h.i).length; i$ < len$; ++i$) {
+        item = ref$[i$];
+        $interval.cancel(item);
+      }
+      for (i$ = 0, len$ = (ref$ = this.h.t).length; i$ < len$; ++i$) {
+        item = ref$[i$];
+        $timeout.cancel(item);
+      }
+      this.idx = this.step.length - 2;
+      return this.toggle(0, true);
+    },
+    interval: function(func, delay){
+      var ret;
+      ret = $interval(func, delay);
+      this.h.i.push(ret);
+      return ret;
+    },
+    timeout: function(func, delay){
+      var ret;
+      ret = $timeout(func, delay);
+      this.h.t.push(ret);
+      return ret;
+    },
+    clean: function(){
+      var x$;
+      delete $scope.mouse.forceStay;
+      delete $scope.mouse.forceMood;
+      $scope.dialog.tut = false;
+      $scope.mouse.unlock();
+      $('#score').removeClass('hint');
+      x$ = $scope.doctor;
+      x$.chance = 5;
+      x$.hurting = 0;
+      x$.faint = false;
+      x$.energy = 1;
+      x$.setMood(2);
+      return $scope.game.setState(2);
+    },
+    step: [
+      {}, {
+        ready: false,
+        check: function(){
+          if (!this.ready && $scope.game.state === 2) {
+            $scope.game.state = 3;
+            this.ready = true;
+          }
+          return this.ready;
+        },
+        fire: function(){
+          $scope.mouse.forceStay = false;
+          $scope.mouse.forceMood = 1;
+          $scope.mouse.lock();
+          $scope.dialog.timeout(function(){
+            return $scope.patient.add(1, 1, 0);
+          }, 1000);
+          $scope.dialog.timeout(function(){
+            return $scope.patient.add(1, 2, 0);
+          }, 2000);
+          return $scope.dialog.timeout(function(){
+            return $scope.patient.add(1, 3, 0);
+          }, 3000);
+        }
+      }, {
+        ready: false,
+        check: function(){
+          var this$ = this;
+          if (this.ready) {
+            return true;
+          }
+          if ($scope.percent.sprite.points.filter(function(it){
+            return it.type === 1 && it.variant === 3;
+          }).length > 0) {
+            $scope.dialog.timeout(function(){
+              return this$.ready = true;
+            }, 1000);
+          }
+          return false;
+        }
+      }, {
+        check: function(){
+          return true;
+        }
+      }, {
+        check: function(){
+          return true;
+        },
+        fire: function(){
+          $('#finger-slide').css({
+            display: 'block',
+            top: '33%',
+            left: '22%'
+          });
+          return setTimeout(function(){
+            $('#finger-slide').css({
+              display: 'none'
+            });
+            return $scope.mouse.unlock();
+          }, 3000);
+        }
+      }, {
+        check: function(){
+          var ret, this$ = this;
+          ret = $scope.percent.sprite.points.filter(function(it){
+            return it.type === 1 && it.variant !== 0;
+          }).length === 0;
+          if (ret) {
+            $scope.dialog.type = 'mini';
+            this.handler = $scope.dialog.timeout(function(){
+              $scope.doctor.fail();
+              return this$.handler = null;
+            }, 500);
+          }
+          return ret;
+        },
+        fire: function(){
+          var ref$;
+          ref$ = $scope.doctor;
+          ref$.chance = 5;
+          ref$.hurting = 0;
+          if (this.handler) {
+            return $timeout.cancel(this.handler);
+          }
+        }
+      }, {
+        check: function(){
+          $('#score').addClass('hint');
+          return true;
+        },
+        fire: function(){
+          return $('#score').removeClass('hint');
+        }
+      }, {
+        mood: 0,
+        check: function(){
+          var this$ = this;
+          if (!(this.handler != null)) {
+            this.handler = $scope.dialog.interval(function(){
+              $scope.doctor.setMood(this$.mood + 4);
+              $scope.rebuild();
+              return this$.mood = (this$.mood + 1) % 3;
+            }, 500);
+          }
+          return true;
+        },
+        fire: function(){
+          $scope.doctor.setMood(1);
+          $scope.rebuild();
+          $interval.cancel(this.handler);
+          $scope.mouse.forceStay = true;
+          return $scope.patient.add(1, 2, 0);
+        }
+      }, {
+        mood: 3,
+        ready: false,
+        handler: null,
+        moodHandler: null,
+        check: function(){
+          var hasPat2, hasPat1, this$ = this;
+          hasPat2 = $scope.percent.sprite.points.filter(function(it){
+            return it.type === 4 && it.variant > 0;
+          }).length > 0;
+          hasPat1 = $scope.percent.sprite.points.filter(function(it){
+            return it.type === 1 && it.variant === 2;
+          }).length > 0;
+          if (hasPat2 && this.handler == null) {
+            this.handler = $scope.dialog.timeout(function(){
+              return this$.ready = true;
+            }, 1000);
+          }
+          if (!hasPat2 && !hasPat1) {
+            $scope.patient.add(1, 2, parseInt(1 + Math.random() * 4));
+          }
+          if (this.ready && !this.moodHandler) {
+            this.moodHandler = $scope.dialog.interval(function(){
+              $scope.doctor.setMood(this$.mood);
+              $scope.rebuild();
+              return this$.mood = 4 - this$.mood;
+            }, 500);
+          }
+          return this.ready;
+        },
+        fire: function(){
+          $interval.cancel(this.moodHandler);
+          $('#finger-tap').css({
+            display: 'block',
+            top: '22%',
+            left: '68%'
+          });
+          $scope.madspeed = 0.02;
+          return $scope.dialog.timeout(function(){
+            return $('#finger-tap').css({
+              display: 'none'
+            });
+          }, 1300);
+        }
+      }, {
+        ready: false,
+        handler: null,
+        check: function(){
+          var this$ = this;
+          if ($scope.madspeed === 0.02 && $('#finger-tap').css('display') === 'none' && !this.handler) {
+            this.handler = $scope.dialog.timeout(function(){
+              return this$.ready = true;
+            }, 2000);
+          }
+          return this.ready;
+        },
+        fire: function(){
+          return $scope.mouse.lock();
+        }
+      }, {
+        launched: 0,
+        supply: 0,
+        ready: false,
+        check: function(){
+          var this$ = this;
+          if ($scope.madmax >= 1 && this.launched === 0) {
+            this.launched = 1;
+            $('#finger-tap').css({
+              display: 'block',
+              top: '30%',
+              left: '30%'
+            });
+            $scope.madspeed = 0.002;
+            $scope.dialog.timeout(function(){
+              return $('#finger-tap').css({
+                display: 'none'
+              });
+            }, 1000);
+          }
+          if ($scope.madspeed === 0.002 && $scope.madmax < 1 && this.launched === 1) {
+            this.launched = 2;
+            $scope.percent.sprite.points.filter(function(it){
+              return it.type === 4;
+            })[0].mad = 0;
+            $scope.dialog.timeout(function(){
+              this$.handler = $scope.dialog.interval(function(){
+                $scope.supply.active(this$.supply, false);
+                this$.supply = (this$.supply + 1) % 4;
+                return $scope.supply.active(this$.supply);
+              }, 500);
+              $('#arrow').css({
+                display: 'block',
+                top: '25%',
+                left: '35%'
+              });
+              return this$.ready = true;
+            }, 1000);
+          }
+          return this.ready;
+        },
+        fire: function(){
+          $interval.cancel(this.handler);
+          $scope.supply.active(0, false);
+          $scope.supply.active(1, true);
+          $scope.supply.active(2, false);
+          $scope.supply.active(3, false);
+          $('#arrow').css({
+            display: 'none'
+          });
+          $('#finger-tap').css({
+            display: 'block',
+            top: '7%',
+            left: '20%'
+          });
+          return $scope.dialog.timeout(function(){
+            return $('#finger-tap').css({
+              display: 'none'
+            });
+          }, 1000);
+        }
+      }, {
+        ready: false,
+        handler: false,
+        check: function(){
+          var this$ = this;
+          if (!this.handler) {
+            this.handler = $scope.dialog.timeout(function(){
+              this$.ready = true;
+              $scope.supply.active(1, false);
+              $scope.doctor.setMood(7);
+              $scope.rebuild();
+              $scope.doctor.energy -= 0.1;
+              return $('#arrow').css({
+                display: 'block',
+                top: '10%',
+                left: '31%'
+              });
+            }, 3000);
+          }
+          return this.ready;
+        },
+        fire: function(){
+          $('#arrow').css({
+            display: 'none'
+          });
+          $scope.doctor.energy = 0;
+          $scope.doctor.faint = true;
+          $('#finger-tap').css({
+            display: 'block',
+            top: '20%',
+            left: '30%'
+          });
+          return $scope.dialog.timeout(function(){
+            return $('#finger-tap').css({
+              display: 'none'
+            });
+          }, 1000);
+        }
+      }, {
+        ready: false,
+        check: function(){
+          var this$ = this;
+          console.log('hit');
+          if (this.handler == null && $scope.doctor.energy === 1 && $scope.doctor.faint === false) {
+            this.handler = $scope.dialog.timeout(function(){
+              this$.ready = true;
+              return $scope.dialog.type = "";
+            }, 1000);
+          }
+          return this.ready;
+        },
+        fire: function(){
+          return $scope.dialog.clean();
+        }
+      }, {
+        check: function(){
+          return false;
+        }
+      }
+    ],
+    main: function(force){
+      force == null && (force = false);
+      if (force && this.step[this.idx] && this.step[this.idx].fire && !this.step[this.idx].fired) {
+        this.step[this.idx].fire();
+        this.step[this.idx].fired = true;
+      }
+      if (this.show && !force) {
+        return;
+      }
+      if (this.step[this.idx + 1] && this.step[this.idx + 1].check()) {
+        return this.toggle(this.idx + 1, true);
+      } else {
+        return this.toggle(0, false);
+      }
+    },
+    toggle: function(idx, isOn){
+      var this$ = this;
+      if (idx) {
+        this.idx = idx;
+      }
+      return setTimeout(function(){
+        if (!(isOn != null)) {
+          this$.show = !this$.show;
+        } else {
+          this$.show = isOn;
+        }
+        if (this$.show) {
+          return $('#dialog').fadeIn();
+        } else {
+          return $('#dialog').fadeOut();
+        }
+      }, 0);
+    }
+  };
+  return $interval(function(){
+    return $scope.dialog.main();
+  }, 100);
+}));

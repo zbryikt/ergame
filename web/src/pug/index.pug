@@ -1,0 +1,143 @@
+doctype html
+//- basic libraries: jquery(1.10.2), d3js(3.3.11), angularjs(1.2.3), bootstrap(3.0)/semantic-ui(0.9.3/0.9.5)
+//-                  fontawesome(4.4.0)
+- var use = { cdn: false, og: false, favicon: true }
+- var lib = { jquery: true, d3js: false, angular: true, bootstrap: true, semantic: false, fontawesome: true }
+- var assets = "assets"
+- var thumbnail = "assets/img/thumbnail.png"
+- var favicon = "assets/img/thumbnail.png"
+html(lang="en")
+  head(prefix="og: http://ogp.me/ns#")
+    meta(charset="utf-8")
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    title template
+    // libraries
+    include library.pug
+    // custom files
+    link(rel="stylesheet",type="text/css",href="css/index.css")
+    link(href='https://fonts.googleapis.com/css?family=Montserrat',rel='stylesheet',type='text/css')
+    script(type="text/javascript",src="js/index.js")
+  body(ng-app="ERGame",ng-controller="ERGame",ng-mouseup="mouse.up($event)",ng-mousedown="mouse.down($event)")
+    #container
+      #head
+        img#logo(src="assets/img/logo.png")
+        .pull-right
+          a(href="#"): img(src="assets/img/fb.png")
+          a(href="#"): img(src="assets/img/twt.png")
+      #frame: #wrapper
+        #landing(ng-if="game.state==0")
+          #landing-reporter
+            img(src="assets/img/cover/landing-reporter-0.png")
+            img.active(src="assets/img/cover/landing-reporter-1.png")
+          #landing-start(ng-click="game.start()")
+            img(src="assets/img/cover/landing-start-0.png")
+            img.active(src="assets/img/cover/landing-start-1.png")
+          #landing-skip(ng-click="dialog.skip();game.start()")
+            img(src="assets/img/cover/landing-skip-0.png")
+            img.active(src="assets/img/cover/landing-skip-1.png")
+        #countdown(ng-if="game.state==5")
+          img(src="assets/img/countdown/3.png",ng-if="game.countdown.value==4")
+          img(src="assets/img/countdown/2.png",ng-if="game.countdown.value==3")
+          img(src="assets/img/countdown/1.png",ng-if="game.countdown.value==2")
+          img(src="assets/img/countdown/go.png",ng-if="game.countdown.value==1")
+        #pause(ng-if="game.state==1")
+          #pause-link
+            img(src="assets/img/pause/link-0.png")
+            img.active(src="assets/img/pause/link-1.png")
+          #pause-reporter
+            img(src="assets/img/pause/reporter-0.png")
+            img.active(src="assets/img/pause/reporter-1.png")
+          #pause-facebook
+            img(src="assets/img/pause/fb-0.png")
+            img.active(src="assets/img/pause/fb-1.png")
+          #pause-tutorial
+            img(src="assets/img/pause/tutorial-0.png")
+            img.active(src="assets/img/pause/tutorial-1.png")
+        #game-ctrl(ng-if="game.state>0")
+          #gctrl-landing(ng-if="game.state==4",ng-click="game.reset()")
+            img(src="assets/img/game/landing-0.png")
+            img.active(src="assets/img/game/landing-1.png")
+          #gctrl-pause(ng-if="game.state==2",ng-click="game.setState(1)")
+            img(src="assets/img/game/pause-0.png")
+            img.active(src="assets/img/game/pause-1.png")
+          #gctrl-skip(ng-if="game.state==3",ng-click="dialog.skip()")
+            img(src="assets/img/game/skip-0.png")
+            img.active(src="assets/img/game/skip-1.png")
+          #gctrl-start(ng-if="game.state==1",ng-click="game.setState(2)")
+            img(src="assets/img/game/start-0.png")
+            img.active(src="assets/img/game/start-1.png")
+        #game-over(ng-if="game.state==4")
+          #gover-link
+            img(src="assets/img/pause/link-0.png")
+            img.active(src="assets/img/pause/link-1.png")
+          #gover-reporter
+            img(src="assets/img/pause/reporter-0.png")
+            img.active(src="assets/img/pause/reporter-1.png")
+          #gover-facebook
+            img(src="assets/img/pause/fb-0.png")
+            img.active(src="assets/img/pause/fb-1.png")
+          .score
+            each val in [0,1,2,3]
+              .score-digit(ng-attr-style="background-image:url(assets/img/gauge/{{doctor.score.digit["+val+"]}}s.png)")
+
+        #energy
+          #energy-base
+          #energy-current(ng-attr-style="width:{{doctor.energy*100}}%")
+        #chance(ng-class="{'active':doctor.hurting>0}")
+          each val in [1,2,3,4,5]
+            .chance-node(ng-class="{'active':doctor.chance >="+val+"}")
+        #score
+          each val in [0,1,2,3]
+            .score-digit(ng-attr-style="background-image:url(assets/img/gauge/{{doctor.score.digit["+val+"]}}s.png)")
+        #block-mask(ng-click="demad($event)",ng-if="doctor.faint || madmax")
+          .type(ng-if="doctor.faint && !madmax")
+            img(src="assets/img/mad/hungry1.png")
+            img(src="assets/img/mad/hungry2.png")
+          .type(ng-if="madmax==1")
+            img(src="assets/img/mad/gangster1.png")
+            img(src="assets/img/mad/gangster2.png")
+          .type(ng-if="madmax==2")
+            img(src="assets/img/mad/hysteria1.png")
+            img(src="assets/img/mad/hysteria2.png")
+        #arrow
+          img(src="assets/img/arrow.png",draggable="false")
+        #finger-slide
+          img(src="assets/img/tutorial/finger1.png",draggable="false")
+          img(src="assets/img/tutorial/finger2.png",draggable="false")
+          img(src="assets/img/wheel.png",draggable="false")
+        #finger-tap
+          img(src="assets/img/tutorial/finger1.png",draggable="false")
+          img(src="assets/img/tutorial/finger2.png",draggable="false")
+        #dialog(ng-click="dialog.next()",ng-class="dialog.type")
+          img#dialog-content(ng-attr-src="assets/img/tutorial/{{dialog.idx}}.png")
+          img#dialog-doctor(src="assets/img/tutorial/doctor.png")
+          //-.btn.btn-default(ng-click="dialog.next()") 
+            span(ng-if="dialog.hasNext[dialog.idx]") 下一步
+            span(ng-if="!dialog.hasNext[dialog.idx]") 知道了
+        img#wheel(src="assets/img/wheel.png",draggable="false")
+        img(src="/assets/img/scenario.png",style="width:100%",draggable="false")
+        .sprite(ng-repeat="pat in percent.sprite.points",
+        ng-attr-style="width:{{percent.sprite.size[pat.type].w}}%;height:{{percent.sprite.size[pat.type].h}}%;"+
+        "left:{{pat.x}}%;top:{{pat.y}}%",draggable="false",ng-mousedown="mouse.down($event, pat)",
+        ng-class="pat.cls")
+          .base(draggable="false")
+          .normal(draggable="false")
+          .active(ng-if="pat.type==1 && pat.active==1",
+          ng-attr-style="height:{{100 * (1 - pat.life)}}%",draggable="false")
+            img(ng-attr-src="assets/img/it-{{pat.type}}-{{pat.variant || 0}}-{{pat.active || 0}}.png",draggable="false")
+
+          .active(ng-if="pat.type>=2 && pat.type<=4 && pat.active==1",
+          ng-attr-style="top:{{100 * (1 - pat.mad)}}%",draggable="false")
+            img(ng-attr-src="assets/img/it-{{pat.type}}-{{pat.variant || 0}}-{{pat.active || 0}}.png",draggable="false",
+            ng-attr-style="position:absolute;top:-{{100 * (1 - pat.mad)}}%")
+
+          .active(ng-if="pat.type>=5 && pat.type<=8 && pat.active==1",
+          ng-attr-style="height:{{100 * (1 - pat.life)}}%",draggable="false")
+            img(ng-attr-src="assets/img/it-{{pat.type}}-{{pat.variant || 0}}-{{pat.active || 0}}.png",draggable="false")
+      //-#foot
+        .pull-left
+           a(href="#") ABOUT
+        #foot-source SOURCE CODE
+      #foot
+        a.pull-left(href="#"): img(src="assets/img/about.png")
+        a.pull-right(href="#"): img(src="assets/img/github.png")
