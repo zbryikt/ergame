@@ -13,9 +13,7 @@
     "npm": ">=8.1.0"
   },
   "scripts": {
-    "start": "node_modules/.bin/lsc server.ls",
-    "restart": "node_modules\\.bin\\lsc server.ls",
-    "prepare": "npm install chokidar@0.8.0"
+    "start": "npx server -r web -o true"
   },
   "devDependencies": {
     "@zbryikt/template": "^2.3.38",
