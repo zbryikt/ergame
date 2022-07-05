@@ -5,14 +5,14 @@ a #急診人生
 
 ## 使用方法
 
-請預先安裝 NodeJS。這裡使用的版本為 `16.13.0` ( npm 版本為 `8.1.0` )。您可以在 NodeJS 的[官方網站](https://nodejs.org/en/) 取得 NodeJS 。
+請預先安裝 NodeJS。這裡使用的版本為 `16.13.0` ( npm 版本為 `8.1.0` )。您可以在 NodeJS 的 [官方網站](https://nodejs.org/en/) 取得 NodeJS 。
 
 接著，使用終端機 / 命令提示字元程式切換到專案根目錄之後，執行：
 
     npm install
     npm start
 
-瀏覽器應當會自動帶出網站畫面，但若沒有，您可以直接用瀏覽器開啟[http://localhost:2119](http://localhost:2119)
+瀏覽器應當會自動帶出網站畫面，但若沒有，您可以直接用瀏覽器開啟 [http://localhost:2119](http://localhost:2119)
 
 
 ## 授權
