@@ -57,10 +57,6 @@ img
   no-selection()
   position: absolute
   z-index: index(order, 'wheel')
-  background-image: url(img/wheel.png)
-  background-size: contain
-  background-position: center center
-  background-repeat: no-repeat
   width: 33%
   margin: -16.5% 0 0 -16.5%
   display: none
@@ -71,18 +67,6 @@ img
     overflow: hidden
   .active img
     width: 100%
-
-for type in (1..12)
-  for variant in 0 1 2 3 4 5 6 7
-    for active in 0 1
-      .it-{type}-{variant}-{active}
-        .base
-          background-image: unquote("url(img/it-"+type+"-0-0.png)")
-        .normal
-          background-image: unquote("url(img/it-"+type+"-"+variant+"-0.png)")
-    //.it-{type}-{variant}-1
-    //  .active
-    //    background-image: unquote("url(img/it-"+type+"-"+variant+"-1.png)")
 
 +keyframes(blink)
   0%
@@ -95,7 +79,6 @@ for type in (1..12)
 #block-mask
   width: 100%
   height: 100%
-  background: rgba(65,65,65,0.7)
   z-index: index(order, 'mad-mask')
   position: absolute
   cursor: pointer
@@ -223,7 +206,7 @@ for type in (1..12)
     animation(vibrate 0.2s linear infinite)
 
 #chance .chance-node
-  width: 17%
+  width: 16%
   height: 100%
   margin: 2px
   display: inline-block
@@ -244,7 +227,6 @@ for type in (1..12)
   right: 2%
   width: 14.648%
   height: 10.416%
-  background-image: url(img/gauge/counting.png)
   background-repeat: no-repeat
   background-size: contain
   z-index: index(order, 'gauge')
@@ -276,14 +258,13 @@ for type in (1..12)
   z-index: index(order, 'cover')
 
 #landing 
-  div
+  div, a
     position: absolute
     width: 24%
     height: 13%
     bottom: 38%
 
 #urgency
-  background-image: url(img/urgency.png)
   background-position: center center
   background-size: cover
   background-repeat: no-repeat
@@ -295,7 +276,7 @@ for type in (1..12)
     z-index: index(order, 'urgent')
 
 
-#landing div, #pause div, #game-ctrl div, #game-over div, #mute div
+#landing div, #landing a, #pause div, #pause a, #game-ctrl div, #game-over div, #game-over a, #mute div
   img
     position: absolute
     top: 0
@@ -372,7 +353,8 @@ for type in (1..12)
 #pause
   background-color: rgba(65,65,65,0.7)
   text-align: center
-  div
+  z-index: index(order, 'pause')
+  div, a
     display: inline-block
     position: relative
     width: 12%
@@ -416,7 +398,6 @@ for type in (1..12)
 #game-over
   z-index: index(order, 'game-over')
   background-color: rgba(65,65,65,0.7)
-  background-image: url(img/cover/exitscene.png)
   text-align: center
   #gover-facebook, #gover-reporter
     position: absolute
@@ -426,7 +407,7 @@ for type in (1..12)
     width: 21.5%
     right: 31px
     margin-right: 12%
-  #gover-reporter
+  #gover-facebook
     right: 37px
     margin-right: 33.5%
   img
@@ -457,11 +438,11 @@ for type in (1..12)
   overflow: hidden
   transition(left 3s ease-out)
 #game-over #gover-rank-active img
-    position: relative
-    height: 100%
-    width: auto
-    position: relative
-    transition(left 3s ease-out)
+  position: relative
+  height: 100%
+  width: auto
+  position: relative
+  transition(left 3s ease-out)
 
 #countdown
   background: rgba(65,65,65,0.7)
@@ -474,6 +455,7 @@ for type in (1..12)
 #head
   text-align: center
   font-size: 32px
+  display: block
   .pull-right
     margin: 8px 0
     img
@@ -482,9 +464,10 @@ for type in (1..12)
       width: 18px
       margin-left: 16px
 
-#logo
-  width: 300px
-  margin: 15px
+#logo1, #logo2
+  height: 38px
+  margin: 15px 0
+  border: 0
 
 #container
   max-width: 1024px
@@ -622,7 +605,7 @@ for type in (1..12)
   animation(blink 0.4s linear infinite)
 
 #block-progress
-  top: 57.4%
+  top: 64.4%
   left: 47%
   width: 14%
   height: 12px
@@ -680,3 +663,18 @@ for type in (1..12)
   left: 0
   width: 100%
   height: 200%
+
+#main-canvas
+  position: absolute
+  top: 0
+  left: 0
+  width: 100%
+  height: 100%
+  z-index: index(order, 'base')
+
+#copy-input
+  position: absolute
+  top: 0
+  left: 0
+  z-index: 0
+  opacity: 0

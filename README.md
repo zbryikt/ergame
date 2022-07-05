@@ -1,4 +1,4 @@
-# 急診人生
+a #急診人生
 
 急診人生 - 三分鐘的急診室醫師人生，透過新聞遊戲化的方式讓讀者體驗三分鐘的急診室醫師生活。
 
@@ -43,14 +43,3 @@ Sound Resources Used:
 
  * sel.mp3 - [Game Sound Selection.wav](https://freesound.org/people/Bertrof/sounds/131658/)
    - by Bertrof, CC BY 3.0
-
- * count1.mp3, count2.mp3 - generated using bfxr.net.
- 
- * dindon.mp3 - [dingdong1.wav](https://freesound.org/people/baujahr66/sounds/157252/)
-   - by baujahr66, CC0
-
- * born.mp3 - [Short and Sensetive - G2](https://freesound.org/people/modularsamples/sounds/281726/)
-   - by modularsamples, CC0
-
- * click2.mp3 - [Click.wav](https://freesound.org/people/kwahmah_02/sounds/256116/)
-   - by kwahmah_02, CC0

@@ -1,8 +1,15 @@
 {
+<<<<<<< HEAD
   "author": "zbryikt",
   "name": "ergame",
   "description": "simple, quick template for bootstrap a page",
   "version": "0.1.0",
+=======
+  "author": "Kirby Wu",
+  "name": "ERGame",
+  "description": "Life in Emergency Room the Game",
+  "version": "0.0.1",
+>>>>>>> master
   "homepage": "https://github.com/zbryikt/ergame",
   "repository": {
     "type": "git",

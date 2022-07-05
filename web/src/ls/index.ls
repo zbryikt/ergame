@@ -86,17 +86,27 @@ angular.module \ERGame, <[]>
         $timeout (->
           r = parseInt($scope.doctor.score.value / 10)
           if r >= 6 => r--
+          if r >= 6 => r = 6
           $scope.doctor.rank = r
+          $scope.share.update-rank!
         ), 500
       set-state: -> 
         @state = it
       tutorial: ->
         @set-state 3
-        $scope.audio.bkloop 0, true
+        $scope.audio.bkloop 0, true, true
         $scope.audio.bk.pause true
+      last-state: 0
       pause: ->
-        @set-state 1
+        if @state <= 1 => return
         $scope.audio.bk.pause!
+        $scope.audio.bkloop.pause!
+        @last-state = @state
+        @set-state 1
+      resume: ->
+        @set-state (@last-state or 2)
+        if @last-state == 2 => $scope.audio.bk!
+        if @last-state == 3 => $scope.audio.bkloop!
       start: ->
         @set-state 2
         $scope.audio.bkloop.pause true
@@ -119,13 +129,13 @@ angular.module \ERGame, <[]>
         value: 0
         count: ->
           @value = @value - 1
-          if @value > 0 => 
+          if @value > 0 =>
             $scope.audio["count#{if @value == 1 => 2 else 1}"]!
             $timeout (~> @count!), 650
-          else => 
+          else =>
             $scope.game.set-state 2
             $scope.audio.bkloop.pause true
-            $scope.audio.bk!
+            $scope.audio.bk 0, false, true
         start: ->
           $scope.game.set-state 5
           @value = 5
@@ -229,7 +239,6 @@ angular.module \ERGame, <[]>
     $scope.config = do
       cur: do
         prob: {pat: [0.05, 0.60, 0.95], sup: 0.01, stay: 0.1}, decay: {life: 0.001, sup: 0.001, mad: 0.001}
-      # trivial mode
       mode: do
         trivial: [
           * prob: {pat: [0.00, 0.60, 0.95], sup: 0.01, stay: 0.1}, decay: {life: 0.001, sup: 0.001, mad: 0.001}
@@ -237,19 +246,23 @@ angular.module \ERGame, <[]>
           * prob: {pat: [0.00, 0.60, 0.95], sup: 0.01, stay: 0.1}, decay: {life: 0.001, sup: 0.001, mad: 0.001}
           * prob: {pat: [0.00, 0.60, 0.95], sup: 0.01, stay: 0.1}, decay: {life: 0.001, sup: 0.001, mad: 0.001}
         ]
-        # easy mode
         easy: [
           * prob: {pat: [0.02, 0.60, 0.95], sup: 0.01, stay: 0.1}, decay: {life: 0.001, sup: 0.005, mad: 0.001}
           * prob: {pat: [0.04, 0.50, 0.82], sup: 0.02, stay: 0.2}, decay: {life: 0.002, sup: 0.008, mad: 0.002}
           * prob: {pat: [0.08, 0.40, 0.70], sup: 0.04, stay: 0.4}, decay: {life: 0.003, sup: 0.011, mad: 0.003}
           * prob: {pat: [0.12, 0.30, 0.60], sup: 0.10, stay: 0.5}, decay: {life: 0.006, sup: 0.014, mad: 0.006}
         ]
-        # normal mode
         normal: [
           * prob: {pat: [0.02, 0.45, 0.95], sup: 0.01, stay: 0.1}, decay: {life: 0.002, sup: 0.005, mad: 0.001}
           * prob: {pat: [0.06, 0.40, 0.80], sup: 0.03, stay: 0.3}, decay: {life: 0.003, sup: 0.015, mad: 0.003}
           * prob: {pat: [0.14, 0.30, 0.50], sup: 0.09, stay: 0.5}, decay: {life: 0.005, sup: 0.020, mad: 0.005}
           * prob: {pat: [0.22, 0.10, 0.20], sup: 0.15, stay: 0.6}, decay: {life: 0.006, sup: 0.025, mad: 0.007}
+        ]
+        hard: [
+          * prob: {pat: [0.02, 0.10, 0.95], sup: 0.25, stay: 0.6}, decay: {life: 0.006, sup: 0.025, mad: 0.007}
+          * prob: {pat: [0.02, 0.10, 0.95], sup: 0.25, stay: 0.6}, decay: {life: 0.006, sup: 0.025, mad: 0.007}
+          * prob: {pat: [0.02, 0.10, 0.95], sup: 0.25, stay: 0.6}, decay: {life: 0.006, sup: 0.025, mad: 0.007}
+          * prob: {pat: [0.02, 0.10, 0.95], sup: 0.25, stay: 0.6}, decay: {life: 0.006, sup: 0.025, mad: 0.007}
         ]
 
     $scope.mouse = do
@@ -266,7 +279,8 @@ angular.module \ERGame, <[]>
         if $scope.madmax or $scope.doctor.faint => return $scope.demad e
         if @is-locked => return
         if @is-pal-on => return
-        $(\#finger-tap).css display: \none
+        #$(\#finger-tap).css display: \none
+        $scope.dialog.finger.isOn = false
         offset = $(\#wrapper).offset!
         [ex, ey] = [(e.clientX or e.pageX), (e.clientY or e.pageY)]
         if !ex and !ey => [ex,ey] = [e.touches.0.clientX, e.touches.0.clientY]
@@ -281,8 +295,8 @@ angular.module \ERGame, <[]>
           pat = $scope.percent.sprite.points.filter(->it.type == 1)
           max = 0
           for item in pat => if item.variant > max => max = item.variant
-          #if target.variant < max => 
-          if max == 3 and target.variant < max => 
+          #if target.variant < max =>
+          if max == 3 and target.variant < max =>
             @target = null
             return
         @target = target
@@ -309,14 +323,14 @@ angular.module \ERGame, <[]>
         if @is-locked or $scope.madmax or $scope.doctor.faint => return
         now = new Date!getTime!
         [ex, ey] = [(e.clientX or e.pageX), (e.clientY or e.pageY)]
-        if !ex and !ey => 
+        if !ex and !ey =>
           if e.touches? and e.touches.length =>
             [ex,ey] = [e.touches.0.clientX, e.touches.0.clientY]
           else if e.changedTouches? and e.changedTouches.length =>
             [ex,ey] = [e.changedTouches.0.clientX, e.changedTouches.0.clientY]
         if !ex and !ey => [ex,ey] = [@last.x, @last.y]
         if @target and @target.type == 1 and
-           (((ex - @last.x)**2 + (ey - @last.y)**2) < 18 or now - @timestamp < 100) => return
+           (((ex - @last.x)**2 + (ey - @last.y)**2) < 72 or now - @timestamp < 100) => return
         <~ setTimeout _, 0
         @is-pal-on = false
         $(\#wheel).css({display: "none"})
@@ -332,7 +346,7 @@ angular.module \ERGame, <[]>
           # 待診病人
           if @target.type == 1 =>
             # 正確回答
-            if @target.variant == type => 
+            if @target.variant == type =>
               if @target.variant == 1 => # 輕症病患
                 # 一定機率濫用資源
                 mood = if Math.random! < 0.5 => 2 else 4 + parseInt(Math.random! * 3)
@@ -340,7 +354,7 @@ angular.module \ERGame, <[]>
                 $scope.doctor.set-mood mood
                 $scope.audio.dindon!
                 # 非濫用資源者才計分
-                if mood == 2 => 
+                if mood == 2 =>
                   $scope.doctor.score.value += 1
               else # 中、重症病患
                 # 一定機率進留觀
@@ -349,11 +363,11 @@ angular.module \ERGame, <[]>
                   $scope.patient.add parseInt(3 * Math.random! + 2)
                 else if @forceStay =>
                   $scope.doctor.set-mood 3
-                  $scope.patient.add 4, 2, 0
+                  $scope.patient.add (@forceStayType or 4), 2, (@forceStayPos or 0)
                 else $scope.doctor.set-mood 2
                 $scope.audio.dindon!
                 $scope.doctor.score.value += 1
-              if type == 3 => 
+              if type == 3 =>
                 @target.variant = 0
             else => $scope.doctor.fail! # 答錯，難過，扣血
             if type == 3 => $scope.patient.update-urgent!
@@ -378,11 +392,11 @@ angular.module \ERGame, <[]>
 
     $scope.madmax = 0
     $scope.demad = (e) ->
-      $(\#finger-tap).css display: \none
+      $scope.dialog.finger.isOn = false
       prog = 100
       madmax = $scope.percent.sprite.points.filter(->it.ismad) 
       if !madmax.length => $scope.madmax = 0
-      if madmax.length => 
+      if madmax.length =>
         madmax.0.mad <?= 0.8
         madmax.0.mad -= 0.1
         madmax.0.mad >?= 0
@@ -430,7 +444,7 @@ angular.module \ERGame, <[]>
         @ctx = @canvas.getContext \2d
         @img = new Image!
         @img.src = \mask.png
-        @img.onload = ~> 
+        @img.onload = ~>
           @ctx.drawImage @img, 0, 0, 1024, 576
           @ready = true
 
@@ -442,8 +456,10 @@ angular.module \ERGame, <[]>
       next: -> $timeout (~> @main true), 200
       type: ""
       h: {i: [], t: []}
+      finger: value: 1, isOn: false
       reset: ->
         @ <<< {tut: true, show: false, idx: 0, type: ""}
+        @finger = {value: 1, isOn: false}
         for step in @step =>
           step.fired = false
           if step.reset => step.reset!
@@ -456,7 +472,7 @@ angular.module \ERGame, <[]>
         if @idx == @step.length - 2 => @next!
         else
           @type = ""
-          if hold => 
+          if hold =>
             @idx = @step.length - 2
             @toggle 0, true
       interval: (func, delay) ->
@@ -494,9 +510,9 @@ angular.module \ERGame, <[]>
               $scope.mouse.forceStay = false
               $scope.mouse.forceMood = 1
               $scope.mouse.lock!
-              $scope.dialog.timeout (-> $scope.patient.add 1, 1, 0), 1000
-              $scope.dialog.timeout (-> $scope.patient.add 1, 2, 0), 2000
-              $scope.dialog.timeout (-> $scope.patient.add 1, 3, 0), 3000
+              $scope.dialog.timeout (-> $scope.patient.add 1, 1, 0), 800
+              $scope.dialog.timeout (-> $scope.patient.add 1, 2, 0), 1600
+              $scope.dialog.timeout (-> $scope.patient.add 1, 3, 0), 2400
         * do
             ready: false
             reset: -> @ready = false
@@ -520,7 +536,6 @@ angular.module \ERGame, <[]>
         * do
             reset: -> @ <<< handler: null
             check: ->
-
               if $scope.doctor.chance < 5 =>
                 $(\#oops).css display: \block
                 $scope.doctor.chance = 5
@@ -551,7 +566,7 @@ angular.module \ERGame, <[]>
             mood: 0
             reset: -> @ <<< handler: null, mood: 0
             check: ->
-              if !(@handler?) => 
+              if !(@handler?) =>
                 @handler = $scope.dialog.interval (~>
                   $scope.doctor.set-mood @mood + 4
                   $scope.rebuild!
@@ -571,11 +586,18 @@ angular.module \ERGame, <[]>
             mood-handler: null
             reset: -> @ <<< {handler: null, mood-handler: null, ready: false, mood: 3}
             check: ->
-              has-pat2 = ($scope.percent.sprite.points.filter(->it.type==4 and it.variant > 0).length > 0)
+              if $scope.doctor.chance < 5 =>
+                $(\#oops).css display: \block
+                $scope.doctor.chance = 5
+                $scope.patient.reset!
+                set-timeout (~> $(\#oops).css display: \none), 800
+
+              has-pat2 = $scope.percent.sprite.points.filter(->(it.type==2 or it.type==4) and it.variant > 0).length
+              $scope.mouse.forceStayType = if has-pat2 => 2 else 4
               has-pat1 = ($scope.percent.sprite.points.filter(->it.type==1 and it.variant==2).length > 0)
-              if has-pat2 and !@handler? => 
+              if has-pat2 > 1 and !@handler? =>
                 @handler = $scope.dialog.timeout (~> @ready = true), 1000
-              if !has-pat2 and !has-pat1 =>
+              if has-pat2 < 2 and !has-pat1 =>
                 $scope.patient.add 1, 2, parseInt(1 + Math.random! * 4)
               if @ready and !@mood-handler =>
                 @mood-handler = $scope.dialog.interval (~>
@@ -586,19 +608,16 @@ angular.module \ERGame, <[]>
               return @ready
             fire: ->
               $interval.cancel @mood-handler
-              $(\#finger-tap).css do
-                display: \block
-                top: \22%
-                left: \68%
+              $scope.dialog.finger <<< { isOn: true, y: [344,266], x: [750,1000], small: true}
               $scope.madspeed = 0.015
-              #$scope.dialog.timeout (-> $(\#finger-tap).css display: \none), 1300
+              $scope.dialog.timeout (-> $scope.dialog.finger <<< {isOn: false, small: false}), 2300
         * do
             ready: false
             handler: null
             reset: -> @ <<< handler: null, ready: false
             check: ->
-              if $scope.madspeed == 0.015 and $(\#finger-tap).css(\display) == \none and !@handler =>
-                @handler = $scope.dialog.timeout (~> @ready = true), 2000
+              if $scope.madspeed == 0.015 and !$scope.dialog.finger.isOn and !@handler =>
+                @handler = $scope.dialog.timeout (~> @ready = true), 1000
               @ready
             fire: ->
               $scope.madspeed = 0.04
@@ -607,7 +626,7 @@ angular.module \ERGame, <[]>
             ready: false
             reset: -> @ready = false
             check: ->
-              $scope.dialog.timeout (~> @ready = true), 1700
+              if $scope.madmax => @ready = true
               @ready
         * do
             launched: 0
@@ -617,13 +636,9 @@ angular.module \ERGame, <[]>
             check: ->
               if $scope.madmax >= 1 and @launched==0 =>
                 @launched = 1
-                $(\#finger-tap).css do
-                  display: \block
-                  top: \30%
-                  left: \30%
+                $scope.dialog.finger <<< { isOn: true, y: 197.4, x: 351}
                 $scope.madspeed = 0.002
-                #$scope.dialog.timeout (-> $(\#finger-tap).css display: \none), 1000
-              if $scope.madspeed == 0.002 and $scope.madmax < 1 and @launched == 1 => 
+              if $scope.madspeed == 0.002 and $scope.madmax < 1 and @launched == 1 =>
                 @launched = 2
                 $scope.percent.sprite.points.filter(->it.type == 4).0.mad = 0
                 $scope.dialog.timeout (~>
@@ -632,10 +647,6 @@ angular.module \ERGame, <[]>
                     @supply = ( @supply + 1 ) % 3
                     $scope.supply.active @supply
                   ), 500
-                  $(\#arrow).css do
-                    display: \block
-                    top: \25%
-                    left: \35%
                   @ready = true
                 ), 1000
               @ready
@@ -644,46 +655,30 @@ angular.module \ERGame, <[]>
               $scope.supply.active 0, false
               $scope.supply.active 1, true
               $scope.supply.active 2, false
-              $(\#arrow).css display: \none
-              $(\#finger-tap).css do
-                display: \block
-                top: \7%
-                left: \20%
-              $scope.dialog.timeout (->
-                #$(\#finger-tap).css display: \none
-                $scope.mouse.unlock!
-              ), 1000
+              $scope.dialog.finger <<< { isOn: true, y: 46.06, x: 234}
+              $scope.dialog.timeout (-> $scope.mouse.unlock!), 1000
         * do
             ready: false
             handler: false
             reset: -> @ <<< handler: null, ready: false
             check: ->
-              if !@handler => 
+              if !@handler =>
                 @handler = $scope.dialog.timeout (~> 
                   @ready = true
                   $scope.supply.active 1, false
                   $scope.doctor.set-mood 7
                   $scope.rebuild!
                   $scope.doctor.energy -= 0.1
-                  $(\#arrow).css do
-                    display: \block
-                    top: \10%
-                    left: \31%
                 ), 3000
               @ready
             fire: ->
         * do
             check: -> true
             fire: ->
-              $(\#arrow).css display: \none
               $scope.doctor.energy = 0
               $scope.doctor.faint = true
               $scope.doctor.demading = 0
-              $(\#finger-tap).css do
-                display: \block
-                top: \20%
-                left: \30%
-              #$scope.dialog.timeout (-> $(\#finger-tap).css display: \none), 1000
+              $scope.dialog.finger <<< { isOn: true, y: 131.6, x: 351}
         * do
             ready: false
             reset: -> @ <<< ready: false, handler: null
@@ -700,7 +695,7 @@ angular.module \ERGame, <[]>
         * check: -> false
       ]
       main: (force = false) ->
-        if force and @step[@idx] and @step[@idx].fire and !@step[@idx].fired => 
+        if force and @step[@idx] and @step[@idx].fire and !@step[@idx].fired =>
           @step[@idx].fire!
           @step[@idx].fired = true
         if @show and !force => return
@@ -711,7 +706,7 @@ angular.module \ERGame, <[]>
         <~ setTimeout _, 0
         if !(isOn?) => @show = !@show
         else @show = isOn
-        if @show => 
+        if @show =>
           $(\#dialog).fadeIn!
           $scope.audio.menu!
         else $(\#dialog).fadeOut!
@@ -725,12 +720,15 @@ angular.module \ERGame, <[]>
         [w1,h1] = if doc-w < 1024 => [doc-w, doc-w * 576 / 1024 ] else [1024,576]
         [w2,h2] = if doc-h < 576  => [doc-h * 1024 / 576, doc-h] else [1024,576]
         [w,h] = if h1 > doc-h => [w2,h2] else [w1,h1]
+        w *= 0.9
+        h *= 0.9
+        @ <<< {w,h}
         $(\#frame).css width: "#{w}px", height: "#{h}px"
         $(\#container).css width: "#{w}px"
 
         $(\body).css overflow: \hidden
 
-        if doc-w < doc-h => 
+        if doc-w < doc-h =>
           @portrait = true 
           if $scope.game.state == 2 => $scope.game.pause!
         else 
@@ -766,6 +764,8 @@ angular.module \ERGame, <[]>
               top: \10px, left: \10px
             $(\#head).css display: \block
             $(\#foot).css display: \block
+        $(\#prehide).css(\display, \none)
+        if $scope.canvas and $scope.canvas.e => $scope.canvas.update!
 
       portrait: false
       rotate: ->
@@ -812,26 +812,26 @@ angular.module \ERGame, <[]>
         else if time <= 120 => $scope.danger = false
         if isHalt! => return
         r = Math.random!
-        if r < $scope.config.cur.prob.pat.0 => 
+        if r < $scope.config.cur.prob.pat.0 =>
           $scope.patient.add 1
         if Math.random! < $scope.config.cur.prob.sup => $scope.supply.active!
         if $scope.percent.sprite.points.filter(->it.type == 1 and it.variant != 0).length == 0 
-          and Math.random! > 0.8 => 
+          and Math.random! > 0.8 =>
             $scope.patient.add 1
         $scope.madspeed = $scope.config.cur.decay.mad
       drain: ->
         if isHalt! => return
-        if $scope.doctor.hurting => 
+        if $scope.doctor.hurting =>
           $scope.doctor.hurting -= 0.2
           $scope.doctor.hurting >?= 0
-        if $scope.doctor.draining => 
+        if $scope.doctor.draining =>
           $scope.doctor.draining -= 0.2
           $scope.doctor.draining >?= 0
         inqueue = $scope.percent.sprite.points.filter(->it.type == 1 and it.variant > 0)
         die = false
         for it in inqueue
           it.life -= ( $scope.config.cur.decay.life * it.variant )
-          if it.life <= 0 => 
+          if it.life <= 0 =>
             it.life = 0
             $scope.doctor.fail!
             it.variant = 0
@@ -842,11 +842,11 @@ angular.module \ERGame, <[]>
         for it in inqueue
           if !(it.mad?) => it.mad = 0
           it.mad += $scope.madspeed
-          if it.mad >= 0.8 => 
+          if it.mad >= 0.8 =>
             it.mad = 1
             it.ismad = true
             madmax = 1
-        if madmax and !$scope.madmax => 
+        if madmax and !$scope.madmax =>
           $scope.madmax = parseInt( Math.random!*2 + 1 )
           $scope.doctor.demading = 0
         if !$scope.doctor.faint =>
@@ -865,10 +865,12 @@ angular.module \ERGame, <[]>
         try
           ismin = $scope.scream.is-minimal-view!
           $scope.debug.d1 = ismin
-        if $scope.ismin and !ismin and !is-pad=> 
+        if $scope.ismin and !ismin and !is-pad =>
           document.body.scrollTop = 0
           $(\#minimal-fix).css display: \block
-        if is-pad or ismin => $(\#minimal-fix).css display: \none
+        # this is not gonna work in i5. don't do this work instead.
+        #if is-pad or ismin =>
+        #  $(\#minimal-fix).css display: \none
         $scope.ismin = ismin
         $scope.is-pad = is-pad
         if w != @w or h != @h => $scope.dimension.update!
@@ -933,19 +935,21 @@ angular.module \ERGame, <[]>
         @is-mute = !@is-mute
         @gain.gain.value = if @is-mute => 0 else 1
       player: (name) ->
-        ret = (offset, looping = false) ~>
+        ret = (offset, looping = false, reset = false) ~>
+          if reset =>
+            delete ret.pausetime
+          else if ret.pausetime =>
+            offset = ret.pausetime - ret.starttime
+            delete ret.pausetime
+          ret.starttime = parseInt( new Date!getTime! / 1000 ) - (if offset? => offset else 0)
+          if name == \bk => @bkt = ret.starttime
           if !@buf[name] => return
           if @n[name] => @n[name]disconnect!
           @n[name] = src = @context.create-buffer-source!
           src.buffer = @buf[name]
           src.connect @gain # @context.destination
-          if ret.pausetime =>
-            offset = ret.pausetime - ret.starttime
-            delete ret.pausetime
-          ret.starttime = parseInt( new Date!getTime! / 1000 ) - (if offset? => offset else 0)
           if looping => src.loop = true
           if offset? => src.start 0, offset else src.start 0
-          if name == \bk => @bkt = ret.starttime
         ret.pause = (reset = false) ~> 
           if @n[name] =>
             try
@@ -956,12 +960,21 @@ angular.module \ERGame, <[]>
       init: ->
         AudioContext = window.AudioContext or window.webkitAudioContext
         #TODO android browser doesn't support web audio
+        if /Android.+Firefox.+/.exec(navigator.userAgent) => AudioContext = null
         if !AudioContext =>
+          dummy = (name) ~>
+            ret = (offset, looping = false) ~>
+              if ret.pausetime =>
+                offset = ret.pausetime - ret.starttime
+                delete ret.pausetime
+              ret.starttime = parseInt( new Date!getTime! / 1000 ) - (if offset? => offset else 0)
+              if name == \bk => @bkt = ret.starttime
+            ret.pause = (reset = false) ->
+              if !reset => ret.pausetime = parseInt( new Date!getTime! / 1000 )
+            ret
           for item in @names =>
-            @[item] = ->
-            @[item]pause = ->
+            @[item] = dummy item
             @s[item] = pause: ->
-          $scope.loading = false
           return
         $scope.progress.count.total += @names.length
         @context = new AudioContext!
@@ -969,9 +982,7 @@ angular.module \ERGame, <[]>
         @gain.connect @context.destination
         ({url,buf}) <~ $scope.assets.fetch \assets/snd.gz, \audio/mpeg, _
         decode = (name,key) ~>
-          @context.decode-audio-data buf[key], ((ret)~> 
-            @buf[name] = ret
-          ), (-> console.log(\fail))
+          @context.decode-audio-data buf[key], ((ret)~> @buf[name] = ret), (-> console.log(\fail))
         for [name,key] in @names.map(->[it,"snd/#it.mp3"]) =>
           @[name] = @player name
           decode name, key
@@ -979,11 +990,18 @@ angular.module \ERGame, <[]>
 
     $scope.image = do
       url: {}
+      img: {}
+      zoom: {}
       init: ->
         $scope.progress.count.total++
-        ({@url,buf}) <~ $scope.assets.fetch \assets/img.gz, \image/png, _
+        $scope.progress.update!
+        isEn = /en/.exec(window.location.search or (navigator.languages or [])[0] or navigator.language or "en")
+        if /zh/.exec(window.location.search) => isEn = false
+        # localized configuration
+        img-assets = if isEn => \assets/img-en.gz else \assets/img-zh.gz
+        ({@url,buf}) <~ $scope.assets.fetch img-assets, \image/png, _
         [imgs,bks] = [$(\img.src), $(\.img-bk)]
-        for idx from 0 til imgs.length => 
+        for idx from 0 til imgs.length =>
           item = $(imgs[idx])
           src = item.attr(\data-src)
           des = @url[src.replace /^.+\/img\//, "img/"]
@@ -992,10 +1010,149 @@ angular.module \ERGame, <[]>
           item = $(bks[idx])
           src = item.attr(\data-src)
           item.css "background-image": "url(#{@url[src].toString!})"
-        $scope.progress.count.current++
-        
+        for k,v of @url =>
+          $scope.progress.count.total++
+          @img[k] = img = new Image!
+          img.src = v.toString!
+          img.onload = -> $scope.progress.count.current++
+        # a little delay before we actually remove loading panel
+        $timeout (-> $scope.progress.count.current++), 100
+        $scope.$watch 'loading', (-> $scope.canvas.init!)
+
     $scope.audio.init!
     $scope.image.init!
+
+    vizchange = [
+      <[hidden visibilitychange]>
+      <[mozHidden mozvisibilitychange]>
+      <[msHidden msvisibilitychange]>
+      <[webkitHidden webkitvisibilitychange]>
+    ].filter(->document[it.0]?).0
+    if vizchange =>
+      document.addEventListener vizchange.1, (->
+        if document[vizchange.0] => $scope.game.pause!
+      ), false
+      document.addEventListener \pagehide, (-> $scope.game.pause!), false
+
+    $scope.canvas = do
+      e: null
+      ctx: null
+      init: ->
+        @e = document.getElementById(\main-canvas)
+        @ctx = @e.getContext \2d
+        @ctx.imageSmoothingEnabled = true
+        @ctx.mozImageSmoothingEnabled = true
+        @ctx.webkitImageSmoothingEnabled = true
+        @ctx.msImageSmoothingEnabled = true
+        if $scope.usedom => return
+        @update!
+        if !@handler => @handler = $interval (~> @draw!), 100
+      update: ->
+        if !@e => return @init!
+        {w,h} = $scope.dimension{w,h}
+        [w,h] = [w/100,h/100]
+        if @w == w and @h == h => return
+        @e <<< {width: 1170, height: 658}
+        @e.style <<< {width: "#{w * 100}px", height: "#{h * 100}px"}
+        @ <<< {w,h}
+      draw: ->
+        @ctx.fillStyle = "rgba(0,0,0,0.0)"
+        @ctx.fillRect 0, 0, 1170, 658
+        img = $scope.image.img["img/scenario.png"]
+        @ctx.drawImage img, 0, 0, 1170, 658
+        for it in $scope.percent.sprite.points =>
+          img = $scope.image.img["img/it-#{it.type}-#{it.variant or 0}-0.png"]
+          dim = $scope.percent.sprite.size[it.type]
+          des = {w: dim.w * 11.70, h: dim.h * 6.58, x: it.x * 11.70, y: it.y * 6.58}
+          @ctx.drawImage img, des.x, des.y, des.w, des.h
+          if it.active =>
+            img = $scope.image.img["img/it-#{it.type}-#{it.variant or 0}-1.png"]
+            if it.type == 1 =>
+              if it.life < 1 => @ctx.drawImage img,
+                0, 0, img.width, (1 - it.life) * img.height,
+                des.x, des.y, des.w, (1 - it.life) * des.h
+            else if it.type <= 4 =>
+              if it.mad > 0 => @ctx.drawImage img,
+                0, ( 1 - it.mad ) * img.height, img.width, it.mad * img.height,
+                des.x, des.y + ( 1 - it.mad ) * des.h, des.w, it.mad * des.h
+            else if it.type >=5 =>
+              @ctx.drawImage img,
+                0, 0, img.width,  img.height, des.x, des.y, des.w, des.h
+
+        if $scope.doctor.faint or $scope.madmax or 
+          ($scope.dialog.show and !$scope.dialog.type) or 
+          $scope.game.state == 5 =>
+          @ctx.fillStyle = "rgba(65,65,65,0.7)"
+          @ctx.fillRect 0, 0, 1170, 658
+        if $scope.patient.urgent =>
+          img = $scope.image.img["img/urgency.png"]
+          @ctx.drawImage img, 0, 0, 1170, 658
+        if $scope.doctor.faint or $scope.madmax =>
+          ts = parseInt(new Date!getTime! / 250)
+          mod = ( ts % 2 ) + 1
+          [mw,mh] = [11.70 * 35.5, 11.70 * 35.5]
+          [mx,my] = [(1170 - mw) * 0.6, (658 - mh) * 0.4]
+          if $scope.doctor.faint and !$scope.madmax =>
+            img = $scope.image.img["img/mad/hungry#mod.png"]
+          else if $scope.madmax == 1 =>
+            img = $scope.image.img["img/mad/gangster#mod.png"]
+          else =>
+            img = $scope.image.img["img/mad/hysteria#mod.png"]
+          @ctx.drawImage img, mx, my, mw, mh
+        if $scope.dialog.show =>
+          img1 = $scope.image.img["img/tutorial/#{$scope.dialog.idx}.png"]
+          img2 = $scope.image.img["img/tutorial/doctor.png"]
+          if $scope.dialog.type == \mini
+            @ctx.drawImage img1, 386.1, 263.2, 514.8, 263.853
+          else
+            @ctx.drawImage img1, 81.9, 85.54, 702, 490.249
+            @ctx.drawImage img2, 819, 111.86, 234, 433.45
+        if $scope.game.state == 5 =>
+          img = $scope.image.img["img/countdown/#{($scope.game.countdown.value - 1) or \go}.png"]
+          @ctx.drawImage img, 409.5, 148.5, 351, 351
+        if $scope.dialog.finger.isOn =>
+          ts = parseInt(new Date!getTime! / 100)
+          mod = ( ts % 2 ) + 1
+          f = $scope.dialog.finger
+          if f.small =>
+            img = $scope.image.img["img/mad/click-#mod.png"]
+            if f.x.length =>
+              for i from 0 til f.x.length =>
+                @ctx.drawImage img, f.x[i], f.y[i], 70.2, 114.426
+            else @ctx.drawImage img, f.x, f.y, 70.2, 114.426
+          else
+            img = $scope.image.img["img/tutorial/finger#mod.png"]
+            @ctx.drawImage img, f.x, f.y, 292.5, 292.5
+
+    $scope.usedom = false
+
+    # params for sharing in FB
+    args = do
+      app_id: \646775858745770
+      display: \popup
+      caption: \www.twreporter.org
+      picture: \http://0media.tw/p/ergame/img/thumbnail.jpg
+      link: \http://0media.tw/p/ergame/
+      redirect_uri: \http://0media.tw/p/ergame/
+      description: "一款富含真實情境的經典急診室經營夢幻之作，為台灣第一個急診室新聞遊戲。遊戲背景鎖定在台灣的一間大型醫學中心，面對健保體制的崩壞、沒膽改革的政府以及愛跑大醫院看病的人民，擁有拯救急診室命運能力的鍵盤醫師，將在一次又一次的真實的醫療突發狀況中突圍，試圖拯救病患的生命。你，將在人類的極限體力、醫生的使命和病患的生命中作出抉擇，準備好了嗎？"
+    $scope.share = do
+      update-rank: ->
+        score = $scope.doctor.score.value
+        rank = $scope.doctor.rank
+        title = <[見習醫生 實習醫生 住院醫生 總住院醫生 研究醫生 主治醫生 醫龍]>
+        obj = do
+          app_id: \646775858745770
+          display: \popup
+          caption: "急診人生 - 三分鐘的急診室醫師人生 / 報導者 x 0media"
+          picture: "http://0media.tw/p/ergame/rank/s#{score}.png"
+          link: \http://0media.tw/p/ergame/
+          name: "我在急診人生救了 #{score} 個人，獲得「#{title[rank]}」稱號！"
+          redirect_uri: \http://0media.tw/p/ergame/
+          description: "一款富含真實情境的經典急診室經營夢幻之作，為台灣第一個急診室新聞遊戲。遊戲背景鎖定在台灣的一間大型醫學中心，面對健保體制的崩壞、沒膽改革的政府以及愛跑大醫院看病的人民，擁有拯救急診室命運能力的鍵盤醫師，將在一次又一次的真實的醫療突發狀況中突圍，試圖拯救病患的生命。你，將在人類的極限體力、醫生的使命和病患的生命中作出抉擇，準備好了嗎？"
+        @rank = ["#k=#{encodeURIComponent(v)}" for k,v of obj].join(\&)
+      game: ["#k=#{encodeURIComponent(v)}" for k,v of args].join(\&)
+      link: encodeURIComponent(\http://0media.tw/p/ergame/)
+      rank: ""
 
 window.ctrl = do
   _s: null
@@ -1029,14 +1186,30 @@ window.ctrl = do
     @scope!game.reset!
     @scope!audio.click!
 
+  resettutorial: (is-touch = false, event) -> @wrap is-touch, ~>
+    @scope!game.reset!
+    @scope!game.tutorial!
+    @scope!audio.click!
+
   tutorial: (is-touch = false, event) -> @wrap is-touch, ~>
     @scope!game.tutorial!
     @scope!audio.click!
 
   cont: (is-touch = false, event) -> @wrap is-touch, ~>
-    @scope!game.set-state 2
     @scope!audio.click!
-    @scope!audio.bk!
+    @scope!game.resume!
+
+  copy: ->
+    @scope!audio.click!
+    copybtn = '#pause-link'
+    clipboard = new Clipboard copybtn
+    clipboard.on \success, ->
+    # $(copybtn).tooltip({title: '拷好囉', trigger: 'click'}).tooltip('show')
+    # setTimeout((->$(copybtn).tooltip('hide')), 1000)
+    clipboard.on \error, ->
+    # $(copybtn).tooltip({title: '抱歉你的瀏覽器不行喔', trigger: 'click'}).tooltip('show')
+    # setTimeout((->$(copybtn).tooltip('hide')), 1000)
+
 
 
 touchflag = false
@@ -1048,7 +1221,11 @@ window.touch = touch = do
     angular.element(\#wrapper).scope().mouse.down(e,true)
     # prevent default eats slide-up action, which is needed for ios to enter minimal-view.
     # only prevent default when it's in minimal view.
-    if angular.element(\#wrapper).scope().is-min => e.prevent-default!
+    s = angular.element(\#wrapper).scope()
+    if s.is-min or s.is-pad =>
+      if (e.target and e.target.nodeName.toLowerCase! == "a")
+      or (e.target.parentNode and e.target.parentNode.toLowerCase! == "a") => return
+      e.prevent-default!
   up: (e) ->
     touchflag := true
     angular.element(\#wrapper).scope().mouse.up(e,true)
