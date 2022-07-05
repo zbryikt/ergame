@@ -443,7 +443,7 @@ angular.module \ERGame, <[]>
           ..width = 1024
         @ctx = @canvas.getContext \2d
         @img = new Image!
-        @img.src = \mask.png
+        @img.src = \assets/img/mask.png
         @img.onload = ~>
           @ctx.drawImage @img, 0, 0, 1024, 576
           @ready = true
@@ -980,7 +980,7 @@ angular.module \ERGame, <[]>
         @context = new AudioContext!
         @gain = @context.create-gain!
         @gain.connect @context.destination
-        ({url,buf}) <~ $scope.assets.fetch \assets/snd.gz, \audio/mpeg, _
+        ({url,buf}) <~ $scope.assets.fetch \assets/snd/snd.gz, \audio/mpeg, _
         decode = (name,key) ~>
           @context.decode-audio-data buf[key], ((ret)~> @buf[name] = ret), (-> console.log(\fail))
         for [name,key] in @names.map(->[it,"snd/#it.mp3"]) =>
@@ -998,17 +998,21 @@ angular.module \ERGame, <[]>
         isEn = /en/.exec(window.location.search or (navigator.languages or [])[0] or navigator.language or "en")
         if /zh/.exec(window.location.search) => isEn = false
         # localized configuration
-        img-assets = if isEn => \assets/img-en.gz else \assets/img-zh.gz
-        ({@url,buf}) <~ $scope.assets.fetch img-assets, \image/png, _
+        img-assets = if isEn => \assets/img/img-en.gz else \assets/img/img-zh.gz
+        ({url,buf}) <~ $scope.assets.fetch img-assets, \image/png, _
         [imgs,bks] = [$(\img.src), $(\.img-bk)]
+        @url = {}
+        for k, v of url => @url["assets/#k"] = v
         for idx from 0 til imgs.length =>
           item = $(imgs[idx])
           src = item.attr(\data-src)
-          des = @url[src.replace /^.+\/img\//, "img/"]
+          # TODO
+          #des = @url[src.replace /^.+\/img\//, "img/"]
+          des = @url[src]
           if des? => item.attr(\src, des.toString!)
         for idx from 0 til bks.length =>
           item = $(bks[idx])
-          src = item.attr(\data-src)
+          src = item.attr(\data-src)#.replace('assets/','')
           item.css "background-image": "url(#{@url[src].toString!})"
         for k,v of @url =>
           $scope.progress.count.total++
@@ -1058,15 +1062,15 @@ angular.module \ERGame, <[]>
       draw: ->
         @ctx.fillStyle = "rgba(0,0,0,0.0)"
         @ctx.fillRect 0, 0, 1170, 658
-        img = $scope.image.img["img/scenario.png"]
+        img = $scope.image.img["assets/img/scenario.png"]
         @ctx.drawImage img, 0, 0, 1170, 658
         for it in $scope.percent.sprite.points =>
-          img = $scope.image.img["img/it-#{it.type}-#{it.variant or 0}-0.png"]
+          img = $scope.image.img["assets/img/it-#{it.type}-#{it.variant or 0}-0.png"]
           dim = $scope.percent.sprite.size[it.type]
           des = {w: dim.w * 11.70, h: dim.h * 6.58, x: it.x * 11.70, y: it.y * 6.58}
           @ctx.drawImage img, des.x, des.y, des.w, des.h
           if it.active =>
-            img = $scope.image.img["img/it-#{it.type}-#{it.variant or 0}-1.png"]
+            img = $scope.image.img["assets/img/it-#{it.type}-#{it.variant or 0}-1.png"]
             if it.type == 1 =>
               if it.life < 1 => @ctx.drawImage img,
                 0, 0, img.width, (1 - it.life) * img.height,
@@ -1085,7 +1089,7 @@ angular.module \ERGame, <[]>
           @ctx.fillStyle = "rgba(65,65,65,0.7)"
           @ctx.fillRect 0, 0, 1170, 658
         if $scope.patient.urgent =>
-          img = $scope.image.img["img/urgency.png"]
+          img = $scope.image.img["assets/img/urgency.png"]
           @ctx.drawImage img, 0, 0, 1170, 658
         if $scope.doctor.faint or $scope.madmax =>
           ts = parseInt(new Date!getTime! / 250)
@@ -1093,35 +1097,35 @@ angular.module \ERGame, <[]>
           [mw,mh] = [11.70 * 35.5, 11.70 * 35.5]
           [mx,my] = [(1170 - mw) * 0.6, (658 - mh) * 0.4]
           if $scope.doctor.faint and !$scope.madmax =>
-            img = $scope.image.img["img/mad/hungry#mod.png"]
+            img = $scope.image.img["assets/img/mad/hungry#mod.png"]
           else if $scope.madmax == 1 =>
-            img = $scope.image.img["img/mad/gangster#mod.png"]
+            img = $scope.image.img["assets/img/mad/gangster#mod.png"]
           else =>
-            img = $scope.image.img["img/mad/hysteria#mod.png"]
+            img = $scope.image.img["assets/img/mad/hysteria#mod.png"]
           @ctx.drawImage img, mx, my, mw, mh
         if $scope.dialog.show =>
-          img1 = $scope.image.img["img/tutorial/#{$scope.dialog.idx}.png"]
-          img2 = $scope.image.img["img/tutorial/doctor.png"]
+          img1 = $scope.image.img["assets/img/tutorial/#{$scope.dialog.idx}.png"]
+          img2 = $scope.image.img["assets/img/tutorial/doctor.png"]
           if $scope.dialog.type == \mini
             @ctx.drawImage img1, 386.1, 263.2, 514.8, 263.853
           else
             @ctx.drawImage img1, 81.9, 85.54, 702, 490.249
             @ctx.drawImage img2, 819, 111.86, 234, 433.45
         if $scope.game.state == 5 =>
-          img = $scope.image.img["img/countdown/#{($scope.game.countdown.value - 1) or \go}.png"]
+          img = $scope.image.img["assets/img/countdown/#{($scope.game.countdown.value - 1) or \go}.png"]
           @ctx.drawImage img, 409.5, 148.5, 351, 351
         if $scope.dialog.finger.isOn =>
           ts = parseInt(new Date!getTime! / 100)
           mod = ( ts % 2 ) + 1
           f = $scope.dialog.finger
           if f.small =>
-            img = $scope.image.img["img/mad/click-#mod.png"]
+            img = $scope.image.img["assets/img/mad/click-#mod.png"]
             if f.x.length =>
               for i from 0 til f.x.length =>
                 @ctx.drawImage img, f.x[i], f.y[i], 70.2, 114.426
             else @ctx.drawImage img, f.x, f.y, 70.2, 114.426
           else
-            img = $scope.image.img["img/tutorial/finger#mod.png"]
+            img = $scope.image.img["assets/img/tutorial/finger#mod.png"]
             @ctx.drawImage img, f.x, f.y, 292.5, 292.5
 
     $scope.usedom = false
@@ -1131,7 +1135,7 @@ angular.module \ERGame, <[]>
       app_id: \646775858745770
       display: \popup
       caption: \www.twreporter.org
-      picture: \http://0media.tw/p/ergame/img/thumbnail.jpg
+      picture: \http://0media.tw/p/ergame/assets/img/thumbnail.jpg
       link: \http://0media.tw/p/ergame/
       redirect_uri: \http://0media.tw/p/ergame/
       description: "一款富含真實情境的經典急診室經營夢幻之作，為台灣第一個急診室新聞遊戲。遊戲背景鎖定在台灣的一間大型醫學中心，面對健保體制的崩壞、沒膽改革的政府以及愛跑大醫院看病的人民，擁有拯救急診室命運能力的鍵盤醫師，將在一次又一次的真實的醫療突發狀況中突圍，試圖拯救病患的生命。你，將在人類的極限體力、醫生的使命和病患的生命中作出抉擇，準備好了嗎？"

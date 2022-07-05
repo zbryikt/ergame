@@ -1,15 +1,8 @@
 {
-<<<<<<< HEAD
   "author": "zbryikt",
   "name": "ergame",
-  "description": "simple, quick template for bootstrap a page",
-  "version": "0.1.0",
-=======
-  "author": "Kirby Wu",
-  "name": "ERGame",
   "description": "Life in Emergency Room the Game",
-  "version": "0.0.1",
->>>>>>> master
+  "version": "0.1.0",
   "homepage": "https://github.com/zbryikt/ergame",
   "repository": {
     "type": "git",
@@ -20,7 +13,7 @@
     "npm": ">=8.1.0"
   },
   "scripts": {
-    "start": "npx server -r web -o true"
+    "start": "npx server -r web -o true -p 2119"
   },
   "devDependencies": {
     "livescript": "^1.6.0",

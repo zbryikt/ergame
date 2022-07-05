@@ -952,7 +952,7 @@ x$.controller('ERGame', ['$scope', '$interval', '$timeout', '$http', '$sce'].con
       x$.width = 1024;
       this.ctx = this.canvas.getContext('2d');
       this.img = new Image();
-      this.img.src = 'mask.png';
+      this.img.src = 'assets/img/mask.png';
       return this.img.onload = function(){
         this$.ctx.drawImage(this$.img, 0, 0, 1024, 576);
         return this$.ready = true;
@@ -1939,7 +1939,7 @@ x$.controller('ERGame', ['$scope', '$interval', '$timeout', '$http', '$sce'].con
       this.context = new AudioContext();
       this.gain = this.context.createGain();
       this.gain.connect(this.context.destination);
-      return $scope.assets.fetch('assets/snd.gz', 'audio/mpeg', function(arg$){
+      return $scope.assets.fetch('assets/snd/snd.gz', 'audio/mpeg', function(arg$){
         var url, buf, decode, i$, ref$, len$, ref1$, name, key;
         url = arg$.url, buf = arg$.buf;
         decode = function(name, key){
@@ -1974,16 +1974,21 @@ x$.controller('ERGame', ['$scope', '$interval', '$timeout', '$http', '$sce'].con
       if (/zh/.exec(window.location.search)) {
         isEn = false;
       }
-      imgAssets = isEn ? 'assets/img-en.gz' : 'assets/img-zh.gz';
+      imgAssets = isEn ? 'assets/img/img-en.gz' : 'assets/img/img-zh.gz';
       return $scope.assets.fetch(imgAssets, 'image/png', function(arg$){
-        var buf, ref$, imgs, bks, i$, to$, idx, item, src, des, k, v, img;
-        this$.url = arg$.url, buf = arg$.buf;
+        var url, buf, ref$, imgs, bks, k, v, i$, to$, idx, item, src, des, img;
+        url = arg$.url, buf = arg$.buf;
         ref$ = [$('img.src'), $('.img-bk')], imgs = ref$[0], bks = ref$[1];
+        this$.url = {};
+        for (k in url) {
+          v = url[k];
+          this$.url["assets/" + k] = v;
+        }
         for (i$ = 0, to$ = imgs.length; i$ < to$; ++i$) {
           idx = i$;
           item = $(imgs[idx]);
           src = item.attr('data-src');
-          des = this$.url[src.replace(/^.+\/img\//, "img/")];
+          des = this$.url[src];
           if (des != null) {
             item.attr('src', des.toString());
           }
@@ -2076,11 +2081,11 @@ x$.controller('ERGame', ['$scope', '$interval', '$timeout', '$http', '$sce'].con
       var img, i$, ref$, len$, dim, des, ts, mod, mw, mh, mx, my, img1, img2, f, to$, i, results$ = [];
       this.ctx.fillStyle = "rgba(0,0,0,0.0)";
       this.ctx.fillRect(0, 0, 1170, 658);
-      img = $scope.image.img["img/scenario.png"];
+      img = $scope.image.img["assets/img/scenario.png"];
       this.ctx.drawImage(img, 0, 0, 1170, 658);
       for (i$ = 0, len$ = (ref$ = $scope.percent.sprite.points).length; i$ < len$; ++i$) {
         it = ref$[i$];
-        img = $scope.image.img["img/it-" + it.type + "-" + (it.variant || 0) + "-0.png"];
+        img = $scope.image.img["assets/img/it-" + it.type + "-" + (it.variant || 0) + "-0.png"];
         dim = $scope.percent.sprite.size[it.type];
         des = {
           w: dim.w * 11.70,
@@ -2090,7 +2095,7 @@ x$.controller('ERGame', ['$scope', '$interval', '$timeout', '$http', '$sce'].con
         };
         this.ctx.drawImage(img, des.x, des.y, des.w, des.h);
         if (it.active) {
-          img = $scope.image.img["img/it-" + it.type + "-" + (it.variant || 0) + "-1.png"];
+          img = $scope.image.img["assets/img/it-" + it.type + "-" + (it.variant || 0) + "-1.png"];
           if (it.type === 1) {
             if (it.life < 1) {
               this.ctx.drawImage(img, 0, 0, img.width, (1 - it.life) * img.height, des.x, des.y, des.w, (1 - it.life) * des.h);
@@ -2109,7 +2114,7 @@ x$.controller('ERGame', ['$scope', '$interval', '$timeout', '$http', '$sce'].con
         this.ctx.fillRect(0, 0, 1170, 658);
       }
       if ($scope.patient.urgent) {
-        img = $scope.image.img["img/urgency.png"];
+        img = $scope.image.img["assets/img/urgency.png"];
         this.ctx.drawImage(img, 0, 0, 1170, 658);
       }
       if ($scope.doctor.faint || $scope.madmax) {
@@ -2118,17 +2123,17 @@ x$.controller('ERGame', ['$scope', '$interval', '$timeout', '$http', '$sce'].con
         ref$ = [11.70 * 35.5, 11.70 * 35.5], mw = ref$[0], mh = ref$[1];
         ref$ = [(1170 - mw) * 0.6, (658 - mh) * 0.4], mx = ref$[0], my = ref$[1];
         if ($scope.doctor.faint && !$scope.madmax) {
-          img = $scope.image.img["img/mad/hungry" + mod + ".png"];
+          img = $scope.image.img["assets/img/mad/hungry" + mod + ".png"];
         } else if ($scope.madmax === 1) {
-          img = $scope.image.img["img/mad/gangster" + mod + ".png"];
+          img = $scope.image.img["assets/img/mad/gangster" + mod + ".png"];
         } else {
-          img = $scope.image.img["img/mad/hysteria" + mod + ".png"];
+          img = $scope.image.img["assets/img/mad/hysteria" + mod + ".png"];
         }
         this.ctx.drawImage(img, mx, my, mw, mh);
       }
       if ($scope.dialog.show) {
-        img1 = $scope.image.img["img/tutorial/" + $scope.dialog.idx + ".png"];
-        img2 = $scope.image.img["img/tutorial/doctor.png"];
+        img1 = $scope.image.img["assets/img/tutorial/" + $scope.dialog.idx + ".png"];
+        img2 = $scope.image.img["assets/img/tutorial/doctor.png"];
         if ($scope.dialog.type === 'mini') {
           this.ctx.drawImage(img1, 386.1, 263.2, 514.8, 263.853);
         } else {
@@ -2137,7 +2142,7 @@ x$.controller('ERGame', ['$scope', '$interval', '$timeout', '$http', '$sce'].con
         }
       }
       if ($scope.game.state === 5) {
-        img = $scope.image.img["img/countdown/" + ($scope.game.countdown.value - 1 || 'go') + ".png"];
+        img = $scope.image.img["assets/img/countdown/" + ($scope.game.countdown.value - 1 || 'go') + ".png"];
         this.ctx.drawImage(img, 409.5, 148.5, 351, 351);
       }
       if ($scope.dialog.finger.isOn) {
@@ -2145,7 +2150,7 @@ x$.controller('ERGame', ['$scope', '$interval', '$timeout', '$http', '$sce'].con
         mod = ts % 2 + 1;
         f = $scope.dialog.finger;
         if (f.small) {
-          img = $scope.image.img["img/mad/click-" + mod + ".png"];
+          img = $scope.image.img["assets/img/mad/click-" + mod + ".png"];
           if (f.x.length) {
             for (i$ = 0, to$ = f.x.length; i$ < to$; ++i$) {
               i = i$;
@@ -2156,7 +2161,7 @@ x$.controller('ERGame', ['$scope', '$interval', '$timeout', '$http', '$sce'].con
             return this.ctx.drawImage(img, f.x, f.y, 70.2, 114.426);
           }
         } else {
-          img = $scope.image.img["img/tutorial/finger" + mod + ".png"];
+          img = $scope.image.img["assets/img/tutorial/finger" + mod + ".png"];
           return this.ctx.drawImage(img, f.x, f.y, 292.5, 292.5);
         }
       }
@@ -2167,7 +2172,7 @@ x$.controller('ERGame', ['$scope', '$interval', '$timeout', '$http', '$sce'].con
     app_id: '646775858745770',
     display: 'popup',
     caption: 'www.twreporter.org',
-    picture: 'http://0media.tw/p/ergame/img/thumbnail.jpg',
+    picture: 'http://0media.tw/p/ergame/assets/img/thumbnail.jpg',
     link: 'http://0media.tw/p/ergame/',
     redirect_uri: 'http://0media.tw/p/ergame/',
     description: "一款富含真實情境的經典急診室經營夢幻之作，為台灣第一個急診室新聞遊戲。遊戲背景鎖定在台灣的一間大型醫學中心，面對健保體制的崩壞、沒膽改革的政府以及愛跑大醫院看病的人民，擁有拯救急診室命運能力的鍵盤醫師，將在一次又一次的真實的醫療突發狀況中突圍，試圖拯救病患的生命。你，將在人類的極限體力、醫生的使命和病患的生命中作出抉擇，準備好了嗎？"

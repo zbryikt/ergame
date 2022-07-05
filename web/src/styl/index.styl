@@ -43,7 +43,7 @@ img
   background: #000
   margin: auto
   position: relative
-  z-index: index(order, 'frame')
+  z-index: z-index-frame
 
 #wrapper
   no-selection()
@@ -56,7 +56,7 @@ img
 #wheel
   no-selection()
   position: absolute
-  z-index: index(order, 'wheel')
+  z-index: z-index-wheel
   width: 33%
   margin: -16.5% 0 0 -16.5%
   display: none
@@ -79,7 +79,7 @@ img
 #block-mask
   width: 100%
   height: 100%
-  z-index: index(order, 'mad-mask')
+  z-index: z-index-mad-mask
   position: absolute
   cursor: pointer
   .type img
@@ -101,7 +101,7 @@ img
   height: 100%
   background: url(mask.png) center center
   background-size: contain
-  z-index: index(order, 'hit-mask')
+  z-index: z-index-hit-mask
   position: absolute
   opacity: 0.5
 
@@ -109,7 +109,7 @@ img
   width: 100%
   height: 100%
   position: absolute
-  z-index: index(order, 'dialog')
+  z-index: z-index-dialog
   background: rgba(0,0,0,0.5)
   display: none
   &.mini
@@ -156,7 +156,7 @@ img
   position: absolute
   top: 2%
   left: 2%
-  z-index: index(order, 'gauge')
+  z-index: z-index-gauge
   width: 33%
   height: 4%
   margin: 0.85%
@@ -169,7 +169,7 @@ img
   overflow: hidden
   top: 0
   left: 0
-  z-index: index(order, 'gauge')
+  z-index: z-index-gauge
   position: absolute
   img
     position: absolute
@@ -178,7 +178,7 @@ img
 
 #energy-base
 #energy-current 
-  z-index: index(order, 'gauge-current')
+  z-index: z-index-gauge-current
   transition(width 0.5s ease-in-out)
 
 +keyframes(vibrate)
@@ -201,7 +201,7 @@ img
   left: 3.3%
   width: 30%
   height: 10%
-  z-index: index(order, 'gauge')
+  z-index: z-index-gauge
   &.active
     animation(vibrate 0.2s linear infinite)
 
@@ -210,11 +210,11 @@ img
   height: 100%
   margin: 2px
   display: inline-block
-  background-image: url(img/gauge/chance-x.png)
+  background-image: url(../assets/img/gauge/chance-x.png)
   background-size: contain
   background-repeat: no-repeat
   &.active
-    background-image: url(img/gauge/chance-o.png)
+    background-image: url(../assets/img/gauge/chance-o.png)
 
 +keyframes(beat)
   0%
@@ -229,7 +229,7 @@ img
   height: 10.416%
   background-repeat: no-repeat
   background-size: contain
-  z-index: index(order, 'gauge')
+  z-index: z-index-gauge
   padding-left: 1.757%
   &.hint
     animation(beat 0.5s ease-out infinite)
@@ -242,7 +242,7 @@ img
     margin: 2% 3%
     background-repeat: no-repeat
     background-size: contain
-    z-index: index(order, 'guage-current')
+    z-index: z-index-guage-current
 #score .score-digit
   margin-top: 10%
   height: 40%
@@ -255,7 +255,7 @@ img
   height: 100%
   background-size: cover
   background-repeat: no-repeat
-  z-index: index(order, 'cover')
+  z-index: z-index-cover
 
 #landing 
   div, a
@@ -273,7 +273,7 @@ img
   transition(opacity 0.5s linear)
   &.active
     opacity: 0.7
-    z-index: index(order, 'urgent')
+    z-index: z-index-urgent
 
 
 #landing div, #landing a, #pause div, #pause a, #game-ctrl div, #game-over div, #game-over a, #mute div
@@ -307,7 +307,7 @@ img
     opacity: 0
 
 #loading
-  z-index: index(order, 'loading')
+  z-index: z-index-loading
   background: #fff
   &.fade
     animation(fade 0.5s ease-in-out 1)
@@ -353,7 +353,7 @@ img
 #pause
   background-color: rgba(65,65,65,0.7)
   text-align: center
-  z-index: index(order, 'pause')
+  z-index: z-index-pause
   div, a
     display: inline-block
     position: relative
@@ -371,7 +371,7 @@ img
     width: 100%
 
 #game-ctrl, #mute
-  z-index: index(order, 'game-ctrl')
+  z-index: z-index-game-ctrl
   top: auto
   left: auto
   bottom: 20px
@@ -396,7 +396,7 @@ img
   width: 351%
 
 #game-over
-  z-index: index(order, 'game-over')
+  z-index: z-index-game-over
   background-color: rgba(65,65,65,0.7)
   text-align: center
   #gover-facebook, #gover-reporter
@@ -501,7 +501,7 @@ img
   position: absolute
   top: 0
   left: 0
-  z-index: index(order, 'cover')
+  z-index: z-index-cover
   img
     width: 100%
     height: 100%
@@ -585,13 +585,13 @@ img
   height: 20%
   display: none
   animation(jump 0.6s ease-in-out infinite)
-  z-index: index(order, 'cover')
+  z-index: z-index-cover
   img
     width: 100%
     height: 100%
 
 #danger
-  z-index: index(order, 'urgent')
+  z-index: z-index-urgent
   position: absolute
   display: none
   top: 10%
@@ -654,7 +654,7 @@ img
   background-position: center center
   background-repeat: no-repeat
   background-color: #fff
-  z-index: index(order, 'deg90')
+  z-index: z-index-deg90
   background-size: cover
 
 #minimal-fix
@@ -670,7 +670,7 @@ img
   left: 0
   width: 100%
   height: 100%
-  z-index: index(order, 'base')
+  z-index: z-index-base
 
 #copy-input
   position: absolute

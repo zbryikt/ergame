@@ -65,7 +65,7 @@ img {
   background: #000;
   margin: auto;
   position: relative;
-  z-index: ;
+  z-index: 150;
 }
 #wrapper {
   -webkit-touch-callout: none;
@@ -88,7 +88,7 @@ img {
   -ms-user-select: none;
   user-select: none;
   position: absolute;
-  z-index: ;
+  z-index: 40;
   width: 33%;
   margin: -16.5% 0 0 -16.5%;
   display: none;
@@ -192,7 +192,7 @@ width: 100%;
 #block-mask {
   width: 100%;
   height: 100%;
-  z-index: ;
+  z-index: 60;
   position: absolute;
   cursor: pointer;
 }
@@ -227,7 +227,7 @@ width: 100%;
   height: 100%;
   background: url("mask.png") center center;
   background-size: contain;
-  z-index: ;
+  z-index: 50;
   position: absolute;
   opacity: 0.5;
 }
@@ -236,7 +236,7 @@ width: 100%;
   width: 100%;
   height: 100%;
   position: absolute;
-  z-index: ;
+  z-index: 100;
   background: rgba(0,0,0,0.5);
   display: none;
 }
@@ -297,7 +297,7 @@ width: 100%;
   position: absolute;
   top: 2%;
   left: 2%;
-  z-index: ;
+  z-index: 20;
   width: 33%;
   height: 4%;
   margin: 0.85%;
@@ -316,7 +316,7 @@ width: 100%;
   overflow: hidden;
   top: 0;
   left: 0;
-  z-index: ;
+  z-index: 20;
   position: absolute;
 }
 #energy-base img,
@@ -327,7 +327,7 @@ width: 100%;
 }
 #energy-base,
 #energy-current {
-  z-index: ;
+  z-index: 30;
   -ms-transition: width 0.5s ease-in-out;
   -moz-transition: width 0.5s ease-in-out;
   -webkit-transition: width 0.5s ease-in-out;
@@ -693,7 +693,7 @@ width: 100%;
   left: 3.3%;
   width: 30%;
   height: 10%;
-  z-index: ;
+  z-index: 20;
 }
 #chance.active {
   -ms-animation: vibrate 0.2s linear infinite;
@@ -707,12 +707,12 @@ width: 100%;
   height: 100%;
   margin: 2px;
   display: inline-block;
-  background-image: url("img/gauge/chance-x.png");
+  background-image: url("../assets/img/gauge/chance-x.png");
   background-size: contain;
   background-repeat: no-repeat;
 }
 #chance .chance-node.active {
-  background-image: url("img/gauge/chance-o.png");
+  background-image: url("../assets/img/gauge/chance-o.png");
 }
 width: 100%;
 @-webkit-keyframes beat {
@@ -851,7 +851,7 @@ width: 100%;
   height: 10.416%;
   background-repeat: no-repeat;
   background-size: contain;
-  z-index: ;
+  z-index: 20;
   padding-left: 1.757%;
 }
 #score.hint {
@@ -869,7 +869,7 @@ width: 100%;
   margin: 2% 3%;
   background-repeat: no-repeat;
   background-size: contain;
-  z-index: ;
+  z-index: z-index-guage-current;
 }
 #score .score-digit {
   margin-top: 10%;
@@ -890,7 +890,7 @@ width: 100%;
   height: 100%;
   background-size: cover;
   background-repeat: no-repeat;
-  z-index: ;
+  z-index: 80;
 }
 #landing div,
 #landing a {
@@ -913,7 +913,7 @@ width: 100%;
 }
 #urgency.active {
   opacity: 0.7;
-  z-index: ;
+  z-index: 70;
 }
 #landing div img,
 #landing a img,
@@ -1028,7 +1028,7 @@ width: 100%;
   }
 }
 #loading {
-  z-index: ;
+  z-index: 140;
   background: #fff;
 }
 #loading.fade {
@@ -1089,7 +1089,7 @@ width: 100%;
 #pause {
   background-color: rgba(65,65,65,0.7);
   text-align: center;
-  z-index: ;
+  z-index: 110;
 }
 #pause div,
 #pause a {
@@ -1112,7 +1112,7 @@ width: 100%;
 }
 #game-ctrl,
 #mute {
-  z-index: ;
+  z-index: 120;
   top: auto;
   left: auto;
   bottom: 20px;
@@ -1138,7 +1138,7 @@ width: 100%;
   width: 351%;
 }
 #game-over {
-  z-index: ;
+  z-index: 90;
   background-color: rgba(65,65,65,0.7);
   text-align: center;
 }
@@ -1269,7 +1269,7 @@ width: 100%;
   position: absolute;
   top: 0;
   left: 0;
-  z-index: ;
+  z-index: 80;
 }
 #finger-tap img,
 #finger-slide img {
@@ -1915,14 +1915,14 @@ width: 100%;
   -webkit-animation: jump 0.6s ease-in-out infinite;
   -o-animation: jump 0.6s ease-in-out infinite;
   animation: jump 0.6s ease-in-out infinite;
-  z-index: ;
+  z-index: 80;
 }
 #arrow img {
   width: 100%;
   height: 100%;
 }
 #danger {
-  z-index: ;
+  z-index: 70;
   position: absolute;
   display: none;
   top: 10%;
@@ -2016,7 +2016,7 @@ width: 100%;
   background-position: center center;
   background-repeat: no-repeat;
   background-color: #fff;
-  z-index: ;
+  z-index: 130;
   background-size: cover;
 }
 #minimal-fix {
@@ -2032,7 +2032,7 @@ width: 100%;
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: ;
+  z-index: 10;
 }
 #copy-input {
   position: absolute;
