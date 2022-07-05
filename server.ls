@@ -13,7 +13,7 @@ now = -> new Date! |> ->
 
 _log = console.log
 console.log = (...arg) -> _log.apply null, [now!] ++ arg
-ignore-list = [/^server.ls$/, /^library.jade$/, /^\.[^/]+/, /^node_modules\//,/^assets\//]
+ignore-list = [/^build-assets.ls$/, /^server.ls$/, /^library.jade$/, /^\.[^/]+/, /^node_modules\//,/^assets\//]
 ignore-func = (f) -> if f => ignore-list.filter(-> it.exec f.replace(cwd-re, "")replace(/^\.\/+/, ""))length else 0
 
 type-table =
@@ -253,8 +253,8 @@ update-file = ->
         files = fs.readdir-sync \src/ls/ .map -> "src/ls/#it"
         files = files.filter -> (/\/\./.exec it) == null
         result = [uglify.minify(lsc.compile(fs.read-file-sync(file)toString!,{bare:true}),{fromString:true}).code for file in files].join("")
-        fs.write-file-sync "build.min.js", result
-        console.log "[BUILD] #src --> build.min.js"
+        #fs.write-file-sync "build.min.js", result
+        #console.log "[BUILD] #src --> build.min.js"
       catch
         console.log "[BUILD] #src failed: "
         console.log e.message
@@ -319,6 +319,6 @@ watcher = chokidar.watch watch-path, ignored: ignore-func, persistent: true
   .on \add, update-file
   .on \change, update-file
 
-http.createServer server .listen 9999, \0.0.0.0
+http.createServer server .listen 9997, \0.0.0.0
 
-console.log "running server on 0.0.0.0:9999"
+console.log "running server on 0.0.0.0:9997"
