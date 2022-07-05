@@ -1,29 +1,24 @@
-急診人生
-========
-
+# 急診人生
 
 急診人生 - 三分鐘的急診室醫師人生，透過新聞遊戲化的方式讓讀者體驗三分鐘的急診室醫師生活。
 
-Usage
---------
+
+## Usage
 
 請預先安裝 nodejs. 接著，使用終端機 / 命令提示字元程式切換到專案根目錄:
-```
+
     npm install
-    ./node_modules/.bin/lsc server
-```
+    npm start
 
-然後用瀏覽器開啟[http://localhost:9997](http://localhost:9997)
+瀏覽器會自動帶出畫面；若沒有，亦可直接開啟[http://localhost:2119](http://localhost:2119)
 
 
-License
---------
+## License
 
 MIT License
 
 
-Attribution
-====================
+## Attribution
 
 Sound Resources Used: 
  * bk.mp3 - [Hall of the Mountain King](http://incompetech.com/music/royalty-free/index.html?isrc=USUAN1200072)
