@@ -16,7 +16,10 @@
     "start": "npx server -r web -o true -p 2119"
   },
   "devDependencies": {
-    "livescript": "^1.6.0",
-    "@zbryikt/template": "^2.3.38"
+    "@zbryikt/template": "^2.3.38",
+    "livescript": "^1.6.0"
+  },
+  "dependencies": {
+    "fs-extra": "^10.1.0"
   }
 }

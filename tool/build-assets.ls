@@ -1,10 +1,11 @@
-require! <[fs zlib]>
+require! <[fs fs-extra zlib]>
 
 packer = (root) ->
   ret = []
   find = (path) ->
     files = fs.readdir-sync path .map -> "#path/#it"
     for file in files =>
+      if /\/rank/.exec(file) => continue
       if fs.stat-sync(file).is-directory! => find file
       else if /\.(png|jpg|mp3)$/.exec file => 
         size = fs.stat-sync(file).size
@@ -14,7 +15,8 @@ packer = (root) ->
   console.log ret.map(-> "#{it.1} #{it.0}").join(\\n)
   console.log "[#root] total size:", ret.reduce(((a,b)-> a + b.1),0)
   files = ret.map(-> it.0)
-  fs.write-file-sync "assets/#{root}-filelist.json", JSON.stringify(files)
+  fs-extra.ensure-dir-sync "output"
+  fs.write-file-sync "output/#{root}-filelist.json", JSON.stringify(files)
   console.log "[#root] file list stored in #{root}-filelist.json."
   console.log "[#root] pack files..."
   pack = {}
@@ -25,7 +27,7 @@ packer = (root) ->
   #(e,b) <- zlib.gzip JSON.stringify(pack), _
   b = zlib.gzip-sync JSON.stringify(pack)
   console.log "hashed files compressed ( #{b.length} bytes )"
-  fs.write-file-sync "assets/#root.gz", b
+  fs.write-file-sync "output/#root.gz", b
   console.log "[#root] files packed in #root.gz"
 
 packer \img
