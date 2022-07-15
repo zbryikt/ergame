@@ -2169,7 +2169,7 @@ x$.controller('ERGame', ['$scope', '$interval', '$timeout', '$http', '$sce'].con
   };
   $scope.usedom = false;
   args = {
-    app_id: '646775858745770',
+    app_id: '2492205787583141',
     display: 'popup',
     caption: 'www.twreporter.org',
     picture: 'http://0media.tw/p/ergame/assets/img/thumbnail.jpg',
@@ -2184,7 +2184,7 @@ x$.controller('ERGame', ['$scope', '$interval', '$timeout', '$http', '$sce'].con
       rank = $scope.doctor.rank;
       title = ['見習醫生', '實習醫生', '住院醫生', '總住院醫生', '研究醫生', '主治醫生', '醫龍'];
       obj = {
-        app_id: '646775858745770',
+        app_id: '2492205787583141',
         display: 'popup',
         caption: "急診人生 - 三分鐘的急診室醫師人生 / 報導者 x 0media",
         picture: "http://0media.tw/p/ergame/rank/s" + score + ".png",
