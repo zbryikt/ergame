@@ -16,6 +16,7 @@
     "start": "npx server -r web -o true -p 2119"
   },
   "devDependencies": {
+    "@zbryikt/deploy": "^0.0.1",
     "@zbryikt/template": "^2.3.38",
     "livescript": "^1.6.0"
   },
